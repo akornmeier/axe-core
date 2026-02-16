@@ -268,5 +268,5 @@ jobs:
           node-version: ${{ matrix.node }}
       - *restore-axe-build
       - name: Run Node.js Tests
-        run: node test/node/node.js
+        run: pnpm run test:node
         working-directory: packages/axe-core
