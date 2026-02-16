@@ -52,14 +52,7 @@ module.exports = function (grunt) {
         compact: false
       },
       core: {
-        files: [
-          {
-            expand: true,
-            cwd: 'lib/core',
-            src: ['index.js'],
-            dest: 'tmp/core'
-          }
-        ]
+        files: []
       },
       misc: {
         files: [
@@ -106,7 +99,18 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: 'lib/core',
-            src: ['core.js'],
+            src: ['core.ts'],
+            dest: 'tmp/core'
+          }
+        ]
+      },
+      index: {
+        bundle: false,
+        files: [
+          {
+            expand: true,
+            cwd: 'lib/core',
+            src: ['index.ts'],
             dest: 'tmp/core'
           }
         ]
@@ -118,17 +122,17 @@ module.exports = function (grunt) {
           {
             expand: true,
             src: [
-              'lib/checks/**/*-{evaluate,after}.js',
-              'lib/rules/**/*-matches.js'
+              'lib/checks/**/*-{evaluate,after}.ts',
+              'lib/rules/**/*-matches.ts'
             ],
-            dest: 'lib/core/base/metadata-function-map.js'
+            dest: 'lib/core/base/metadata-function-map.ts'
           }
         ]
       }
     },
     'aria-supported': {
       data: {
-        entry: 'lib/commons/aria/index.js',
+        entry: 'lib/commons/aria/index.ts',
         destFile: 'doc/aria-supported.md',
         options: {
           langs: langs
