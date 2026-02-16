@@ -8,7 +8,10 @@ import { messageHandler } from './frame-messenger/message-handler';
  */
 export const frameMessenger = {
   open(topicHandler: (...args: unknown[]) => void): (() => void) | undefined {
-    if (typeof window.addEventListener !== 'function') {
+    if (
+      typeof window === 'undefined' ||
+      typeof window.addEventListener !== 'function'
+    ) {
       return;
     }
 
@@ -27,7 +30,10 @@ export const frameMessenger = {
     data: Record<string, unknown>,
     replyHandler: unknown
   ): boolean | undefined {
-    if (typeof window.addEventListener !== 'function') {
+    if (
+      typeof window === 'undefined' ||
+      typeof window.addEventListener !== 'function'
+    ) {
       return false;
     }
     return postMessage(

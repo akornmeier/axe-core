@@ -15,12 +15,16 @@ let uuid: typeof v4 & {
 // returns 128-bits of randomness, since that's what's usually required
 let _rng: (() => number[] | Uint8Array) | undefined;
 
-// Allow for MSIE11 msCrypto
+// Allow for MSIE11 msCrypto — guard for Node.js compatibility
 const _crypto =
-  window.crypto ||
-  ((window as unknown as Record<string, unknown>).msCrypto as
-    | Crypto
-    | undefined);
+  typeof window !== 'undefined'
+    ? window.crypto ||
+      ((window as unknown as Record<string, unknown>).msCrypto as
+        | Crypto
+        | undefined)
+    : typeof globalThis !== 'undefined'
+      ? ((globalThis as Record<string, unknown>).crypto as Crypto | undefined)
+      : undefined;
 
 if (!_rng && _crypto && typeof _crypto.getRandomValues === 'function') {
   // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
@@ -49,11 +53,14 @@ if (!_rng) {
   };
 }
 
-// Buffer class to use
+// Buffer class to use — guard for Node.js compatibility
 const BufferClass =
+  typeof window !== 'undefined' &&
   typeof (window as unknown as Record<string, unknown>).Buffer == 'function'
     ? (window as unknown as Record<string, typeof Array>).Buffer
-    : Array;
+    : typeof Buffer !== 'undefined'
+      ? Buffer
+      : Array;
 
 // Maps for number <-> hex string conversion
 const _byteToHex: string[] = [];

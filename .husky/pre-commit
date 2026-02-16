@@ -1,3 +1,2 @@
 cd packages/axe-core
-npx grunt configure
 npx lint-staged
