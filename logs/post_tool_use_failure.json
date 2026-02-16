@@ -1,0 +1,31 @@
+[
+  {
+    "timestamp": "2026-02-16T04:17:25.099436",
+    "session_id": "19a788e3-528e-433c-b726-616d9dfbad73",
+    "hook_event_name": "PostToolUseFailure",
+    "tool_name": "Read",
+    "tool_use_id": "toolu_01Qg7z79ysebfsiZR8UkkBfn",
+    "tool_input": {
+      "file_path": "/Users/tk/Code/axe-core/CLAUDE.md"
+    },
+    "error": "File does not exist.",
+    "cwd": "/Users/tk/Code/axe-core",
+    "permission_mode": "default",
+    "transcript_path": "/Users/tk/.claude/projects/-Users-tk-Code-axe-core/19a788e3-528e-433c-b726-616d9dfbad73.jsonl",
+    "raw_input": {
+      "session_id": "19a788e3-528e-433c-b726-616d9dfbad73",
+      "transcript_path": "/Users/tk/.claude/projects/-Users-tk-Code-axe-core/19a788e3-528e-433c-b726-616d9dfbad73.jsonl",
+      "cwd": "/Users/tk/Code/axe-core",
+      "permission_mode": "default",
+      "hook_event_name": "PostToolUseFailure",
+      "tool_name": "Read",
+      "tool_input": {
+        "file_path": "/Users/tk/Code/axe-core/CLAUDE.md"
+      },
+      "tool_use_id": "toolu_01Qg7z79ysebfsiZR8UkkBfn",
+      "error": "File does not exist.",
+      "is_interrupt": false,
+      "logged_at": "2026-02-16T04:17:25.099436"
+    }
+  }
+]
