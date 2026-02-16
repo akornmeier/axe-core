@@ -53,7 +53,7 @@
     "bdd",
     "axe"
   ],
-  "main": "axe.js",
+  "main": "dist/axe.js",
   "typings": "axe.d.ts",
   "exports": {
     ".": {
@@ -63,8 +63,7 @@
     }
   },
   "files": [
-    "axe.js",
-    "axe.min.js",
+    "dist/",
     "axe.d.ts",
     "sri-history.json",
     "locales/",
