@@ -18,7 +18,7 @@ Please respect the coding style of the files you are changing and adhere to that
 The files in this project are formatted by [Prettier](https://prettier.io/) and [ESLint](https://eslint.org/). Both are run when code is committed. Additionally, you can run ESLint manually:
 
 ```console
-npm run eslint
+pnpm run eslint
 ```
 
 ### When to use HTMLElement vs Virtual Node
@@ -123,32 +123,38 @@ function CheckResult(check) {
 
 ## Setting up your environment
 
-In order to get going, fork and clone the repository. Then, if you do not have [Node.js](https://nodejs.org/download/) installed, install it!
+In order to get going, fork and clone the repository. Then, if you do not have [Node.js](https://nodejs.org/download/) installed, install it! Node 20 LTS or later is required.
 
-Once the basic infrastructure is installed, from the repository root, do the following:
+Once the basic infrastructure is installed, enable Corepack (which manages PNPM):
 
 ```console
-npm install
+corepack enable
+```
+
+Then from the repository root, install dependencies:
+
+```console
+pnpm install
 ```
 
 Then build the package:
 
 ```console
-npm run build
+pnpm build
 ```
 
 ## Developing and testing
 
-In order to run axe tests, `axe.js` must be built using `npm run build`. To run the unit tests:
+In order to run axe tests, `axe.js` must be built using `pnpm build`. To run the unit tests:
 
 ```console
-npm test
+pnpm test
 ```
 
 To continually watch changes to the axe source files and re-build on changes, use:
 
 ```console
-npm run develop
+pnpm run develop
 ```
 
 This will also rerun any tests that have been changed, and any changes to the axe source files will trigger a rerun of that files tests.
@@ -156,17 +162,17 @@ This will also rerun any tests that have been changed, and any changes to the ax
 To run axe integration tests:
 
 ```console
-npm run test:integration
+pnpm run test:integration
 ```
 
 Lastly, there are a few other tests that get run during the continuous integration process:
 
 ```console
 # run the tests from `doc/examples/*` using the current local build of `axe.js`
-npm run test:examples
+pnpm run test:examples
 
 # run the tests from `test/node`
-npm run test:node
+pnpm run test:node
 ```
 
 ### Running and debugging specific unit tests
@@ -175,31 +181,31 @@ If you want to run a specific set of unit tests instead of all the unit tests, y
 
 ```console
 # run just the tests from `test/core`
-npm run test:unit:core
+pnpm run test:unit:core
 
 # run just the tests from `test/commons`
-npm run test:unit:commons
+pnpm run test:unit:commons
 
 # run just the tests from `test/rule-matches`
-npm run test:unit:rule-matches
+pnpm run test:unit:rule-matches
 
 # run just the tests from `test/checks`
-npm run test:unit:checks
+pnpm run test:unit:checks
 
 # run just the tests from `test/integration/rules`
-npm run test:unit:integration
+pnpm run test:unit:integration
 
 # run just the tests from `test/integration/api`
-npm run test:unit:api
+pnpm run test:unit:api
 
 # run just the tests from `test/integration/virtual-rules`
-npm run test:unit:virtual-rules
+pnpm run test:unit:virtual-rules
 ```
 
 If you need to debug the unit tests in a browser, you can run:
 
 ```console
-npm run test:debug
+pnpm run test:debug
 ```
 
 This will start the Karma server and open up the Chrome browser. Click the `Debug` button to start debugging the tests. You can either use that browser's debugger or attach an external debugger on port 9765; [a VS Code launch profile](./.vscode/launch.json) is provided. You can also navigate to the listed URL in your browser of choice to debug tests using that browser.
@@ -208,7 +214,7 @@ Because the amount of tests is so large, it's recommended to debug only a specif
 
 ```console
 # accepts a single directory or a comma-separated list of directories
-npm run test:debug -- testDirs=core,commons
+pnpm run test:debug -- testDirs=core,commons
 ```
 
 ## Using axe with TypeScript
@@ -220,7 +226,7 @@ The TypeScript definition file for axe-core is distributed with this module and 
 You can run TypeScript definition tests using the following command:
 
 ```console
-npm run test:tsc
+pnpm run test:tsc
 ```
 
 ## Including axe's type definition in tests

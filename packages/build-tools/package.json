@@ -1,0 +1,14 @@
+{
+  "name": "@axe-core/build-tools",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Internal Vite build plugins for axe-core",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "echo 'No build configured yet'",
+    "test": "echo 'No tests configured yet'"
+  },
+  "license": "MPL-2.0"
+}

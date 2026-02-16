@@ -1,30 +1,38 @@
 # defaults
 node_modules
+logs/
+.claude/
 npm-shrinkwrap.json
-doc/examples/*/package-lock.json
 .DS_Store
 .idea
+.turbo/
 
 # tmp - `dev` time generated assets
 tmp
 
+# pnpm-lock.yaml is NOT ignored (it should be committed)
+
 # test - runner generated assets
-test/*/index.html
-test/integration/*/index.html
-!test/integration/virtual-rules/index.html
+packages/axe-core/test/*/index.html
+packages/axe-core/test/integration/*/index.html
+!packages/axe-core/test/integration/virtual-rules/index.html
 
 # dist
-axe.js
-axe.*.js
+packages/axe-core/axe.js
+packages/axe-core/axe.*.js
 
 # generated src file
-lib/core/base/metadata-function-map.js
+packages/axe-core/lib/core/base/metadata-function-map.js
 
 # generated jsdoc api docs
-doc/api/*
+packages/axe-core/doc/api/*
+packages/axe-core/doc/examples/*/package-lock.json
 
 # ts generated file
-typings/axe-core/axe-core-tests.js
+packages/axe-core/typings/axe-core/axe-core-tests.js
 
 # doc
-doc/rule-descriptions.*.md
+packages/axe-core/doc/rule-descriptions.*.md
+
+# stub package dist
+packages/*/dist/

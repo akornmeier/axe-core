@@ -1,0 +1,14 @@
+{
+  "name": "@axe-core/schemas",
+  "version": "0.0.0",
+  "description": "Zod schemas for axe-core configuration and results",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "echo 'No build configured yet'",
+    "test": "echo 'No tests configured yet'"
+  },
+  "license": "MPL-2.0"
+}
