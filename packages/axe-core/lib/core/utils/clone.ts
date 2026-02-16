@@ -16,8 +16,12 @@ function cloneRecused(obj: unknown, seen: Map<unknown, unknown>): unknown {
   // don't clone DOM nodes. since we can pass nodes from different window contexts
   // we'll also use duck typing to determine what is a DOM node
   if (
-    (window?.Node && obj instanceof window.Node) ||
-    (window?.HTMLCollection && obj instanceof window.HTMLCollection) ||
+    (typeof window !== 'undefined' &&
+      window?.Node &&
+      obj instanceof window.Node) ||
+    (typeof window !== 'undefined' &&
+      window?.HTMLCollection &&
+      obj instanceof window.HTMLCollection) ||
     ('nodeName' in (obj as object) &&
       'nodeType' in (obj as object) &&
       'ownerDocument' in (obj as object))

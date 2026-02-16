@@ -3,26 +3,34 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["axe.js", "axe.min.js", "axe.*.js", "dist/**"],
-      "inputs": ["lib/**", "build/**", "locales/**", "Gruntfile.js", "src/**", "tsconfig.json", "vite.config.ts"]
+      "outputs": ["dist/**"],
+      "inputs": ["lib/**", "src/**", "tsconfig.json", "vite.config.ts"]
     },
-    "test": {
+    "build:locales": {
       "dependsOn": ["build"],
-      "inputs": ["lib/**", "test/**", "build/**"]
-    },
-    "test:tsc": {
-      "inputs": ["typings/**", "axe.d.ts", "tsconfig.json"]
-    },
-    "lint": {
-      "inputs": ["lib/**", "test/**", "build/**", "Gruntfile.js", "eslint.config.js", "src/**"]
-    },
-    "format:check": {
-      "inputs": ["**/*.{md,json,ts,html,js,mjs}"]
+      "outputs": ["dist/locales/**"],
+      "inputs": ["locales/**"]
     },
     "typecheck": {
       "dependsOn": ["^build"],
       "outputs": [],
       "inputs": ["lib/**", "src/**", "tsconfig.json"]
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "inputs": ["lib/**", "test/**"]
+    },
+    "test:tsc": {
+      "inputs": ["typings/**", "axe.d.ts", "tsconfig.json"]
+    },
+    "lint": {
+      "inputs": ["lib/**", "test/**", "src/**", "../../oxlint.json"]
+    },
+    "format:check": {
+      "inputs": ["**/*.{md,json,ts,html,js,mjs}"]
+    },
+    "format:fix": {
+      "cache": false
     }
   }
 }

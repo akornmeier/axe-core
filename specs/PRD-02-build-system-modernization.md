@@ -15,6 +15,8 @@
 
 axe-core's build pipeline is a Grunt orchestration of seven discrete tools: `clean` → `validate` → `metadata-function-map` → `esbuild` → `configure` → `babel` → `concat` → `uglify` → `aria-supported` → `add-locale` → `prettier` → `bytesize`. This pipeline was designed when the library was pure JavaScript with no module system, and files were literally concatenated into a single output.
 
+**Important:** Primary goal is to re-engineer the pipeline to the most efficient process possible, NOT to replicate every step in a newer technology. The existing process was built 12 years ago, many of these tasks are done automatically now with modern tooling. Do not fall into the replace 1:1 trap.
+
 This phase replaces the entire pipeline with Vite 8 (powered by Rolldown), which provides a unified bundler for both development and production. Code quality tooling migrates from ESLint + Prettier to Oxlint + Oxfmt, achieving 50–100× faster linting and 30× faster formatting. Custom Grunt tasks are rewritten as Vite plugins in the `packages/build-tools/` workspace package.
 
 **Critical caveat:** As of February 2026, Vite 8 is in beta. This PRD includes a contingency path using Vite 7 + the `rolldown-vite` package. The migration to Vite 8 stable is a one-line dependency swap (see PRD-00, Section 4.1).
@@ -49,22 +51,22 @@ This phase replaces the entire pipeline with Vite 8 (powered by Rolldown), which
 
 ```typescript
 // packages/axe-core/vite.config.ts
-import { defineConfig } from 'vite';
-import { resolve } from 'node:path';
-import { axeMetadataPlugin } from '@axe-core/build-tools/vite-plugin-axe-metadata';
-import { axeLocalePlugin } from '@axe-core/build-tools/vite-plugin-axe-locale';
-import { axeAriaPlugin } from '@axe-core/build-tools/vite-plugin-axe-aria';
+import { defineConfig } from "vite";
+import { resolve } from "node:path";
+import { axeMetadataPlugin } from "@axe-core/build-tools/vite-plugin-axe-metadata";
+import { axeLocalePlugin } from "@axe-core/build-tools/vite-plugin-axe-locale";
+import { axeAriaPlugin } from "@axe-core/build-tools/vite-plugin-axe-aria";
 
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'lib/index.ts'),
-      name: 'axe',
-      formats: ['umd', 'es', 'cjs'],
+      entry: resolve(__dirname, "lib/index.ts"),
+      name: "axe",
+      formats: ["umd", "es", "cjs"],
       fileName: (format) => {
-        if (format === 'umd') return 'axe.js';
-        if (format === 'es') return 'axe.mjs';
-        return 'axe.cjs';
+        if (format === "umd") return "axe.js";
+        if (format === "es") return "axe.mjs";
+        return "axe.cjs";
       },
     },
     rolldownOptions: {
@@ -75,16 +77,16 @@ export default defineConfig({
     },
     minify: true, // Rolldown uses Oxc minifier (replaces UglifyJS)
     sourcemap: true,
-    target: 'es2022', // Aligns with Baseline Widely Available
+    target: "es2022", // Aligns with Baseline Widely Available
   },
   define: {
-    'process.env.NODE_ENV': JSON.stringify('production'),
+    "process.env.NODE_ENV": JSON.stringify("production"),
     __AXE_VERSION__: JSON.stringify(process.env.npm_package_version),
   },
   plugins: [
-    axeMetadataPlugin(),  // Replaces grunt metadata-function-map + configure
-    axeLocalePlugin(),    // Replaces grunt add-locale
-    axeAriaPlugin(),      // Replaces grunt aria-supported
+    axeMetadataPlugin(), // Replaces grunt metadata-function-map + configure
+    axeLocalePlugin(), // Replaces grunt add-locale
+    axeAriaPlugin(), // Replaces grunt aria-supported
   ],
 });
 ```
@@ -105,6 +107,7 @@ packages/build-tools/
 ```
 
 **`packages/build-tools/package.json`:**
+
 ```jsonc
 {
   "name": "@axe-core/build-tools",
@@ -115,15 +118,15 @@ packages/build-tools/
     "./vite-plugin-axe-metadata": "./src/vite-plugin-axe-metadata.ts",
     "./vite-plugin-axe-locale": "./src/vite-plugin-axe-locale.ts",
     "./vite-plugin-axe-aria": "./src/vite-plugin-axe-aria.ts",
-    "./report-size": "./src/report-size.ts"
+    "./report-size": "./src/report-size.ts",
   },
   "dependencies": {
     "@axe-core/schemas": "workspace:*",
-    "glob": "^11.0"
+    "glob": "^11.0",
   },
   "devDependencies": {
-    "vite": "^8.0.0"
-  }
+    "vite": "^8.0.0",
+  },
 }
 ```
 
@@ -135,12 +138,12 @@ packages/build-tools/
 
 ```typescript
 // packages/build-tools/src/vite-plugin-axe-metadata.ts
-import type { Plugin } from 'vite';
-import { glob } from 'glob';
+import type { Plugin } from "vite";
+import { glob } from "glob";
 
 export function axeMetadataPlugin(): Plugin {
   return {
-    name: 'axe-metadata',
+    name: "axe-metadata",
     async buildStart() {
       // Scan packages/axe-core/lib/rules/ and lib/checks/ for definitions
       // Generate packages/axe-core/lib/core/generated/metadata-function-map.ts
@@ -167,6 +170,7 @@ export function axeMetadataPlugin(): Plugin {
 **Current behavior:** Reads locale JSON files and produces per-locale builds (`axe.de.js`, `axe.fr.js`, etc.).
 
 **Migration:** Becomes a Vite plugin or Node.js script in `packages/build-tools/` that:
+
 1. Reads `packages/axe-core/locales/*.json`
 2. Validates each locale against the Zod `LocaleSchema` (from `@axe-core/schemas`)
 3. For each locale, invokes `vite build` with the locale injected via `define`
@@ -192,12 +196,14 @@ The unminified `axe.js` output from Rolldown is already readable. If exact forma
 
 ```typescript
 // packages/build-tools/src/report-size.ts
-import { readFileSync } from 'node:fs';
-import { gzipSync } from 'node:zlib';
+import { readFileSync } from "node:fs";
+import { gzipSync } from "node:zlib";
 
-const file = readFileSync('packages/axe-core/dist/axe.min.js');
+const file = readFileSync("packages/axe-core/dist/axe.min.js");
 const gzipped = gzipSync(file);
-console.log(`axe.min.js: ${(file.length / 1024).toFixed(1)}KB (${(gzipped.length / 1024).toFixed(1)}KB gzipped)`);
+console.log(
+  `axe.min.js: ${(file.length / 1024).toFixed(1)}KB (${(gzipped.length / 1024).toFixed(1)}KB gzipped)`,
+);
 ```
 
 ### 2.3 Package Scripts
@@ -215,18 +221,18 @@ The root `package.json` scripts (defined in PRD-00, Section 2.6) delegate to Tur
     "typecheck": "tsc --noEmit",
     "test": "vitest run --project unit",
     "test:browser": "vitest run --project browser",
-    "size": "tsx ../build-tools/src/report-size.ts"
+    "size": "tsx ../build-tools/src/report-size.ts",
   },
   "dependencies": {
-    "@axe-core/schemas": "workspace:*"
+    "@axe-core/schemas": "workspace:*",
   },
   "devDependencies": {
     "@axe-core/build-tools": "workspace:*",
     "vite": "^8.0.0",
     "vitest": "^4.0",
     "typescript": "^5.7",
-    "zod": "^3.24"
-  }
+    "zod": "^3.24",
+  },
 }
 ```
 
@@ -263,13 +269,9 @@ pnpm validate       # turbo run typecheck lint format:check test
 
     // Import analysis (multi-file, Oxlint-native)
     "import/no-cycle": "error",
-    "import/no-self-import": "error"
+    "import/no-self-import": "error",
   },
-  "ignorePatterns": [
-    "dist/",
-    "node_modules/",
-    "**/generated/"
-  ]
+  "ignorePatterns": ["dist/", "node_modules/", "**/generated/"],
 }
 ```
 
@@ -291,7 +293,7 @@ pnpm dlx @oxlint/migrate eslint.config.js > oxlint.json
   "singleQuote": true,
   "trailingComma": "none",
   "bracketSpacing": true,
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
 }
 ```
 
@@ -313,15 +315,15 @@ These settings match axe-core's current Prettier configuration, ensuring a zero-
 
 The build must produce the same set of artifacts consumers expect:
 
-| Artifact | Format | Description |
-|---|---|---|
-| `axe.js` | UMD (unminified) | For script tag inclusion |
-| `axe.min.js` | UMD (minified + sourcemap) | Production script tag |
-| `axe.mjs` | ESM | For `import` consumers |
-| `axe.cjs` | CJS | For `require()` consumers |
-| `axe.d.ts` | Declaration | TypeScript types (from Phase 1) |
-| `axe.{locale}.js` | UMD (unminified) | Per-locale builds |
-| `axe.{locale}.min.js` | UMD (minified) | Per-locale production builds |
+| Artifact              | Format                     | Description                     |
+| --------------------- | -------------------------- | ------------------------------- |
+| `axe.js`              | UMD (unminified)           | For script tag inclusion        |
+| `axe.min.js`          | UMD (minified + sourcemap) | Production script tag           |
+| `axe.mjs`             | ESM                        | For `import` consumers          |
+| `axe.cjs`             | CJS                        | For `require()` consumers       |
+| `axe.d.ts`            | Declaration                | TypeScript types (from Phase 1) |
+| `axe.{locale}.js`     | UMD (unminified)           | Per-locale builds               |
+| `axe.{locale}.min.js` | UMD (minified)             | Per-locale production builds    |
 
 The `packages/axe-core/package.json` exports map:
 
@@ -333,11 +335,11 @@ The `packages/axe-core/package.json` exports map:
   "exports": {
     ".": {
       "import": { "types": "./dist/axe.d.ts", "default": "./dist/axe.mjs" },
-      "require": { "types": "./dist/axe.d.ts", "default": "./dist/axe.cjs" }
+      "require": { "types": "./dist/axe.d.ts", "default": "./dist/axe.cjs" },
     },
-    "./locales/*": "./locales/*.json"
+    "./locales/*": "./locales/*.json",
   },
-  "files": ["dist/", "locales/", "LICENSE", "README.md"]
+  "files": ["dist/", "locales/", "LICENSE", "README.md"],
 }
 ```
 
@@ -348,6 +350,7 @@ The `packages/axe-core/package.json` exports map:
 ## 3. Migration Plan
 
 ### Sprint 1: Foundation (Weeks 1–2)
+
 - Scaffold `packages/build-tools/` with plugin stubs and `package.json`
 - Install Vite 8 (or `rolldown-vite` — see PRD-00 Section 4.1) in `packages/axe-core/`
 - Create `packages/axe-core/vite.config.ts` with library mode
@@ -357,6 +360,7 @@ The `packages/axe-core/package.json` exports map:
 - Set up parallel CI: old Grunt build + new Vite build, diff the outputs
 
 ### Sprint 2: Custom Task Migration (Weeks 3–4)
+
 - Implement `vite-plugin-axe-metadata` in `packages/build-tools/` (replaces `metadata-function-map` + `configure`)
 - Implement `vite-plugin-axe-aria` (replaces `aria-supported`)
 - Implement locale build script (replaces `add-locale`)
@@ -364,6 +368,7 @@ The `packages/axe-core/package.json` exports map:
 - Verify all artifacts match the Grunt output
 
 ### Sprint 3: Cleanup & Optimization (Weeks 5–6)
+
 - Remove `Gruntfile.js` and all `grunt-*` devDependencies
 - Remove Babel configuration and `babel-*` devDependencies
 - Remove `eslint`, `eslint-config-prettier`, `eslint-plugin-mocha-no-only`
@@ -373,6 +378,7 @@ The `packages/axe-core/package.json` exports map:
 - Performance benchmarking: measure and document build times
 
 ### Sprint 4: Hardening (Weeks 7–8) — if needed
+
 - Address edge cases in locale builds
 - Ensure sourcemaps are correct end-to-end
 - Validate that downstream integrations (axe-playwright, axe-puppeteer, @axe-core/react, etc.) work with new artifacts
@@ -438,6 +444,7 @@ The ESM output (`axe.mjs`) will be tree-shakeable. Consumers who only use `axe.r
 ### 5.5 Turborepo Caching for Build Tasks
 
 The `turbo.json` config (PRD-00 Section 2.5) defines `build` with `"dependsOn": ["^build"]`. This means:
+
 - `@axe-core/schemas` builds first (it has no internal dependencies)
 - `@axe-core/build-tools` builds next (depends on schemas)
 - `axe-core` builds last (depends on both)

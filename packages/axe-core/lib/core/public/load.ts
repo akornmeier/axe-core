@@ -105,7 +105,7 @@ function runCommand(
   }
 }
 
-if (window.top !== window) {
+if (typeof window !== 'undefined' && window.top !== window) {
   respondable.subscribe(
     'axe.start',
     runCommand as (

@@ -83,6 +83,9 @@ export function pollyfillElementsFromPoint(): (
   };
 }
 
-if (typeof window.addEventListener === 'function') {
+if (
+  typeof window !== 'undefined' &&
+  typeof window.addEventListener === 'function'
+) {
   document.elementsFromPoint = pollyfillElementsFromPoint();
 }

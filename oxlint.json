@@ -1,0 +1,96 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "vitest"],
+  "env": {
+    "builtin": true,
+    "node": true,
+    "es2015": true
+  },
+  "globals": {
+    "axe": "readonly",
+    "Promise": "readonly"
+  },
+  "rules": {
+    "no-bitwise": "error",
+    "camelcase": "error",
+    "curly": "error",
+    "eqeqeq": "error",
+    "guard-for-in": "error",
+    "no-caller": "error",
+    "no-empty": "error",
+    "no-new": "error",
+    "no-undef": "error",
+    "no-unused-vars": "error",
+    "no-debugger": "error",
+    "no-eval": "error",
+    "dot-notation": "error",
+    "no-shadow": "error",
+    "max-params": ["error", { "max": 6 }],
+    "max-depth": ["error", { "max": 5 }],
+    "prefer-const": "error",
+    "new-cap": "error",
+    "no-use-before-define": ["error", { "functions": false }],
+    "no-var": "warn",
+    "vitest/no-focused-tests": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "packages/axe-core/lib/**/*.ts",
+        "packages/axe-core/lib/**/*.js",
+        "!packages/axe-core/lib/core/reporters/**",
+        "!packages/axe-core/lib/**/*-after.ts",
+        "!packages/axe-core/lib/**/*-after.js"
+      ],
+      "rules": {
+        "func-names": ["error", "as-needed"],
+        "no-use-before-define": "off"
+      }
+    },
+    {
+      "files": [
+        "packages/axe-core/lib/core/imports/polyfills.ts",
+        "packages/axe-core/lib/core/imports/polyfills.js",
+        "packages/axe-core/lib/core/utils/pollyfill-elements-from-point.ts",
+        "packages/axe-core/lib/core/utils/pollyfill-elements-from-point.js"
+      ],
+      "rules": {
+        "func-names": "off",
+        "no-bitwise": "off",
+        "curly": "off",
+        "eqeqeq": "off"
+      }
+    },
+    {
+      "files": ["packages/axe-core/test/**/*.js"],
+      "env": {
+        "mocha": true,
+        "browser": true
+      },
+      "globals": {
+        "assert": "readonly",
+        "helpers": "readonly",
+        "checks": "readonly",
+        "sinon": "readonly"
+      },
+      "rules": {
+        "new-cap": "off",
+        "no-use-before-define": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules",
+    "**/node_modules",
+    "**/dist",
+    "**/tmp",
+    "packages/axe-core/patches",
+    "packages/axe-core/build/tasks/aria-supported.js",
+    "packages/axe-core/doc/api",
+    "packages/axe-core/doc/examples/jest_react",
+    "packages/axe-core/lib/core/imports/polyfills.js",
+    "packages/axe-core/lib/core/utils/uuid.js",
+    "packages/axe-core/axe.js",
+    "packages/axe-core/axe.min.js"
+  ]
+}

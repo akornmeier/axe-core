@@ -2,7 +2,11 @@ import log from '../log';
 
 const performanceTimer = (() => {
   function now(): number | undefined {
-    if (window.performance && window.performance) {
+    if (
+      typeof window !== 'undefined' &&
+      window.performance &&
+      window.performance
+    ) {
       return window.performance.now();
     }
   }

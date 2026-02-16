@@ -329,11 +329,11 @@ for the version defined in \`sri-history.json\`.
   const filesToCheck = [
     {
       name: 'axe.js',
-      path: fileURLToPath(import.meta.resolve(`${pkg.name}/axe.js`))
+      path: fileURLToPath(import.meta.resolve(`${pkg.name}/dist/axe.js`))
     },
     {
       name: 'axe.min.js',
-      path: fileURLToPath(import.meta.resolve(`${pkg.name}/axe.min.js`))
+      path: fileURLToPath(import.meta.resolve(`${pkg.name}/dist/axe.min.js`))
     }
   ];
   const mismatches = [];

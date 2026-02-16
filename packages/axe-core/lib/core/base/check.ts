@@ -1,8 +1,19 @@
-import _metadataFunctionMap from './metadata-function-map';
-const metadataFunctionMap: Record<
-  string,
-  ((...args: any[]) => any) | undefined
-> = _metadataFunctionMap;
+// The metadata function map holds references to all check evaluate/after
+// functions and rule matches functions. It is populated by the entry point
+// (lib/index.ts) via `setMetadataFunctionMap()` to avoid circular dependency
+// issues that would cause the map to be empty when bundled by rolldown.
+let metadataFunctionMap: Record<string, ((...args: any[]) => any) | undefined> =
+  {};
+
+/**
+ * Set the metadata function map. Called once from the entry point after
+ * all check/rule modules have been loaded.
+ */
+export function setMetadataFunctionMap(
+  map: Record<string, (...args: any[]) => any>
+): void {
+  metadataFunctionMap = map;
+}
 import CheckResult from './check-result';
 import { nodeSerializer, checkHelper, deepMerge } from '../utils';
 

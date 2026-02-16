@@ -6,7 +6,8 @@ import Audit from './base/audit';
 import CheckResult from './base/check-result';
 import Check from './base/check';
 import Context from './base/context';
-import metadataFunctionMap from './base/metadata-function-map';
+// metadataFunctionMap is imported in index.ts and passed via setMetadataFunctionMap
+// import metadataFunctionMap from './base/metadata-function-map';
 import RuleResult from './base/rule-result';
 import Rule from './base/rule';
 
@@ -45,7 +46,7 @@ interface ExposedForTesting {
     Context: typeof Context;
     RuleResult: typeof RuleResult;
     Rule: typeof Rule;
-    metadataFunctionMap: typeof metadataFunctionMap;
+    metadataFunctionMap: Record<string, (...args: any[]) => any>;
   };
   public: {
     reporters: typeof reporters;
@@ -86,7 +87,7 @@ const _thisWillBeDeletedDoNotUse: ExposedForTesting = {
     Context,
     RuleResult,
     Rule,
-    metadataFunctionMap
+    metadataFunctionMap: {} as Record<string, (...args: any[]) => any>
   },
   public: {
     reporters

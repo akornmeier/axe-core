@@ -1,8 +1,11 @@
 node_modules/
+dist/
 doc/api
 axe.js
 axe.min.js
 axe.*.js
 lib/core/base/metadata-function-map.js
+lib/core/base/metadata-function-map.ts
+lib/core/generated/
 tmp/
 logs/

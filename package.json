@@ -6,15 +6,24 @@
   },
   "scripts": {
     "build": "turbo run build",
+    "build:locales": "turbo run build:locales",
     "test": "turbo run test",
     "test:tsc": "turbo run test:tsc",
+    "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
+    "lint:oxlint": "oxlint --config oxlint.json .",
+    "format": "turbo run format:check",
     "format:check": "turbo run format:check",
-    "validate": "turbo run test:tsc lint format:check test",
+    "format:fix": "turbo run format:fix",
+    "format:oxfmt": "oxfmt --check .",
+    "format:oxfmt:fix": "oxfmt --write .",
+    "validate": "turbo run typecheck lint format:check test",
     "prepare": "husky"
   },
   "devDependencies": {
     "husky": "^9.0.7",
+    "oxfmt": "^0.33.0",
+    "oxlint": "^1.48.0",
     "turbo": "^2.4"
   }
 }
