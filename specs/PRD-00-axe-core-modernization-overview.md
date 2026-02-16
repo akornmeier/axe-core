@@ -230,6 +230,8 @@ engine-strict=true
 
 ### 2.7 Phase 0 — Monorepo Scaffolding (Pre-requisite)
 
+> **Status: Complete** — See [`specs/phase-00-monorepo-scaffolding.md`](phase-00-monorepo-scaffolding.md) for the full implementation plan and report.
+
 The monorepo restructuring (moving code into `packages/`) should happen as a **dedicated Phase 0 prep step** — a single PR that moves files without changing any code. This isolates the structural change from functional changes, keeping `git blame` and `git bisect` useful.
 
 **Phase 0 deliverables:**

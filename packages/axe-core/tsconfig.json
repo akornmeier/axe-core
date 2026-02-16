@@ -1,7 +1,11 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "noImplicitAny": true
+    "outDir": "./dist",
+    "rootDir": "./lib",
+    "skipLibCheck": true
   },
-  "include": ["typings/axe-core/axe-core-tests.ts"],
-  "exclude": ["node_modules"]
+  "references": [{ "path": "../schemas" }],
+  "include": ["lib"],
+  "exclude": ["node_modules", "dist", "test"]
 }

@@ -8,6 +8,12 @@ module.exports = function (grunt) {
     function () {
       const done = this.async();
       const files = grunt.task.current.data.files;
+      const shouldBundle =
+        grunt.task.current.data.bundle !== undefined
+          ? grunt.task.current.data.bundle
+          : true;
+
+      const promises = [];
 
       files.forEach(file => {
         const src = Array.isArray(file.src) ? file.src : [file.src];
@@ -19,19 +25,25 @@ module.exports = function (grunt) {
             entry = path.join(file.cwd, entry);
           }
 
-          build({
-            entryPoints: [entry],
-            outfile: path.join(dest, name),
-            minify: false,
-            bundle: true
-          })
-            .then(done)
-            .catch(e => {
-              grunt.fail.fatal(e);
-              done();
-            });
+          promises.push(
+            build({
+              entryPoints: [entry],
+              outfile: path.join(dest, name.replace(/\.ts$/, '.js')),
+              minify: false,
+              bundle: shouldBundle,
+              format: 'esm',
+              resolveExtensions: ['.ts', '.js', '.json']
+            })
+          );
         });
       });
+
+      Promise.all(promises)
+        .then(() => done())
+        .catch(e => {
+          grunt.fail.fatal(e);
+          done();
+        });
     }
   );
 };

@@ -1,0 +1,45 @@
+import { getRoleType } from '../commons/aria';
+import { isFocusable, isInTabOrder, isInTextBlock } from '../commons/dom';
+import svgNamespaceMatches from './svg-namespace-matches';
+import { memoize } from '../core/utils';
+import AbstractVirtualNode from '../core/base/virtual-node/abstract-virtual-node';
+
+export default function widgetNotInline(
+  node: HTMLElement,
+  vNode: AbstractVirtualNode
+): boolean {
+  return matchesFns.every(fn => fn(node, vNode));
+}
+
+const matchesFns: Array<
+  (node: HTMLElement, vNode: AbstractVirtualNode) => boolean
+> = [
+  (node, vNode) => isWidgetType(vNode),
+  (node, vNode) => isNotAreaElement(vNode),
+  (node, vNode) => !svgNamespaceMatches(node, vNode),
+  (node, vNode) => isFocusable(vNode),
+  // Skip nested widgets with tabindex=-1
+  (node, vNode) => isInTabOrder(vNode) || !hasWidgetAncestorInTabOrder(vNode),
+  node => !isInTextBlock(node, { noLengthCompare: true })
+];
+
+function isWidgetType(vNode: AbstractVirtualNode): boolean {
+  return getRoleType(vNode) === 'widget';
+}
+
+function isNotAreaElement(vNode: AbstractVirtualNode): boolean {
+  return vNode.props.nodeName !== 'area';
+}
+
+const hasWidgetAncestorInTabOrder = memoize(
+  function hasWidgetAncestorInTabOrderMemoized(...args: unknown[]): boolean {
+    const vNode = args[0] as AbstractVirtualNode;
+    if (!vNode?.parent) {
+      return false;
+    }
+    if (isWidgetType(vNode.parent) && isInTabOrder(vNode.parent)) {
+      return true;
+    }
+    return hasWidgetAncestorInTabOrderMemoized(vNode.parent);
+  }
+);

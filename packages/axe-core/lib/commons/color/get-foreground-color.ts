@@ -1,0 +1,206 @@
+import Color from './color';
+import getBackgroundColor from './get-background-color';
+import incompleteData from './incomplete-data';
+import flattenColors from './flatten-colors';
+import getTextShadowColors from './get-text-shadow-colors';
+import { getStackingContext, stackingContextToColor } from './stacking-context';
+
+interface ForegroundColorOptions {
+  textStrokeEmMin?: number;
+}
+
+interface StackingContext {
+  vNode?: any;
+  ancestor?: StackingContext;
+  opacity: number;
+  bgColor: Color;
+  blendMode?: string;
+  descendants: StackingContext[];
+}
+
+/**
+ * Returns the flattened foreground color of an element, or null if it can't be determined because
+ * of transparency
+ * @method getForegroundColor
+ * @memberof axe.commons.color
+ * @instance
+ * @param {Element} node
+ * @param {Boolean} noScroll (default false)
+ * @param {Color} bgColor
+ * @param {Object} Options
+ * @return {Color|null}
+ *
+ * @deprecated noScroll parameter
+ */
+export default function getForegroundColor(
+  node: Element,
+  _?: unknown,
+  bgColor?: Color | null,
+  options: ForegroundColorOptions = {}
+): Color | null {
+  const nodeStyle = window.getComputedStyle(node);
+
+  const colorStack: Array<() => Color | Color[] | null> = [
+    // Start with -webkit-text-stroke, it is rendered on top
+    () => getStrokeColor(nodeStyle, options),
+    // Next color / -webkit-text-fill-color
+    () => getTextColor(nodeStyle),
+    // If text is (semi-)transparent shadows are visible through it
+    () => getTextShadowColors(node, { minRatio: 0 })
+  ];
+  let fgColors: Color[] = [];
+
+  try {
+    for (const colorFn of colorStack) {
+      const color = colorFn();
+      if (!color) {
+        continue;
+      }
+
+      fgColors = fgColors.concat(color);
+
+      if ((color as Color).alpha === 1) {
+        break;
+      }
+    }
+  } catch (error) {
+    if (error && incompleteData.get('colorParse')) {
+      return null;
+    }
+    throw error;
+  }
+
+  const fgColor = fgColors.reduce((source: Color, backdrop: Color) => {
+    return flattenColors(source, backdrop);
+  });
+
+  // Lastly blend the background
+  bgColor ??= getBackgroundColor(node, []);
+  if (bgColor === null) {
+    const reason = incompleteData.get('bgColor');
+    incompleteData.set('fgColor', reason);
+    return null;
+  }
+
+  const stackingContexts = getStackingContext(node) as StackingContext[];
+  const context = findNodeInContexts(stackingContexts, node);
+  return flattenColors(
+    calculateBlendedForegroundColor(fgColor, context, stackingContexts),
+    // default page background
+    new Color(255, 255, 255, 1)
+  );
+}
+
+function getTextColor(nodeStyle: CSSStyleDeclaration): Color {
+  return new Color().parseString(
+    nodeStyle.getPropertyValue('-webkit-text-fill-color') ||
+      nodeStyle.getPropertyValue('color')
+  );
+}
+
+function getStrokeColor(
+  nodeStyle: CSSStyleDeclaration,
+  { textStrokeEmMin = 0 }: ForegroundColorOptions
+): Color | null {
+  const strokeWidth = parseFloat(
+    nodeStyle.getPropertyValue('-webkit-text-stroke-width')
+  );
+  if (strokeWidth === 0) {
+    return null;
+  }
+  const fontSize = nodeStyle.getPropertyValue('font-size');
+  const relativeStrokeWidth = strokeWidth / parseFloat(fontSize);
+  if (isNaN(relativeStrokeWidth) || relativeStrokeWidth < textStrokeEmMin) {
+    return null;
+  }
+
+  const strokeColor = nodeStyle.getPropertyValue('-webkit-text-stroke-color');
+  return new Color().parseString(strokeColor);
+}
+
+/**
+ * Blend a foreground color into the background stacking context, taking into account opacity at each step.
+ * @param {Color} fgColor
+ * @param {Object} context - The nodes stacking context
+ * @param {Object[]} stackingContexts - Array of all stacking contexts
+ * @return {Color}
+ */
+function calculateBlendedForegroundColor(
+  fgColor: Color,
+  context: StackingContext | undefined,
+  stackingContexts: StackingContext[]
+): Color {
+  while (context) {
+    // find the nearest ancestor that has opacity < 1
+    if (context.opacity === 1 && context.ancestor) {
+      context = context.ancestor;
+      continue;
+    }
+
+    fgColor.alpha *= context.opacity;
+
+    // when blending the foreground color to a background color with opacity,
+    // we ignore the background color of the node itself and instead blend
+    // with the stack behind it
+    let stack: StackingContext[] =
+      context.ancestor?.descendants || stackingContexts;
+    if (context.opacity !== 1) {
+      stack = stack.slice(0, stack.indexOf(context));
+    }
+
+    const bgColors = stack.map((ctx: any) => stackingContextToColor(ctx));
+
+    if (!bgColors.length) {
+      context = context.ancestor;
+      continue;
+    }
+
+    const bgColor = bgColors.reduce(
+      (backdrop: { color: Color; blendMode?: string | undefined }, source) => {
+        const result = flattenColors(
+          source.color,
+          backdrop.color instanceof Color
+            ? backdrop.color
+            : (backdrop as unknown as Color),
+          source.blendMode
+        );
+        return {
+          color: result,
+          blendMode: source.blendMode
+        } as typeof backdrop;
+      },
+      {
+        color: new Color(0, 0, 0, 0),
+        blendMode: 'normal' as string | undefined
+      }
+    );
+
+    fgColor = flattenColors(fgColor, bgColor as unknown as Color);
+    context = context.ancestor;
+  }
+
+  return fgColor;
+}
+
+/**
+ * Find the stacking context that belongs to the passed in node
+ * @param {Object} contexts - Array of stacking contexts
+ * @param {Element} node
+ * @returns {Object}
+ */
+function findNodeInContexts(
+  contexts: StackingContext[],
+  node: Element
+): StackingContext | undefined {
+  for (const context of contexts) {
+    if (context.vNode?.actualNode === node) {
+      return context;
+    }
+
+    const found = findNodeInContexts(context.descendants, node);
+    if (found) {
+      return found;
+    }
+  }
+  return undefined;
+}

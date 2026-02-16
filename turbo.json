@@ -18,6 +18,11 @@
     },
     "format:check": {
       "inputs": ["**/*.{md,json,ts,html,js,mjs}"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "inputs": ["lib/**", "src/**", "tsconfig.json"]
     }
   }
 }
