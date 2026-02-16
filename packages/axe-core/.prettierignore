@@ -1,0 +1,8 @@
+node_modules/
+doc/api
+axe.js
+axe.min.js
+axe.*.js
+lib/core/base/metadata-function-map.js
+tmp/
+logs/

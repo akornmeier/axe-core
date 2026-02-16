@@ -31,43 +31,51 @@ jobs:
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
+      - &enable-corepack
+        name: Enable Corepack
+        run: corepack enable && corepack prepare pnpm@9.15.4 --activate
       - &setup-node
         name: Set up Node.js
         uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
+          cache: 'pnpm'
       - &install-deps-directly
         name: Install Dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       - name: Run ESLint
-        run: npm run eslint
+        run: pnpm run eslint
+        working-directory: packages/axe-core
 
   fmt_check:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - *checkout
+      - *enable-corepack
       - *setup-node
       - *install-deps-directly
-      - run: npm run fmt:check
+      - run: pnpm run fmt:check
+        working-directory: packages/axe-core
 
   build:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - *checkout
+      - *enable-corepack
       - *setup-node
       - *install-deps-directly
       - &build
         name: Build
         run: |
-          npm run prepare
-          npm run build
+          pnpm run prepare
+          pnpm run build
+        working-directory: packages/axe-core
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: axe-core
-          path: axe.js
+          path: packages/axe-core/axe.js
           retention-days: 1
 
   test_chrome:
@@ -88,12 +96,14 @@ jobs:
         env:
           CHROME_BIN: ${{ steps.install-deps.outputs.chrome-path }}
           CHROMEDRIVER_BIN: ${{ steps.install-deps.outputs.chromedriver-path }}
-        run: npm run test -- --browsers Chrome
+        run: pnpm run test -- --browsers Chrome
+        working-directory: packages/axe-core
       - name: Run Chrome Integration Tests
         env:
           CHROME_BIN: ${{ steps.install-deps.outputs.chrome-path }}
           CHROMEDRIVER_BIN: ${{ steps.install-deps.outputs.chromedriver-path }}
-        run: npm run test:integration:chrome
+        run: pnpm run test:integration:chrome
+        working-directory: packages/axe-core
 
   test_firefox:
     runs-on: ubuntu-24.04
@@ -107,11 +117,13 @@ jobs:
       - name: Run Tests Against Firefox
         env:
           FIREFOX_BIN: ${{ steps.install-deps.outputs.firefox-path }}
-        run: npm run test -- --browsers Firefox
+        run: pnpm run test -- --browsers Firefox
+        working-directory: packages/axe-core
       - name: Run Firefox Integration Tests
         env:
           FIREFOX_BIN: ${{ steps.install-deps.outputs.firefox-path }}
-        run: npm run test:integration:firefox
+        run: pnpm run test:integration:firefox
+        working-directory: packages/axe-core
 
   # Run examples under `doc/examples`
   test_examples:
@@ -125,7 +137,8 @@ jobs:
         uses: ./.github/actions/install-deps
       - *build
       - name: Run Tests Against Examples
-        run: npm run test:examples
+        run: pnpm run test:examples
+        working-directory: packages/axe-core
 
   test_act:
     runs-on: ubuntu-24.04
@@ -139,11 +152,13 @@ jobs:
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: axe-core
+          path: packages/axe-core
       - name: Run ACT Tests
         env:
           CHROME_BIN: ${{ steps.install-deps.outputs.chrome-path }}
           CHROMEDRIVER_BIN: ${{ steps.install-deps.outputs.chromedriver-path }}
-        run: npm run test:act
+        run: pnpm run test:act
+        working-directory: packages/axe-core
 
   test_aria_practices:
     runs-on: ubuntu-24.04
@@ -157,7 +172,8 @@ jobs:
         env:
           CHROME_BIN: ${{ steps.install-deps.outputs.chrome-path }}
           CHROMEDRIVER_BIN: ${{ steps.install-deps.outputs.chromedriver-path }}
-        run: npm run test:apg
+        run: pnpm run test:apg
+        working-directory: packages/axe-core
 
   test_locales:
     runs-on: ubuntu-24.04
@@ -168,7 +184,8 @@ jobs:
       - *install-deps
       - *restore-axe-build
       - name: Run Locale Tests
-        run: npm run test:locales
+        run: pnpm run test:locales
+        working-directory: packages/axe-core
 
   test_virtual_rules:
     runs-on: ubuntu-24.04
@@ -179,7 +196,8 @@ jobs:
       - *install-deps
       - *restore-axe-build
       - name: Run Virtual Rules Tests
-        run: npm run test:virtual-rules
+        run: pnpm run test:virtual-rules
+        working-directory: packages/axe-core
 
   test_jsdom:
     runs-on: ubuntu-24.04
@@ -190,7 +208,8 @@ jobs:
       - *install-deps
       - *restore-axe-build
       - name: Run jsdom Tests
-        run: npm run test:jsdom
+        run: pnpm run test:jsdom
+        working-directory: packages/axe-core
 
   build_api_docs:
     runs-on: ubuntu-24.04
@@ -199,7 +218,8 @@ jobs:
       - *checkout
       - *install-deps
       - name: Run API Docs Build
-        run: npm run api-docs
+        run: pnpm run api-docs
+        working-directory: packages/axe-core
 
   test_rule_help_version:
     runs-on: ubuntu-24.04
@@ -209,7 +229,8 @@ jobs:
       - *checkout
       - *install-deps
       - name: Run Rule Help Version Tests
-        run: npm run test:rule-help-version
+        run: pnpm run test:rule-help-version
+        working-directory: packages/axe-core
 
   sri-validate:
     runs-on: ubuntu-24.04
@@ -222,7 +243,8 @@ jobs:
       - *install-deps
       - *restore-axe-build
       - name: Validate Subresource Integrity
-        run: npm run sri-validate
+        run: pnpm run sri-validate
+        working-directory: packages/axe-core
 
   test_node:
     # The package can't be built on Node 6 anymore, but should still run there.
@@ -246,4 +268,5 @@ jobs:
           node-version: ${{ matrix.node }}
       - *restore-axe-build
       - name: Run Node.js Tests
-        run: npm run test:node
+        run: node test/node/node.js
+        working-directory: packages/axe-core

@@ -51,25 +51,12 @@ axe-core/
 - **Start with `rolldown-vite`** (Vite 7 + Rolldown), upgrade to Vite 8 when stable
 - **Oxfmt is advisory-only** until it reaches beta; Prettier remains the hard gate
 
-## Development Commands (Current)
+## Development Commands
 
 ```bash
-# Install
-npm install
+# Enable Corepack (manages PNPM)
+corepack enable
 
-# Build
-npm run build          # or: grunt
-
-# Test
-npm test               # Runs tsc + unit tests via Karma
-npm run test:unit      # Unit tests only (Karma)
-npm run eslint         # Lint
-npm run fmt:check      # Prettier format check
-```
-
-## Development Commands (Target — Post Phase 0)
-
-```bash
 # Install
 pnpm install
 
@@ -80,6 +67,11 @@ pnpm lint              # oxlint
 pnpm format            # oxfmt --check
 pnpm typecheck
 pnpm validate          # all of the above
+
+# Package-specific commands (from packages/axe-core/)
+pnpm run eslint        # ESLint
+pnpm run fmt:check     # Prettier format check
+pnpm run build         # Grunt build
 ```
 
 ## Architecture Terminology
@@ -91,16 +83,16 @@ pnpm validate          # all of the above
 
 ## Important Files
 
-- `lib/core/` — Engine (Audit, Rule, Check, VTree, run/configure)
-- `lib/rules/` — Rule definitions
-- `lib/checks/` — Check evaluators
-- `lib/commons/` — Shared utilities (DOM, text, color, math)
-- `lib/standards/` — ARIA specs, HTML element data
-- `locales/` — Translation JSON files
-- `build/` — Current Grunt build tasks (to be replaced by Vite plugins)
-- `test/` — All test suites (Karma/Mocha — to be replaced by Vitest)
-- `Gruntfile.js` — Current build orchestration (to be replaced)
-- `axe.d.ts` — Hand-written type definitions (to be auto-generated)
+- `packages/axe-core/lib/core/` — Engine (Audit, Rule, Check, VTree, run/configure)
+- `packages/axe-core/lib/rules/` — Rule definitions
+- `packages/axe-core/lib/checks/` — Check evaluators
+- `packages/axe-core/lib/commons/` — Shared utilities (DOM, text, color, math)
+- `packages/axe-core/lib/standards/` — ARIA specs, HTML element data
+- `packages/axe-core/locales/` — Translation JSON files
+- `packages/axe-core/build/` — Current Grunt build tasks (to be replaced by Vite plugins)
+- `packages/axe-core/test/` — All test suites (Karma/Mocha — to be replaced by Vitest)
+- `packages/axe-core/Gruntfile.js` — Current build orchestration (to be replaced)
+- `packages/axe-core/axe.d.ts` — Hand-written type definitions (to be auto-generated)
 
 ## Specs
 
