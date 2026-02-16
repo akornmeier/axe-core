@@ -1,9 +1,0 @@
-[2026-02-16T04:18:10.073769] === SubagentStop for agent: a64ca7a ===
-[2026-02-16T04:18:10.073864] agent_transcript_path: /Users/tk/.claude/projects/-Users-tk-Code-axe-core/19a788e3-528e-433c-b726-616d9dfbad73/subagents/agent-a64ca7a.jsonl
-[2026-02-16T04:18:10.073916] ANTHROPIC_API_KEY present: False
-[2026-02-16T04:18:10.074222] Extracted task_context: completed a task...
-[2026-02-16T04:18:10.074317] [SUMMARIZER] summarize_subagent_task called with: completed a task...
-[2026-02-16T04:18:10.074363] [SUMMARIZER] ERROR: ANTHROPIC_API_KEY not found!
-[2026-02-16T04:18:10.074408] Generated summary_message: Subagent task completed
-[2026-02-16T04:18:10.074535] Lock acquired, announcing: Subagent task completed
-[2026-02-16T04:18:14.262358] Lock released

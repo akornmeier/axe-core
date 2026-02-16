@@ -1,5 +1,7 @@
 # defaults
 node_modules
+logs/
+.claude/
 npm-shrinkwrap.json
 doc/examples/*/package-lock.json
 .DS_Store
