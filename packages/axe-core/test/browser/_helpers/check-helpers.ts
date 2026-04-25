@@ -185,13 +185,28 @@ function ensureFixture(): HTMLElement {
 }
 
 export function checkSetup(
-  content: string,
+  content: string | Node,
   options: unknown = {},
-  target: string = '#target'
+  target?: string
 ): [HTMLElement, unknown, unknown] {
+  // Mirror the legacy testUtils.checkSetup overload pattern: when called as
+  // `checkSetup(content, target)` (string second arg, no options), shift.
+  if (typeof options === 'string') {
+    target = options;
+    options = {};
+  }
   const fixture = ensureFixture();
   fixture.id = 'fixture'; // some commons code keys off id="fixture"
-  fixture.innerHTML = content;
+  if (typeof content === 'string') {
+    fixture.innerHTML = content;
+  } else {
+    fixture.innerHTML = '';
+    fixture.appendChild(content);
+  }
+  // When `content` is a Node, default the target to that node itself —
+  // otherwise fall back to the conventional `#target` selector.
+  const resolvedTarget =
+    target ?? (typeof content === 'string' ? '#target' : null);
   const utils = (
     axe as unknown as {
       utils: any;
@@ -203,9 +218,16 @@ export function checkSetup(
   const rootNode = (axe as unknown as { setup: (n: Node) => unknown }).setup(
     fixture
   ) as { actualNode: HTMLElement };
-  const found = utils.querySelectorAll(rootNode, target)[0];
+  const found =
+    resolvedTarget !== null
+      ? utils.querySelectorAll(rootNode, resolvedTarget)[0]
+      : utils.getNodeFromTree(content as Node);
   if (!found) {
-    throw new Error(`checkSetup: target "${target}" not found in fixture`);
+    throw new Error(
+      `checkSetup: target ${
+        resolvedTarget !== null ? `"${resolvedTarget}"` : '<node>'
+      } not found in fixture`
+    );
   }
   return [found.actualNode, options, found];
 }
@@ -242,17 +264,21 @@ export function queryFixture(html: string, query = '#target') {
  * `aria-valid-attr-value` get the right view of attributes after `axe.setup`
  * runs.
  */
-export function fixtureSetup(content: string | Node | Node[]): any {
+export function fixtureSetup(content?: string | Node | Node[]): any {
   const fixture = ensureFixture();
   fixture.id = 'fixture';
-  fixture.innerHTML = '';
   if (typeof content === 'string') {
     fixture.innerHTML = content;
   } else if (content instanceof Node) {
+    fixture.innerHTML = '';
     fixture.appendChild(content);
   } else if (Array.isArray(content)) {
+    fixture.innerHTML = '';
     for (const node of content) fixture.appendChild(node);
   }
+  // No-arg form: keep whatever the test already injected into `fixture`
+  // (callers sometimes mutate `fixture.innerHTML` and attach a shadow root
+  // before calling `fixtureSetup()` to register the composed tree).
   (axe as unknown as { teardown: () => void }).teardown();
   return (axe as unknown as { setup: (n: Node) => unknown }).setup(fixture);
 }
