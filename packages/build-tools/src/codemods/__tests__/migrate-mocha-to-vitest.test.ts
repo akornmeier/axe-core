@@ -6,14 +6,32 @@
  * separately by manual diff (see Sprint 2 task 6 acceptance criteria).
  */
 
-import { describe, expect, it } from "vitest";
+import { execFile } from "node:child_process";
+import { promises as fs } from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
+import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
+
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import {
   applyPass1,
   applyPass2,
+  globBaseDir,
   migrateFile,
   migrateFileWithWarnings,
+  splitCodeSpans,
 } from "../migrate-mocha-to-vitest";
+
+const execFileP = promisify(execFile);
+const codemodScript = fileURLToPath(
+  new URL("../migrate-mocha-to-vitest.ts", import.meta.url)
+);
+// `pnpm exec tsx` only resolves inside a pnpm workspace, so for CLI tests we
+// run from the build-tools package root (which has tsx in its devDeps) and
+// pass absolute paths via --in/--out.
+const buildToolsDir = fileURLToPath(new URL("../../..", import.meta.url));
 
 // ---------------------------------------------------------------------------
 // Pass 1 — chai BDD `expect(...).to.X` rewrites.
@@ -66,9 +84,12 @@ describe("Pass 1 — chai BDD assertions", () => {
     expect(applyPass1("expect(x).to.exist;")).toBe("expect(x).toBeDefined();");
   });
 
-  it("rewrites .to.not.exist to .toBeUndefined", () => {
+  it("does NOT silently rewrite .to.not.exist (semantic drift — null vs undefined)", () => {
+    // Chai's `.not.exist` accepts both null and undefined. Vitest's
+    // `toBeUndefined` does not. Pass 1 leaves the source alone and Pass 2
+    // raises a warning for the human to review the call site.
     expect(applyPass1("expect(x).to.not.exist;")).toBe(
-      "expect(x).toBeUndefined();"
+      "expect(x).to.not.exist;"
     );
   });
 
@@ -409,4 +430,243 @@ describe('thing', function () {
     const { warnings } = migrateFileWithWarnings(input);
     expect(warnings.length).toBeGreaterThan(0);
   });
+});
+
+// ---------------------------------------------------------------------------
+// Scanner — strings and comments must be passthrough.
+// ---------------------------------------------------------------------------
+
+describe("splitCodeSpans + Pass 1 string/comment safety", () => {
+  it("does NOT rewrite chai-like text inside a line comment", () => {
+    const input = "// expect(x).to.equal(y) is the chai pattern\nconst a = 1;";
+    expect(applyPass1(input)).toBe(input);
+  });
+
+  it("does NOT rewrite chai-like text inside a block comment", () => {
+    const input =
+      "/* before(() => doThing()) — see expect(x).to.equal(1) */\nconst a = 1;";
+    expect(applyPass1(input)).toBe(input);
+  });
+
+  it("does NOT rewrite chai-like text inside a single-quoted string", () => {
+    const input = "const msg = 'expect(x).to.equal(y) explanation';";
+    expect(applyPass1(input)).toBe(input);
+  });
+
+  it("does NOT rewrite chai-like text inside a double-quoted string", () => {
+    const input = 'const msg = "expect(x).to.equal(y) explanation";';
+    expect(applyPass1(input)).toBe(input);
+  });
+
+  it("does NOT rewrite chai-like text inside a template literal with interpolation", () => {
+    const input =
+      "const msg = `before(${name}) and expect(${x}).to.equal(1)`;";
+    expect(applyPass1(input)).toBe(input);
+  });
+
+  it("rewrites code that surrounds a string literal containing chai-like text", () => {
+    const input =
+      "const msg = 'expect(x).to.equal(y)'; expect(x).to.equal(1);";
+    expect(applyPass1(input)).toBe(
+      "const msg = 'expect(x).to.equal(y)'; expect(x).toBe(1);"
+    );
+  });
+
+  it("classifies template literals with nested ${...} as a single string span", () => {
+    const spans = splitCodeSpans("const x = `a${1 + 2}b`;");
+    const stringSpans = spans.filter((s) => s.kind === "string");
+    expect(stringSpans).toHaveLength(1);
+    expect(stringSpans[0]!.text).toBe("`a${1 + 2}b`");
+  });
+
+  it("classifies // line comments as comment spans", () => {
+    const spans = splitCodeSpans("a;// note\nb;");
+    const commentSpans = spans.filter((s) => s.kind === "comment");
+    expect(commentSpans).toHaveLength(1);
+    expect(commentSpans[0]!.text).toBe("// note");
+  });
+
+  it("classifies /* block */ comments as comment spans", () => {
+    const spans = splitCodeSpans("a;/* x\ny */b;");
+    const commentSpans = spans.filter((s) => s.kind === "comment");
+    expect(commentSpans).toHaveLength(1);
+    expect(commentSpans[0]!.text).toBe("/* x\ny */");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// before/after must NOT match method calls on objects.
+// ---------------------------------------------------------------------------
+
+describe("Pass 1 — before/after lifecycle hook scoping", () => {
+  it("does NOT rewrite obj.before(...)", () => {
+    expect(applyPass1("obj.before(arg);")).toBe("obj.before(arg);");
+  });
+
+  it("does NOT rewrite obj.after(...)", () => {
+    expect(applyPass1("obj.after(arg);")).toBe("obj.after(arg);");
+  });
+
+  it("rewrites top-of-line before(...)", () => {
+    expect(applyPass1("before(() => init());")).toBe(
+      "beforeAll(() => init());"
+    );
+  });
+
+  it("rewrites whitespace-led before(...)", () => {
+    expect(applyPass1("  before(() => init());")).toBe(
+      "  beforeAll(() => init());"
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// .to.not.exist warning channel.
+// ---------------------------------------------------------------------------
+
+describe("Pass 2 — .to.not.exist routes to warnings", () => {
+  it("emits a warning for .to.not.exist instead of silently rewriting", () => {
+    const { source, warnings } = migrateFileWithWarnings(
+      "expect(x).to.not.exist;"
+    );
+    expect(source).toContain(".to.not.exist");
+    expect(
+      warnings.some((w) => w.includes(".to.not.exist") || w.includes("to.not.exist"))
+    ).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// globBaseDir helper.
+// ---------------------------------------------------------------------------
+
+describe("globBaseDir", () => {
+  it("returns the literal prefix when no glob meta is present", () => {
+    expect(globBaseDir("test/commons/utils/index.js")).toBe(
+      "test/commons/utils/index.js"
+    );
+  });
+
+  it("returns the dir before a wildcard segment", () => {
+    expect(globBaseDir("test/commons/**/*.js")).toBe("test/commons");
+  });
+
+  it("returns the dir before a brace expansion segment", () => {
+    expect(globBaseDir("test/{a,b}/x.js")).toBe("test");
+  });
+
+  it("returns '.' when the entire pattern is a glob", () => {
+    expect(globBaseDir("**/*.js")).toBe(".");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CLI — directory structure preservation, collisions, and re-run refusal.
+// ---------------------------------------------------------------------------
+
+describe("CLI", () => {
+  let tmp: string;
+
+  beforeEach(async () => {
+    tmp = await fs.mkdtemp(path.join(os.tmpdir(), "codemod-cli-"));
+  });
+
+  afterEach(async () => {
+    await fs.rm(tmp, { recursive: true, force: true });
+  });
+
+  const writeFile = async (rel: string, content: string): Promise<string> => {
+    const full = path.join(tmp, rel);
+    await fs.mkdir(path.dirname(full), { recursive: true });
+    await fs.writeFile(full, content, "utf8");
+    return full;
+  };
+
+  const runCodemod = async (
+    args: string[]
+  ): Promise<{
+    code: number | null;
+    stdout: string;
+    stderr: string;
+  }> => {
+    try {
+      const { stdout, stderr } = await execFileP(
+        "pnpm",
+        ["exec", "tsx", codemodScript, ...args],
+        { cwd: buildToolsDir }
+      );
+      return { code: 0, stdout, stderr };
+    } catch (err: unknown) {
+      const e = err as {
+        code?: number;
+        stdout?: string;
+        stderr?: string;
+      };
+      return {
+        code: e.code ?? 1,
+        stdout: e.stdout ?? "",
+        stderr: e.stderr ?? "",
+      };
+    }
+  };
+
+  it(
+    "preserves relative directory structure (no flattening collision)",
+    async () => {
+      await writeFile("src/commons/index.js", "expect(x).to.equal(1);\n");
+      await writeFile("src/core/index.js", "expect(y).to.equal(2);\n");
+
+      const outDir = path.join(tmp, "out");
+      const result = await runCodemod([
+        "--in",
+        path.join(tmp, "src/**/*.js"),
+        "--out",
+        outDir,
+      ]);
+
+      expect(result.code).toBe(0);
+
+      // Both files preserved under their original sub-paths.
+      const commonsOut = await fs.readFile(
+        path.join(outDir, "commons/index.test.ts"),
+        "utf8"
+      );
+      const coreOut = await fs.readFile(
+        path.join(outDir, "core/index.test.ts"),
+        "utf8"
+      );
+      expect(commonsOut).toContain("expect(x).toBe(1);");
+      expect(coreOut).toContain("expect(y).toBe(2);");
+    },
+    30_000
+  );
+
+  it(
+    "exits 1 when --in and --out resolve to the same path",
+    async () => {
+      await writeFile("a/index.js", "expect(x).to.equal(1);\n");
+      const aDir = path.join(tmp, "a");
+      const result = await runCodemod(["--in", aDir, "--out", aDir]);
+      expect(result.code).not.toBe(0);
+      expect(result.stderr.toLowerCase()).toContain("same path");
+    },
+    30_000
+  );
+
+  it(
+    "refuses to re-process .test.ts files without --force",
+    async () => {
+      await writeFile("out/index.test.ts", "expect(x).toBe(1);\n");
+      const out2 = path.join(tmp, "out2");
+      const result = await runCodemod([
+        "--in",
+        path.join(tmp, "out/index.test.ts"),
+        "--out",
+        out2,
+      ]);
+      expect(result.code).not.toBe(0);
+      expect(result.stderr.toLowerCase()).toContain("already-migrated");
+    },
+    30_000
+  );
 });

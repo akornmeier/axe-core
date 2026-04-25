@@ -47,6 +47,292 @@ import { pathToFileURL } from "node:url";
 import { Project, SyntaxKind, type CallExpression } from "ts-morph";
 
 // ---------------------------------------------------------------------------
+// String / comment scanner. Pass 1 rewrites must NOT touch text inside string
+// literals or comments — chai-like patterns embedded in user-facing strings
+// or explanatory comments must be preserved verbatim. This scanner emits a
+// flat list of { kind, text } spans so callers can rewrite only CODE spans
+// and re-join.
+// ---------------------------------------------------------------------------
+
+export type CodeSpanKind = "code" | "string" | "comment";
+
+export interface CodeSpan {
+  readonly kind: CodeSpanKind;
+  readonly text: string;
+}
+
+/**
+ * Tokenize `source` into spans. Each span is one of:
+ *   - 'code'    — JS/TS source outside any string or comment
+ *   - 'string'  — the entirety of a single-quoted, double-quoted, or
+ *                 backtick-template string (including its delimiters and any
+ *                 nested `${...}` interpolations)
+ *   - 'comment' — a line comment (`// ...`) or block comment (`/* ... *\/`)
+ *
+ * Notes / scope:
+ *   - Escape-aware (`\"`, `\\`, `\``).
+ *   - Template literals correctly recurse through `${...}` (which themselves
+ *     can contain code spans, strings, and comments). The outer span is
+ *     reported as a single 'string' span — a Pass 1 rewrite would never
+ *     fire inside a template anyway, and chasing the contents would let
+ *     rewrites bleed back into user-visible text. This is intentional.
+ *   - Regex literals are NOT classified — they remain in 'code' spans.
+ *     Pass 1's patterns do not match the inside of typical regex bodies in
+ *     practice; if they ever do, the AST pass (Pass 2) is the safer remedy.
+ *   - This is a pragmatic scanner for test-file rewrites, not a full JS
+ *     lexer. It is exported so unit tests can pin its behaviour.
+ */
+export function splitCodeSpans(source: string): CodeSpan[] {
+  const spans: CodeSpan[] = [];
+  let i = 0;
+  let codeStart = 0;
+  const len = source.length;
+
+  const flushCode = (end: number): void => {
+    if (end > codeStart) {
+      spans.push({ kind: "code", text: source.slice(codeStart, end) });
+    }
+  };
+
+  while (i < len) {
+    const ch = source[i];
+    const next = source[i + 1];
+
+    // Line comment.
+    if (ch === "/" && next === "/") {
+      flushCode(i);
+      const start = i;
+      i += 2;
+      while (i < len && source[i] !== "\n") i++;
+      spans.push({ kind: "comment", text: source.slice(start, i) });
+      codeStart = i;
+      continue;
+    }
+
+    // Block comment.
+    if (ch === "/" && next === "*") {
+      flushCode(i);
+      const start = i;
+      i += 2;
+      while (i < len && !(source[i] === "*" && source[i + 1] === "/")) i++;
+      i = Math.min(i + 2, len);
+      spans.push({ kind: "comment", text: source.slice(start, i) });
+      codeStart = i;
+      continue;
+    }
+
+    // Single- or double-quoted string.
+    if (ch === '"' || ch === "'") {
+      flushCode(i);
+      const quote = ch;
+      const start = i;
+      i++;
+      while (i < len) {
+        const c = source[i];
+        if (c === "\\") {
+          i += 2;
+          continue;
+        }
+        if (c === quote) {
+          i++;
+          break;
+        }
+        // Plain quoted strings cannot span a raw newline; bail safely if
+        // they do (treat as terminated to avoid infinite loops on malformed
+        // input).
+        if (c === "\n") {
+          i++;
+          break;
+        }
+        i++;
+      }
+      spans.push({ kind: "string", text: source.slice(start, i) });
+      codeStart = i;
+      continue;
+    }
+
+    // Template literal (backtick). Walk through `${...}` (which may contain
+    // strings, comments, and nested templates) and record the outer span as
+    // a single 'string'.
+    if (ch === "`") {
+      flushCode(i);
+      const start = i;
+      i++;
+      let depth = 0;
+      while (i < len) {
+        const c = source[i];
+        if (depth === 0) {
+          if (c === "\\") {
+            i += 2;
+            continue;
+          }
+          if (c === "`") {
+            i++;
+            break;
+          }
+          if (c === "$" && source[i + 1] === "{") {
+            depth = 1;
+            i += 2;
+            continue;
+          }
+          i++;
+          continue;
+        }
+        // Inside ${...}: track braces, strings, templates, and comments so
+        // that the outer template's terminating backtick isn't mis-detected.
+        if (c === "\\") {
+          i += 2;
+          continue;
+        }
+        if (c === '"' || c === "'") {
+          const innerQuote = c;
+          i++;
+          while (i < len) {
+            const ic = source[i];
+            if (ic === "\\") {
+              i += 2;
+              continue;
+            }
+            if (ic === innerQuote || ic === "\n") {
+              i++;
+              break;
+            }
+            i++;
+          }
+          continue;
+        }
+        if (c === "`") {
+          // Nested template literal — recurse via splitCodeSpans on the
+          // remainder is overkill; instead consume it as a raw template
+          // span by walking the same algorithm inline.
+          let nestedDepth = 0;
+          i++;
+          while (i < len) {
+            const nc = source[i];
+            if (nestedDepth === 0) {
+              if (nc === "\\") {
+                i += 2;
+                continue;
+              }
+              if (nc === "`") {
+                i++;
+                break;
+              }
+              if (nc === "$" && source[i + 1] === "{") {
+                nestedDepth = 1;
+                i += 2;
+                continue;
+              }
+              i++;
+              continue;
+            }
+            if (nc === "{") nestedDepth++;
+            else if (nc === "}") nestedDepth--;
+            i++;
+          }
+          continue;
+        }
+        if (c === "/" && source[i + 1] === "/") {
+          while (i < len && source[i] !== "\n") i++;
+          continue;
+        }
+        if (c === "/" && source[i + 1] === "*") {
+          i += 2;
+          while (i < len && !(source[i] === "*" && source[i + 1] === "/")) i++;
+          i = Math.min(i + 2, len);
+          continue;
+        }
+        if (c === "{") depth++;
+        else if (c === "}") {
+          depth--;
+          if (depth === 0) {
+            i++;
+            continue;
+          }
+        }
+        i++;
+      }
+      spans.push({ kind: "string", text: source.slice(start, i) });
+      codeStart = i;
+      continue;
+    }
+
+    i++;
+  }
+
+  flushCode(len);
+  return spans;
+}
+
+/**
+ * Build a `(index) => boolean` predicate that returns true when `index` is
+ * inside a STRING or COMMENT span — i.e. NOT in user code. Lets rules whose
+ * match patterns include literal text (e.g. `.to.be.a('string')`) operate
+ * on the whole source while still skipping matches that originate inside
+ * unrelated strings or comments.
+ */
+function buildInTextPredicate(source: string): (idx: number) => boolean {
+  const spans = splitCodeSpans(source);
+  // Pre-compute end offsets so we can binary-search; spans are short and
+  // few (<2k typical) so a linear scan is fine.
+  type Range = { start: number; end: number; isText: boolean };
+  const ranges: Range[] = [];
+  let off = 0;
+  for (const s of spans) {
+    ranges.push({
+      start: off,
+      end: off + s.text.length,
+      isText: s.kind !== "code",
+    });
+    off += s.text.length;
+  }
+  return (idx: number) => {
+    for (const r of ranges) {
+      if (idx >= r.start && idx < r.end) return r.isText;
+    }
+    return false;
+  };
+}
+
+/**
+ * Run a regex rule on `source`, but skip matches whose START position is
+ * inside a string literal or comment.
+ */
+function replaceOutsideStringsAndComments(
+  source: string,
+  pattern: RegExp,
+  replacement: string | ((...args: string[]) => string)
+): string {
+  const inText = buildInTextPredicate(source);
+  return source.replace(pattern, (...args: unknown[]) => {
+    // String.replace passes match, ...captures, offset, fullString to the
+    // function form. The offset is the second-to-last argument when the
+    // last is the string; with named groups it's third-from-last. We rely
+    // on the standard signature here (no named groups in our patterns).
+    const match = args[0] as string;
+    // The offset is `args[args.length - 2]` for replace without named
+    // groups, or args[args.length - 3] when a `groups` object is present.
+    const last = args[args.length - 1];
+    const offset =
+      typeof last === "object"
+        ? (args[args.length - 3] as number)
+        : (args[args.length - 2] as number);
+    if (inText(offset)) return match;
+    if (typeof replacement === "string") {
+      // Re-implement $N substitution since we can't delegate back to
+      // String.replace on a literal string.
+      return replacement.replace(/\$(\d+|&)/g, (_m, key: string) => {
+        if (key === "&") return match;
+        const n = Number(key);
+        const cap = args[n] as string | undefined;
+        return cap ?? "";
+      });
+    }
+    return replacement(...(args as string[]));
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Pass 1 — pure-string regex pass.
 // ---------------------------------------------------------------------------
 
@@ -141,7 +427,16 @@ function rewriteBalanced(
  */
 const EXPECT_ARG = String.raw`expect\(((?:[^()]|\([^()]*\))*)\)`;
 
-const PASS_1_RULES: readonly RegexRule[] = [
+/**
+ * Line-anchored declaration rules that intentionally include string literals
+ * in their match (`'use strict'`, `from 'chai'`, etc.). These run BEFORE
+ * the scanner-aware bank because they target the literal itself; gating
+ * them on the scanner would cause the predicate to (correctly) report the
+ * match start as inside a string and skip the rewrite. They are anchored
+ * to a line start under `gm` mode and target only top-level declarations,
+ * so the false-positive risk in test files is negligible.
+ */
+const TOP_LEVEL_DECL_RULES: readonly RegexRule[] = [
   // Strip 'use strict' directives — Vitest files are ESM modules.
   { pattern: /^\s*['"]use strict['"];?\s*\n/gm, replacement: "" },
 
@@ -169,10 +464,14 @@ const PASS_1_RULES: readonly RegexRule[] = [
     pattern: /^\s*const\s+sinon\s*=\s*require\(['"]sinon['"]\);?\s*\n/gm,
     replacement: "import { vi } from 'vitest';\n",
   },
+];
 
-  // Mocha lifecycle aliases.
-  { pattern: /\bbefore\(/g, replacement: "beforeAll(" },
-  { pattern: /\bafter\(/g, replacement: "afterAll(" },
+const PASS_1_RULES: readonly RegexRule[] = [
+  // Mocha lifecycle aliases. Require a leading start-of-line or whitespace so
+  // we don't rewrite method calls on an object (`obj.before(...)` →
+  // `obj.beforeAll(...)`).
+  { pattern: /(^|\s)before\s*\(/g, replacement: "$1beforeAll(" },
+  { pattern: /(^|\s)after\s*\(/g, replacement: "$1afterAll(" },
   // `beforeEach` / `afterEach` are identical in Mocha and Vitest — no rewrite.
 
   // -- Chai BDD: expect(x).to.equal(y) / .to.eql / .to.deep.equal --------
@@ -222,14 +521,11 @@ const PASS_1_RULES: readonly RegexRule[] = [
     pattern: new RegExp(`${EXPECT_ARG}\\.to\\.exist\\b`, "g"),
     replacement: "expect($1).toBeDefined()",
   },
-  {
-    pattern: new RegExp(`${EXPECT_ARG}\\.to\\.not\\.exist\\b`, "g"),
-    // Chai's `.not.exist` matches both null and undefined. `toBeUndefined`
-    // matches only `undefined`. The PRD picks `toBeUndefined` as the closest
-    // analogue; cases that legitimately need null-tolerance are flagged via
-    // the residual-diff process.
-    replacement: "expect($1).toBeUndefined()",
-  },
+  // NOTE: `.to.not.exist` is intentionally NOT rewritten here. Chai's
+  // `.not.exist` accepts both null and undefined; Vitest's `toBeUndefined`
+  // does not. Silently rewriting either way is semantic drift, so Pass 2
+  // detects this pattern and emits a warning so the human reviews the
+  // call site. See `detectNotExistDrift` below.
 
   // -- Type assertions: be.a / be.an / instanceof Array -----------------
   {
@@ -336,11 +632,71 @@ function splitTwoArgs(expr: string): readonly [string, string] | null {
 }
 
 /**
+ * Variant of `rewriteBalanced` that skips matches whose match start is
+ * inside a string literal or comment. Used by the `assert.*` balanced-paren
+ * rewrites to honor the same string/comment safety as the regex bank.
+ */
+function rewriteBalancedSafe(
+  source: string,
+  prefix: RegExp,
+  template: (expr: string) => string
+): string {
+  const inText = buildInTextPredicate(source);
+  let out = "";
+  let i = 0;
+  while (i < source.length) {
+    const remaining = source.slice(i);
+    const match = remaining.match(prefix);
+    if (!match || match.index === undefined) {
+      out += remaining;
+      break;
+    }
+    const matchStart = i + match.index;
+    if (inText(matchStart)) {
+      // Skip over this match and continue scanning past it.
+      out += source.slice(i, matchStart + match[0].length);
+      i = matchStart + match[0].length;
+      continue;
+    }
+    const openParen = matchStart + match[0].length - 1;
+    if (source[openParen] !== "(") {
+      out += source.slice(i, matchStart + match[0].length);
+      i = matchStart + match[0].length;
+      continue;
+    }
+    const close = findBalancedClose(source, openParen);
+    if (close === -1) {
+      out += source.slice(i);
+      break;
+    }
+    const expr = source.slice(openParen + 1, close);
+    out += source.slice(i, matchStart);
+    out += template(expr);
+    i = close + 1;
+  }
+  return out;
+}
+
+/**
  * Pass 1 — pure string transformation. Exported separately so unit tests
  * can exercise it without spinning up a ts-morph Project (which is slow).
+ *
+ * Every rewrite is gated on a string/comment scanner: matches whose start
+ * position falls inside a string literal or comment are left alone. This
+ * is critical when bulk-rewriting test files whose comments and message
+ * strings frequently contain explanatory chai-like text.
  */
 export function applyPass1(source: string): string {
   let out = source;
+
+  // -- Top-level declaration strips run on the whole source (their match
+  //    intentionally includes a string literal). --------------------------
+  for (const rule of TOP_LEVEL_DECL_RULES) {
+    out =
+      typeof rule.replacement === "string"
+        ? out.replace(rule.pattern, rule.replacement)
+        : out.replace(rule.pattern, rule.replacement);
+  }
 
   // -- Balanced-paren `assert.*` rewrites (must precede regex rules) ---
   // These handle expressions with nested parens that the simple `[^)]+`
@@ -356,7 +712,7 @@ export function applyPass1(source: string): string {
     [/\bassert\.isDefined\(/, (e) => `expect(${e}).toBeDefined()`],
   ];
   for (const [prefix, template] of unaryMap) {
-    out = rewriteBalanced(out, prefix, template);
+    out = rewriteBalancedSafe(out, prefix, template);
   }
 
   // Binary asserts (`assert.equal(a, b)` -> `expect(a).toBe(b)`).
@@ -371,7 +727,7 @@ export function applyPass1(source: string): string {
     [/\bassert\.match\(/, (a, b) => `expect(${a}).toMatch(${b})`],
   ];
   for (const [prefix, template] of binaryMap) {
-    out = rewriteBalanced(out, prefix, (expr) => {
+    out = rewriteBalancedSafe(out, prefix, (expr) => {
       const split = splitTwoArgs(expr);
       if (!split) return template(expr, "");
       return template(split[0], split[1]);
@@ -379,17 +735,14 @@ export function applyPass1(source: string): string {
   }
 
   // `assert.throws(fn)` and `assert.throws(fn, msg)`.
-  out = rewriteBalanced(out, /\bassert\.throws\(/, (expr) => {
+  out = rewriteBalancedSafe(out, /\bassert\.throws\(/, (expr) => {
     const split = splitTwoArgs(expr);
     if (!split) return `expect(${expr.trim()}).toThrow()`;
     return `expect(${split[0]}).toThrow(${split[1]})`;
   });
 
   for (const rule of PASS_1_RULES) {
-    out =
-      typeof rule.replacement === "string"
-        ? out.replace(rule.pattern, rule.replacement)
-        : out.replace(rule.pattern, rule.replacement);
+    out = replaceOutsideStringsAndComments(out, rule.pattern, rule.replacement);
   }
   return out;
 }
@@ -534,6 +887,27 @@ function rewriteSinonStubChains(
   const allText = sourceFile.getFullText();
   const chaiLeftover = allText.match(/\bchai\.\w+/g);
   const sinonLeftover = allText.match(/\bsinon\.\w+/g);
+
+  // `.to.not.exist` (Chai) accepts both null and undefined; Vitest's
+  // `toBeUndefined` does not. Rather than silently rewrite (semantic drift),
+  // surface every site as a warning so the migrator can review by hand.
+  // Only count occurrences in CODE spans so explanatory comments don't
+  // trigger false positives.
+  const codeOnlyText = splitCodeSpans(allText)
+    .filter((s) => s.kind === "code")
+    .map((s) => s.text)
+    .join("");
+  const notExistMatches = codeOnlyText.match(
+    /expect\([^)]*\)\.to\.not\.exist\b/g
+  );
+  if (notExistMatches) {
+    warnings.push(
+      `Pass 2: ${notExistMatches.length} '.to.not.exist' assertion(s) require manual review — Chai accepts null and undefined, Vitest's toBeUndefined() does not. Sites: ${notExistMatches
+        .slice(0, 3)
+        .join(", ")}${notExistMatches.length > 3 ? "…" : ""}`
+    );
+  }
+
   if (chaiLeftover) {
     warnings.push(
       `Pass 2: ${chaiLeftover.length} unhandled chai.* reference(s) — manual fixup required: ${chaiLeftover
@@ -592,10 +966,12 @@ export function migrateFileWithWarnings(content: string): MigrateResult {
 interface CliArgs {
   readonly inGlob: string;
   readonly outDir: string;
+  readonly force: boolean;
 }
 
 function parseCliArgs(argv: readonly string[]): CliArgs {
   const args = new Map<string, string>();
+  let force = false;
   for (let i = 0; i < argv.length; i++) {
     const flag = argv[i];
     if (flag === "--in" || flag === "--out") {
@@ -605,22 +981,86 @@ function parseCliArgs(argv: readonly string[]): CliArgs {
       }
       args.set(flag, value);
       i++;
+    } else if (flag === "--force") {
+      force = true;
     }
   }
   const inGlob = args.get("--in");
   const outDir = args.get("--out");
   if (!inGlob || !outDir) {
-    throw new Error("Usage: migrate-mocha-to-vitest --in <glob> --out <dir>");
+    throw new Error(
+      "Usage: migrate-mocha-to-vitest --in <glob> --out <dir> [--force]"
+    );
   }
-  return { inGlob, outDir };
+  return { inGlob, outDir, force };
 }
 
-async function runCli(argv: readonly string[]): Promise<void> {
-  const { inGlob, outDir } = parseCliArgs(argv);
+/**
+ * Compute the longest non-glob prefix of a glob pattern. Used to anchor
+ * relative output paths so directory structure is preserved.
+ *
+ *   `test/commons/**\/*.js`        → `test/commons`
+ *   `test/{a,b}/x.js`              → `test`
+ *   `packages/foo/test/x/*.js`     → `packages/foo/test/x`
+ *   `test/commons/utils/index.js`  → `test/commons/utils/index.js` (literal)
+ */
+export function globBaseDir(pattern: string): string {
+  // Stop at the first path segment containing a glob meta-character.
+  const segments = pattern.split("/");
+  const literal: string[] = [];
+  for (const seg of segments) {
+    if (/[*?[\]{}!()]/.test(seg)) break;
+    literal.push(seg);
+  }
+  const joined = literal.join("/");
+  return joined === "" ? "." : joined;
+}
+
+/**
+ * Resolve the input base directory used to anchor relative output paths.
+ * Literal files / directories are used as-is; globs use `globBaseDir`.
+ */
+async function resolveInputBase(input: string): Promise<string> {
+  // If the input has no glob meta, treat it as a literal path.
+  if (!/[*?[\]{}!()]/.test(input)) {
+    try {
+      const stat = await fs.stat(input);
+      if (stat.isFile()) return path.dirname(path.resolve(input));
+      return path.resolve(input);
+    } catch {
+      // Falls through to glob handling.
+    }
+  }
+  return path.resolve(globBaseDir(input));
+}
+
+export interface RunCliOptions {
+  readonly cwd?: string;
+}
+
+export async function runCli(
+  argv: readonly string[],
+  options: RunCliOptions = {}
+): Promise<void> {
+  const { inGlob, outDir, force } = parseCliArgs(argv);
+  const cwd = options.cwd ?? process.cwd();
+
+  const resolvedOutDir = path.resolve(cwd, outDir);
+  const resolvedInputBase = path.isAbsolute(inGlob)
+    ? await resolveInputBase(inGlob)
+    : await resolveInputBase(path.resolve(cwd, inGlob));
+
+  if (resolvedInputBase === resolvedOutDir) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `migrate-mocha-to-vitest: --in and --out resolve to the same path (${resolvedOutDir}). Refusing to overwrite sources in place.`
+    );
+    process.exit(1);
+  }
 
   // Lazy-import glob to keep the unit-test path fast.
   const { glob } = await import("glob");
-  const files = await glob(inGlob, { absolute: true });
+  const files = await glob(inGlob, { absolute: true, cwd });
 
   if (files.length === 0) {
     // eslint-disable-next-line no-console
@@ -628,13 +1068,40 @@ async function runCli(argv: readonly string[]): Promise<void> {
     process.exit(1);
   }
 
-  await fs.mkdir(outDir, { recursive: true });
+  await fs.mkdir(resolvedOutDir, { recursive: true });
+
+  // Track output paths so collisions are caught BEFORE any write — even with
+  // the relative-path fix, two distinct inputs could still hash to the same
+  // output if globBaseDir is too shallow. Better to surface the collision
+  // than to silently overwrite.
+  const seen = new Map<string, string>();
 
   for (const file of files) {
+    if (/\.test\.ts$/.test(file) && !force) {
+      // eslint-disable-next-line no-console
+      console.error(
+        `migrate-mocha-to-vitest: refusing to re-process already-migrated file ${file} (would produce .test.test.ts). Pass --force to override.`
+      );
+      process.exit(1);
+    }
+
+    const rel = path.relative(resolvedInputBase, file);
+    const relRewritten = rel.replace(/\.(?:js|ts)$/, ".test.ts");
+    const outPath = path.join(resolvedOutDir, relRewritten);
+
+    const prior = seen.get(outPath);
+    if (prior !== undefined) {
+      // eslint-disable-next-line no-console
+      console.error(
+        `migrate-mocha-to-vitest: output collision — both ${prior} and ${file} would write to ${outPath}.`
+      );
+      process.exit(1);
+    }
+    seen.set(outPath, file);
+
     const content = await fs.readFile(file, "utf8");
     const { source, warnings } = migrateFileWithWarnings(content);
-    const base = path.basename(file).replace(/\.(?:js|ts)$/, ".test.ts");
-    const outPath = path.join(outDir, base);
+    await fs.mkdir(path.dirname(outPath), { recursive: true });
     await fs.writeFile(outPath, source, "utf8");
     // eslint-disable-next-line no-console
     console.log(`migrated: ${file} -> ${outPath}`);
