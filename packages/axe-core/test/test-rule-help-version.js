@@ -1,10 +1,10 @@
-var https = require('https');
-var path = require('path');
-var assert = require('assert');
-var packageJSON = require(path.join(__dirname, '../package.json'));
+const https = require('https');
+const path = require('path');
+const assert = require('assert');
+const packageJSON = require(path.join(__dirname, '../package.json'));
 
-var versions = packageJSON.version.split('.');
-var version = versions[0] + '.' + versions[1];
+const versions = packageJSON.version.split('.');
+const version = versions[0] + '.' + versions[1];
 
 it(
   'latest axe version (' + version + ') rule help docs should be active',

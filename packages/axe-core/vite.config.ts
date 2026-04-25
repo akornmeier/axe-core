@@ -71,19 +71,24 @@ function axeGlobalPlugin(): Plugin {
       ].join('\n');
 
       for (const [fileName, chunk] of Object.entries(bundle)) {
-        if (chunk.type !== 'chunk') continue;
+        if (chunk.type !== 'chunk') {
+          continue;
+        }
         if (
           !fileName.endsWith('.js') &&
           !fileName.endsWith('.mjs') &&
           !fileName.endsWith('.cjs')
-        )
+        ) {
           continue;
+        }
 
         const filePath = join(outDir, fileName);
         const content = readFileSync(filePath, 'utf-8');
 
         // Skip if already injected
-        if (content.includes('var axe = {}')) continue;
+        if (content.includes('var axe = {}')) {
+          continue;
+        }
 
         // Determine where to insert the shim.
         // For all formats, insert after the banner comment if present,
@@ -97,14 +102,63 @@ function axeGlobalPlugin(): Plugin {
           insertPos = 0;
         }
 
-        writeFileSync(
-          filePath,
+        let updated =
           content.slice(0, insertPos) +
-            '\n' +
-            shim +
-            '\n' +
-            content.slice(insertPos)
+          '\n' +
+          shim +
+          '\n' +
+          content.slice(insertPos);
+
+        // Phase 2 regression fix: the rolldown-emitted UMD wrapper does
+        // `global.axe = factory()`, REPLACING the outer `var axe = {}`
+        // shim. Inside the factory, code does (paraphrasing):
+        //
+        //   Object.assign(axe, axeExport);   // seeds axe with methods/version
+        //   load(default_config_default);    // sets axe._audit = new Audit(...)
+        //   return axeExport;                // ← _audit lives on the shim, NOT here
+        //
+        // The shim accumulates `_audit` (and any other state set via
+        // `axe.x = ...` in source). When the wrapper reassigns
+        // `global.axe = factory()`, the shim becomes orphaned and the
+        // returned axeExport — which never received those mutations —
+        // is published. Result: window.axe._audit is undefined, breaking
+        // every test that uses it (e.g. test/testutils.js:18).
+        //
+        // Fix: rewrite the wrapper's `global.axe = factory()` to merge
+        // factory's return ONTO the existing shim instead of replacing
+        // it. Since the shim is the same object the factory mutated,
+        // the published global ends up with both axeExport's methods
+        // (already copied onto the shim by the factory's early
+        // `Object.assign(axe, axeExport)`) AND the shim-only state like
+        // `_audit`. We also patch the CJS branch (`module.exports =
+        // factory()`) so Node consumers see the merged shape too.
+        //
+        // The regex anchors on the full UMD wrapper expression so we
+        // only patch the OUTER wrapper and never an internal
+        // `module.exports = something()` that may appear in source.
+        // Matches both unminified and esbuild-minified forms.
+        //
+        // Unminified shape:
+        //   typeof exports === "object" && typeof module !== "undefined"
+        //     ? module.exports = factory()
+        //     : typeof define === "function" && define.amd
+        //       ? define([], factory)
+        //       : (global = ..., global.axe = factory());
+        //
+        // Minified shape (whitespace-stripped, identifiers mangled):
+        //   typeof exports=="object"&&typeof module<"u"?module.exports=je()
+        //     :typeof define=="function"&&define.amd?define([],je)
+        //     :($t=...,$t.axe=je())
+        updated = updated.replace(
+          /(typeof\s+exports\s*===?\s*"object"[\s\S]{0,200}?module\.exports\s*=\s*)([a-zA-Z_$][\w$]*)\(\)/,
+          '$1Object.assign(typeof axe!=="undefined"?axe:{},$2())'
         );
+        updated = updated.replace(
+          /(\([\s\S]{0,200}?([a-zA-Z_$][\w$]*)\s*=\s*typeof\s+globalThis[\s\S]{0,200}?\2\.axe\s*=\s*)([a-zA-Z_$][\w$]*)\(\)/,
+          '$1Object.assign(typeof axe!=="undefined"?axe:($2.axe||($2.axe={})),$3())'
+        );
+
+        writeFileSync(filePath, updated);
       }
     }
   };
@@ -142,10 +196,18 @@ export default defineConfig(({ mode }) => {
         name: 'axe',
         formats: isMinify ? ['umd'] : ['umd', 'es', 'cjs'],
         fileName: format => {
-          if (isMinify) return 'axe.min.js';
-          if (format === 'umd') return 'axe.js';
-          if (format === 'es') return 'axe.mjs';
-          if (format === 'cjs') return 'axe.cjs';
+          if (isMinify) {
+            return 'axe.min.js';
+          }
+          if (format === 'umd') {
+            return 'axe.js';
+          }
+          if (format === 'es') {
+            return 'axe.mjs';
+          }
+          if (format === 'cjs') {
+            return 'axe.cjs';
+          }
           return `axe.${format}.js`;
         }
       },

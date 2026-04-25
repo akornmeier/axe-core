@@ -2,7 +2,7 @@ describe('axe.reset', function () {
   'use strict';
 
   // var Rule = axe._thisWillBeDeletedDoNotUse.base.Rule;
-  var fixture = document.getElementById('fixture');
+  const fixture = document.getElementById('fixture');
   afterEach(function () {
     fixture.innerHTML = '';
   });
@@ -116,7 +116,7 @@ describe('axe.reset', function () {
 
       axe.reset();
 
-      var banana = axe._audit.data.checks.banana;
+      const banana = axe._audit.data.checks.banana;
       assert.equal(banana.impact, 'serious');
       assert.equal(banana.messages.pass, 'yay');
       assert.equal(banana.messages.fail, 'boo');
@@ -139,7 +139,7 @@ describe('axe.reset', function () {
 
     axe.reset();
 
-    var ariaLiveAttr = axe._audit.standards.ariaAttrs['aria-live'];
+    const ariaLiveAttr = axe._audit.standards.ariaAttrs['aria-live'];
     assert.equal(ariaLiveAttr.type, 'nmtoken');
   });
 });

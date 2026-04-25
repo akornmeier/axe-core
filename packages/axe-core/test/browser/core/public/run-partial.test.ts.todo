@@ -1,0 +1,212 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe._audit (internal state); uses Mocha-style done() callback — convert to Promise
+describe('axe.runPartial', function () {
+  var fixture = document.getElementById('fixture');
+  var DqElement = axe.utils.DqElement;
+  var dqElementKeys = Object.keys(new DqElement(null).toJSON());
+
+  afterEach(function () {
+    fixture.innerHTML = '';
+  });
+
+  it('Uses axe._tree if it already exists', function (done) {
+    axe._tree = [axe.setup(fixture)];
+    fixture.innerHTML = '<img>';
+    axe
+      .runPartial(document, { runOnly: 'image-alt' })
+      .then(function (partialResult) {
+        var result = partialResult.results[0];
+        // 0, because <img> was added after the tree was constructed
+        expect(result.nodes).toHaveLength(0);
+        done();
+      })
+      .catch(done);
+  });
+
+  it('cleans up after resolving', function (done) {
+    axe
+      .runPartial(document, { runOnly: 'image-alt' })
+      .then(function () {
+        expect(axe._tree).toBeUndefined();
+        expect(axe._selectorData).toBeUndefined();
+        expect(axe._running).toBe(false);
+        done();
+      })
+      .catch(done);
+  });
+
+  it('normalizes the options argument', function (done) {
+    axe
+      .runPartial(/* no context */ { runOnly: 'image-alt' })
+      .then(function (partialResult) {
+        expect(partialResult.results).toHaveLength(1);
+        expect(partialResult.results[0].id).toBe('image-alt');
+        done();
+      })
+      .catch(done);
+  });
+
+  it('does not mutate the options object', function (done) {
+    var options = {};
+    axe
+      .runPartial(options)
+      .then(function () {
+        expect(options).toEqual({});
+        done();
+      })
+      .catch(done);
+  });
+
+  it('ignores { elementRef: true } option', async () => {
+    const options = { elementRef: true };
+    const result = await axe.runPartial(options);
+    for (const nodeResult of result.results[0].nodes) {
+      expect(nodeResult.node.element).toBeUndefined();
+    }
+  });
+
+  describe('result', function () {
+    var partialResult;
+    beforeAll(function (done) {
+      fixture.innerHTML = '<img>';
+      axe.runPartial(document, { runOnly: 'image-alt' }).then(function (out) {
+        partialResult = out;
+        done();
+      });
+    });
+
+    it('returns a result with all the valid properties', function () {
+      var result = partialResult.results[0];
+      expect(partialResult.results).toHaveLength(1);
+      assert.hasAllKeys(result, [
+        'id',
+        'result',
+        'pageLevel',
+        'impact',
+        'nodes'
+      ]);
+      expect(result.id).toBe('image-alt');
+
+      var checkResult = result.nodes[0];
+      expect(result.nodes).toHaveLength(1);
+      assert.hasAllKeys(checkResult, ['any', 'all', 'none', 'node']);
+      expect(checkResult.node.selector).toEqual(['img']);
+    });
+
+    it('returns check results with a serialized node', function () {
+      var checkResult = partialResult.results[0].nodes[0];
+      expect(partialResult.results[0].nodes).toHaveLength(1);
+      assert.hasAllKeys(checkResult, ['any', 'all', 'none', 'node']);
+      assert.notInstanceOf(checkResult.node, DqElement);
+      assert.hasAllKeys(checkResult.node, dqElementKeys);
+    });
+
+    it('does not return DqElement objects', () => {
+      for (const result of partialResult.results) {
+        for (const nodeResult of result.nodes) {
+          assert.notInstanceOf(nodeResult.node, DqElement);
+          const checks = [
+            ...nodeResult.any,
+            ...nodeResult.all,
+            ...nodeResult.none
+          ];
+          for (const check of checks) {
+            for (const relatedNode of check.relatedNodes) {
+              assert.notInstanceOf(relatedNode, DqElement);
+            }
+          }
+        }
+      }
+    });
+
+    it('can be serialized using JSON.stringify', function () {
+      assert.doesNotThrow(function () {
+        JSON.stringify(partialResult);
+      });
+    });
+  });
+
+  describe('frames', function () {
+    var partialResult;
+    beforeAll(function (done) {
+      fixture.innerHTML =
+        '<main>' +
+        ' <iframe id="foo"></iframe>' +
+        ' <iframe id="bar"></iframe>' +
+        '</main>' +
+        '<iframe id="baz"></iframe>';
+
+      axe
+        .runPartial('#fixture > main', { runOnly: 'image-alt' })
+        .then(function (out) {
+          partialResult = out;
+          done();
+        });
+    });
+
+    it('only has frames in context', function () {
+      expect(partialResult.frames).toHaveLength(2);
+      expect(partialResult.frames[0].selector).toEqual(['#foo']);
+      expect(partialResult.frames[1].selector).toEqual(['#bar']);
+    });
+
+    it('provides serialized frame info', function () {
+      partialResult.frames.forEach(function (frame) {
+        assert.hasAllKeys(frame, dqElementKeys);
+      });
+    });
+  });
+
+  describe('environmentData', function () {
+    it('includes environment data for the initiator', function (done) {
+      var context = {
+        include: [['#fixture']]
+      };
+      axe
+        .runPartial(context, { runOnly: 'image-alt' })
+        .then(function (out) {
+          var keys = Object.keys(axe.utils.getEnvironmentData());
+          assert.hasAllKeys(out.environmentData, keys);
+          done();
+        })
+        .catch(done);
+    });
+
+    it('is undefined for frames', function (done) {
+      var context = {
+        include: [['#fixture']],
+        initiator: false
+      };
+      axe
+        .runPartial(context, { runOnly: 'image-alt' })
+        .then(function (out) {
+          expect(out.environmentData).toBeUndefined();
+          done();
+        })
+        .catch(done);
+    });
+  });
+
+  describe('guards', function () {
+    var audit = axe._audit;
+    afterEach(function () {
+      axe._audit = audit;
+      axe._running = false;
+    });
+
+    it('throws when axe._audit is undefined', function () {
+      axe._audit = null;
+      expect(function () {
+        axe.runPartial();
+      }).toThrow();
+    });
+
+    it('throws if axe is already running', function (done) {
+      axe.runPartial().then(function () {
+        done();
+      });
+      expect(function () {
+        axe.runPartial();
+      }).toThrow();
+    });
+  });
+});

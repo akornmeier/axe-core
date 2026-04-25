@@ -217,6 +217,27 @@ Because the amount of tests is so large, it's recommended to debug only a specif
 pnpm run test:debug -- testDirs=core,commons
 ```
 
+### Test infrastructure (Phase 3 work in progress)
+
+We are introducing [Vitest 4](https://vitest.dev/) and [Playwright](https://playwright.dev/) alongside the existing Karma/Mocha/Chai stack as part of a strangler-fig migration. Both runners coexist for the duration of Phase 3 — the Karma scripts above (`pnpm test:unit`, `pnpm test:integration:*`) remain the source of truth for test correctness until Sprint 4, when the legacy stack is removed.
+
+The new dev-dependency entry points are:
+
+- `vitest` — the new test runner (unit + browser)
+- `@vitest/browser-playwright` — Playwright provider for Vitest browser mode
+- `@vitest/coverage-v8` — V8-based coverage reporter
+- `playwright` — browser automation library (drives Chromium/Firefox/WebKit)
+
+After `pnpm install`, contributors should run the following one-time setup to download the Playwright browser binaries used by the new browser-mode test suites:
+
+```console
+pnpm --filter=axe-core exec playwright install chromium firefox
+```
+
+On macOS this populates `~/Library/Caches/ms-playwright/`. On Linux/CI runners the browsers go under `~/.cache/ms-playwright/`. No `apt-get` / `brew` system packages are required for local development on macOS; CI runner system dependencies are handled in the workflow configuration.
+
+For any test-related questions during this migration, please reference [`specs/phase-03-test-infrastructure-modernization-plan.md`](../../specs/phase-03-test-infrastructure-modernization-plan.md).
+
 ## Using axe with TypeScript
 
 ### Axe Development

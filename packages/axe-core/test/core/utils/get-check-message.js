@@ -1,5 +1,5 @@
 describe('axe.utils.getCheckMessage', function () {
-  var getCheckMessage = axe.utils.getCheckMessage;
+  const getCheckMessage = axe.utils.getCheckMessage;
 
   beforeEach(function () {
     axe._audit = {

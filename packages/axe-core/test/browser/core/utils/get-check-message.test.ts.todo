@@ -1,0 +1,54 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
+describe('axe.utils.getCheckMessage', function () {
+  var getCheckMessage = axe.utils.getCheckMessage;
+
+  beforeEach(function () {
+    axe._audit = {
+      data: {
+        checks: {
+          'my-check': {
+            messages: {
+              pass: 'Pass message',
+              fail: 'Fail message',
+              incomplete: 'Incomplete message'
+            }
+          }
+        }
+      }
+    };
+  });
+
+  afterEach(function () {
+    axe._audit = undefined;
+  });
+
+  it('should return the pass message', function () {
+    expect(getCheckMessage('my-check', 'pass')).toBe('Pass message');
+  });
+
+  it('should return the fail message', function () {
+    expect(getCheckMessage('my-check', 'fail')).toBe('Fail message');
+  });
+
+  it('should return the incomplete message', function () {
+    expect(getCheckMessage('my-check', 'incomplete')).toBe('Incomplete message');
+  });
+
+  it('should handle data', function () {
+    axe._audit.data.checks['my-check'].messages.pass =
+      'Pass message with ${data.message}';
+    expect(getCheckMessage('my-check', 'pass', { message: 'hello world!' })).toBe('Pass message with hello world!');
+  });
+
+  it('should error when check does not exist', function () {
+    expect(function () {
+      getCheckMessage('invalid-check', 'pass');
+    }).toThrow();
+  });
+
+  it('should error when check message does not exist', function () {
+    expect(function () {
+      getCheckMessage('invalid-check', 'invalid');
+    }).toThrow();
+  });
+});

@@ -1,15 +1,15 @@
 describe('reporters - raw-env', function () {
   'use strict';
 
-  var fixture = document.getElementById('fixture');
+  const fixture = document.getElementById('fixture');
 
   function createDqElement() {
-    var node = document.createElement('div');
+    const node = document.createElement('div');
     fixture.appendChild(node);
     return new axe.utils.DqElement(node);
   }
 
-  var runResults;
+  let runResults;
 
   beforeEach(function () {
     runResults = [
@@ -124,10 +124,10 @@ describe('reporters - raw-env', function () {
 
   it('should serialize DqElements (#1195)', function () {
     axe.getReporter('rawEnv')(runResults, {}, function (results) {
-      for (var i = 0; i < results.length; i++) {
-        var result = results[i];
-        for (var j = 0; j < result.passes.length; j++) {
-          var p = result.passes[j];
+      for (let i = 0; i < results.length; i++) {
+        const result = results[i];
+        for (let j = 0; j < result.passes.length; j++) {
+          const p = result.passes[j];
           assert.notInstanceOf(p.node, axe.utils.DqElement);
         }
       }
@@ -145,7 +145,7 @@ describe('reporters - raw-env', function () {
   });
 
   it('uses the environmentData option instead of environment data if specified', function () {
-    var environmentData = {
+    const environmentData = {
       myReporter: 'hello world'
     };
     axe.getReporter('rawEnv')(
@@ -158,8 +158,8 @@ describe('reporters - raw-env', function () {
   });
 
   it('uses nodeSerializer', done => {
-    var rawReporter = axe.getReporter('rawEnv');
-    var spy = sinon.spy(axe.utils.nodeSerializer, 'mapRawNodeResults');
+    const rawReporter = axe.getReporter('rawEnv');
+    const spy = sinon.spy(axe.utils.nodeSerializer, 'mapRawNodeResults');
     rawReporter(
       runResults,
       {},

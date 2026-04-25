@@ -1,5 +1,4 @@
 import { postMessage } from './post-message';
-import { createMessageId } from './message-id';
 
 /**
  * Log, or post an error to the parent window

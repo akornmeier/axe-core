@@ -1,7 +1,7 @@
 describe('axe.runPartial', function () {
-  var fixture = document.getElementById('fixture');
-  var DqElement = axe.utils.DqElement;
-  var dqElementKeys = Object.keys(new DqElement(null).toJSON());
+  const fixture = document.getElementById('fixture');
+  const DqElement = axe.utils.DqElement;
+  const dqElementKeys = Object.keys(new DqElement(null).toJSON());
 
   afterEach(function () {
     fixture.innerHTML = '';
@@ -13,7 +13,7 @@ describe('axe.runPartial', function () {
     axe
       .runPartial(document, { runOnly: 'image-alt' })
       .then(function (partialResult) {
-        var result = partialResult.results[0];
+        const result = partialResult.results[0];
         // 0, because <img> was added after the tree was constructed
         assert.lengthOf(result.nodes, 0);
         done();
@@ -45,7 +45,7 @@ describe('axe.runPartial', function () {
   });
 
   it('does not mutate the options object', function (done) {
-    var options = {};
+    const options = {};
     axe
       .runPartial(options)
       .then(function () {
@@ -64,7 +64,7 @@ describe('axe.runPartial', function () {
   });
 
   describe('result', function () {
-    var partialResult;
+    let partialResult;
     before(function (done) {
       fixture.innerHTML = '<img>';
       axe.runPartial(document, { runOnly: 'image-alt' }).then(function (out) {
@@ -74,7 +74,7 @@ describe('axe.runPartial', function () {
     });
 
     it('returns a result with all the valid properties', function () {
-      var result = partialResult.results[0];
+      const result = partialResult.results[0];
       assert.lengthOf(partialResult.results, 1);
       assert.hasAllKeys(result, [
         'id',
@@ -85,14 +85,14 @@ describe('axe.runPartial', function () {
       ]);
       assert.equal(result.id, 'image-alt');
 
-      var checkResult = result.nodes[0];
+      const checkResult = result.nodes[0];
       assert.lengthOf(result.nodes, 1);
       assert.hasAllKeys(checkResult, ['any', 'all', 'none', 'node']);
       assert.deepEqual(checkResult.node.selector, ['img']);
     });
 
     it('returns check results with a serialized node', function () {
-      var checkResult = partialResult.results[0].nodes[0];
+      const checkResult = partialResult.results[0].nodes[0];
       assert.lengthOf(partialResult.results[0].nodes, 1);
       assert.hasAllKeys(checkResult, ['any', 'all', 'none', 'node']);
       assert.notInstanceOf(checkResult.node, DqElement);
@@ -125,7 +125,7 @@ describe('axe.runPartial', function () {
   });
 
   describe('frames', function () {
-    var partialResult;
+    let partialResult;
     before(function (done) {
       fixture.innerHTML =
         '<main>' +
@@ -157,13 +157,13 @@ describe('axe.runPartial', function () {
 
   describe('environmentData', function () {
     it('includes environment data for the initiator', function (done) {
-      var context = {
+      const context = {
         include: [['#fixture']]
       };
       axe
         .runPartial(context, { runOnly: 'image-alt' })
         .then(function (out) {
-          var keys = Object.keys(axe.utils.getEnvironmentData());
+          const keys = Object.keys(axe.utils.getEnvironmentData());
           assert.hasAllKeys(out.environmentData, keys);
           done();
         })
@@ -171,7 +171,7 @@ describe('axe.runPartial', function () {
     });
 
     it('is undefined for frames', function (done) {
-      var context = {
+      const context = {
         include: [['#fixture']],
         initiator: false
       };
@@ -186,7 +186,7 @@ describe('axe.runPartial', function () {
   });
 
   describe('guards', function () {
-    var audit = axe._audit;
+    const audit = axe._audit;
     afterEach(function () {
       axe._audit = audit;
       axe._running = false;

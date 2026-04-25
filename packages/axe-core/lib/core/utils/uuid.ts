@@ -278,8 +278,13 @@ uuid.parse = parse;
 uuid.unparse = unparse;
 uuid.BufferClass = BufferClass;
 
-// assign a unique id to this axe instance
-axe._uuid = v1();
+// assign a unique id to this axe instance.
+// Guarded to avoid the same ESM-load failure mode that broke `memoize.ts`
+// (PRD-01 §4.1) — under pure-ESM imports `axe` is not yet defined.
+declare const axe: { _uuid?: string | number[] };
+if (typeof axe !== 'undefined') {
+  axe._uuid = v1();
+}
 
 export { v1, v4, parse, unparse, BufferClass };
 export default v4;

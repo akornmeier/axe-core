@@ -1,9 +1,11 @@
-var path = require('path');
-var assert = require('chai').assert;
-var glob = require('glob');
-var axe = require('../axe');
+const path = require('path');
+const assert = require('chai').assert;
+const glob = require('glob');
+// Phase 2 build moved axe.js from the package root into dist/.
+// See test-locales.js for context.
+const axe = require('../dist/axe.js');
 
-var files = glob.sync(path.join(__dirname, 'integration/virtual-rules/*.js'));
+const files = glob.sync(path.join(__dirname, 'integration/virtual-rules/*.js'));
 
 before(function () {
   global.axe = axe;

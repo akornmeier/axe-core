@@ -1,0 +1,9 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._memoizedFns (deprecated registry — see Sprint 4 Task #1)
+describe('axe.utils.memoize', function () {
+  it('should add the function to axe._memoizedFns', function () {
+    const length = axe._memoizedFns.length;
+
+    axe.utils.memoize(function myFn() {});
+    expect(axe._memoizedFns.length).toBe(length + 1);
+  });
+});

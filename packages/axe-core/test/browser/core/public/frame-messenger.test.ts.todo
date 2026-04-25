@@ -1,0 +1,14 @@
+// FIXME(phase-3-sprint-4b): codemod-output failed vitest — see Sprint 4b for residual blockers (likely Path-B Task #4 helper signature mismatch or test-side type/runtime delta).
+describe('frameMessenger', function () {
+  var stub;
+
+  afterAll(function () {
+    stub.restore();
+  });
+
+  it('should call into axe.utils.respondable.updateMessenger', function () {
+    stub = vi.spyOn(axe.utils.respondable, 'updateMessenger').mockImplementation(() => undefined);
+    axe.frameMessenger();
+    expect(stub.called).toBe(true);
+  });
+});

@@ -1,7 +1,7 @@
 describe('axe.commons.color.incompleteData', function () {
   'use strict';
 
-  var fixture = document.getElementById('fixture');
+  const fixture = document.getElementById('fixture');
 
   afterEach(function () {
     fixture.innerHTML = '';
@@ -12,7 +12,7 @@ describe('axe.commons.color.incompleteData', function () {
   });
 
   it('should store a string with a key for the incomplete check', function () {
-    var node = document.createElement('div');
+    const node = document.createElement('div');
     fixture.appendChild(node);
     axe.commons.color.incompleteData.set('fgColor', 'bgImage');
 

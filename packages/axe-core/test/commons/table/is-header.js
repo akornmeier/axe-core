@@ -1,11 +1,11 @@
 describe('table.isHeader', function () {
   'use strict';
 
-  var table = axe.commons.table;
-  var fixture = document.querySelector('#fixture');
-  var fixtureSetup = axe.testUtils.fixtureSetup;
+  const table = axe.commons.table;
+  const fixture = document.querySelector('#fixture');
+  const fixtureSetup = axe.testUtils.fixtureSetup;
 
-  var tableFixture =
+  const tableFixture =
     '<table>' +
     '<tr>' +
     '<th id="ch1">column header 1</th>' +
@@ -23,19 +23,19 @@ describe('table.isHeader', function () {
 
   it('should return true for column headers', function () {
     fixtureSetup(tableFixture);
-    var cell = document.querySelector('#ch1');
+    const cell = document.querySelector('#ch1');
     assert.isTrue(table.isHeader(cell));
   });
 
   it('should return true if cell is a row header', function () {
     fixtureSetup(tableFixture);
-    var cell = document.querySelector('#rh1');
+    const cell = document.querySelector('#rh1');
     assert.isTrue(table.isHeader(cell));
   });
 
   it('should return false if cell is not a column or row header', function () {
     fixtureSetup(tableFixture);
-    var cell = document.querySelector('#cell1');
+    const cell = document.querySelector('#cell1');
     assert.isFalse(table.isHeader(cell));
   });
 
@@ -45,7 +45,7 @@ describe('table.isHeader', function () {
       '<tr><td id="target">1</td><td headers="bar target foo"></tr>' +
       '</table>';
 
-    var target = document.querySelector('#target');
+    const target = document.querySelector('#target');
     fixtureSetup();
     assert.isTrue(table.isHeader(target));
   });
@@ -56,7 +56,7 @@ describe('table.isHeader', function () {
       '<tr><td id="target">1</td><td headers="bar monkeys foo"></tr>' +
       '</table>';
 
-    var target = document.querySelector('#target');
+    const target = document.querySelector('#target');
     fixtureSetup();
     assert.isFalse(table.isHeader(target));
   });

@@ -131,21 +131,21 @@ describe('autocomplete-matches', function () {
   });
 
   it('returns false if readonly attribute is placed whether autocomplete is not valid', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input readonly autocomplete="some invalid value" id="target" />'
     );
     assert.isFalse(rule.matches(null, vNode));
   });
 
   it('returns false if aria-readonly attribute is true whether autocomplete is not valid', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input aria-readonly="true" autocomplete="some invalid value" id="target" />'
     );
     assert.isFalse(rule.matches(null, vNode));
   });
 
   it('returns true if aria-readonly attribute is false whether autocomplete is not valid', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input aria-readonly="false" autocomplete="some invalid value" id="target" />'
     );
     assert.isTrue(rule.matches(null, vNode));

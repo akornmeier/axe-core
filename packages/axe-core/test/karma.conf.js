@@ -1,7 +1,7 @@
-var path = require('path');
+const path = require('path');
 
 // allow running only certain directories
-var testDirs = [
+let testDirs = [
   'core',
   'commons',
   'rule-matches',
@@ -10,13 +10,13 @@ var testDirs = [
   'integration',
   'virtual-rules'
 ];
-var testFiles = [];
-var debugPort = 9765; // arbitrary, sync with .vscode/launch.json
-var args = process.argv.slice(2);
+let testFiles = [];
+let debugPort = 9765; // arbitrary, sync with .vscode/launch.json
+const args = process.argv.slice(2);
 
 args.forEach(function (arg) {
   // pattern: testDir=commons,core
-  var parts = arg.split('=');
+  const parts = arg.split('=');
   if (parts[0] === 'testDirs') {
     testDirs = parts[1].split(',');
   }
@@ -30,11 +30,11 @@ args.forEach(function (arg) {
   }
 });
 
-var testPaths = [];
+let testPaths = [];
 if (testFiles.length) {
   testPaths = testFiles.map(function (file) {
-    var basename = path.basename(file);
-    var extname = path.extname(file);
+    const basename = path.basename(file);
+    const extname = path.extname(file);
 
     // do not transform test files unless it is the integration/rule
     // html, in which case run the json test file
@@ -47,7 +47,7 @@ if (testFiles.length) {
     } else if (basename.includes('-matches.js')) {
       return path.join('test/rule-matches', basename);
     } else {
-      var filePath = file.replace('lib/', 'test/');
+      const filePath = file.replace('lib/', 'test/');
 
       if (file.includes('-evaluate.js')) {
         return filePath.replace('-evaluate.js', '.js');
@@ -99,16 +99,21 @@ module.exports = function (config) {
         included: false,
         served: true
       },
-      'axe.js',
-      { pattern: 'axe.min.js', included: false, served: true },
+      // Phase 2 transitional patch: Vite emits axe.js and axe.min.js into
+      // dist/ rather than the package root (where Grunt used to drop them).
+      // Karma is being deleted in Phase 3 Sprint 4 (replaced by Vitest
+      // Browser Mode + Playwright); this patch keeps the legacy baseline
+      // runnable through Sprints 1–3.
+      'dist/axe.js',
+      { pattern: 'dist/axe.min.js', included: false, served: true },
       'test/testutils.js'
     ].concat(testPaths),
     proxies: {
       '/test': '/base/test',
       '/mock': '/base/test/mock',
       '/integration': '/base/test/integration',
-      '/axe.js': '/base/axe.js',
-      '/axe.min.js': '/base/axe.min.js'
+      '/axe.js': '/base/dist/axe.js',
+      '/axe.min.js': '/base/dist/axe.min.js'
     },
     browsers: ['ChromeHeadless'],
     reporters: ['spec'],

@@ -2,10 +2,10 @@ describe('color.getContrast', function () {
   'use strict';
 
   it('should calculate contrast sensibly', function () {
-    var black = new axe.commons.color.Color(0, 0, 0, 1);
-    var transparent = new axe.commons.color.Color(0, 0, 0, 0);
-    var white = new axe.commons.color.Color(255, 255, 255, 1);
-    var yellow = new axe.commons.color.Color(255, 255, 0, 1);
+    const black = new axe.commons.color.Color(0, 0, 0, 1);
+    const transparent = new axe.commons.color.Color(0, 0, 0, 0);
+    const white = new axe.commons.color.Color(255, 255, 255, 1);
+    const yellow = new axe.commons.color.Color(255, 255, 0, 1);
 
     //Same foreground/background gives 1
     assert.equal(axe.commons.color.getContrast(black, black), 1);

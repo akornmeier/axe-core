@@ -8,7 +8,7 @@ import {
   clone,
   normalizeRunOptions
 } from '../utils';
-import type { RunOptions, EnvironmentData } from '@axe-core/schemas';
+import type { EnvironmentData } from '@axe-core/schemas';
 
 declare const axe: {
   _audit: {
