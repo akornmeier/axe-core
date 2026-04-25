@@ -396,6 +396,18 @@ export declare function cleanup(): void;
 
 ---
 
+## 4.1 Phase 3 Carryover — Pure-ESM Import Blockers
+
+Surfaced during Phase 3 Sprint 2 bulk migration of `test/commons/` (2026-04-25). Phase 1 left several `lib/` modules with module-load side effects against an ambient `axe` global, which prevents pure-ESM consumers (notably the new Vitest `unit` project running in Node) from importing them. The Karma+Mocha pipeline did not surface this because it loaded `axe.js` first as a script, populating `axe` before module evaluation.
+
+| Module | Symptom | Resolution |
+|---|---|---|
+| `lib/core/utils/memoize.ts` line ~23 | Top-level `axe._memoizedFns = []` throws `ReferenceError: axe is not defined` in Node ESM. | Phase 1 follow-up must convert the module-load side effect to a lazy initializer (or expose a typed registry the consumer creates). Closing this unblocks ~58 of the 60 Sprint 2 `it.todo` stubs in `test/unit/commons/`. |
+
+Any other `lib/` module that writes to `axe.*` at module top level falls in the same bucket. Phase 1 follow-up should grep for `\baxe\.\w+\s*=` at module top level under `lib/` and audit each hit.
+
+---
+
 ## 5. Dependencies & Integration Points
 
 - **Phase 0 (Monorepo Scaffolding):** Must be complete before Phase 1 starts. PNPM workspace, Turborepo, and `packages/` directory structure must be in place.
