@@ -1,0 +1,13 @@
+describe('frameMessenger', function () {
+  var stub;
+
+  afterAll(function () {
+    stub.restore();
+  });
+
+  it('should call into axe.utils.respondable.updateMessenger', function () {
+    stub = vi.spyOn(axe.utils.respondable, 'updateMessenger').mockImplementation(() => undefined);
+    axe.frameMessenger();
+    expect(stub.called).toBe(true);
+  });
+});

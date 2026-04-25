@@ -1,0 +1,26 @@
+describe('axe.reporter', function () {
+  var orig = {};
+  beforeAll(function () {
+    orig.reporters = window.reporters;
+  });
+
+  afterAll(function () {
+    Object.keys(orig).forEach(function (k) {
+      window[k] = orig[k];
+    });
+  });
+
+  it('should add reporter with given name', function () {
+    axe.addReporter('bob', 'joe');
+    expect(axe.getReporter('bob')).toBe('joe');
+  });
+
+  it('returns false when reporter does not exist', function () {
+    expect(axe.hasReporter('fancy-bob')).toBe(false);
+  });
+
+  it('returns true when reporter exists', function () {
+    axe.addReporter('sponge');
+    expect(axe.hasReporter('sponge')).toBe(true);
+  });
+});
