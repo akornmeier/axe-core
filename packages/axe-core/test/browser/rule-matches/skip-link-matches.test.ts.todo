@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses chai-style 'assert.*' (codemod did not convert)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); test logic failures after codemod (manual review)
 describe('skip-link-matches', function () {
   let rule, link;
   const fixture = document.getElementById('fixture');

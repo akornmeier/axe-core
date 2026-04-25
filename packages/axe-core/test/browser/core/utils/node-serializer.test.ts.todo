@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+// FIXME(phase-3-sprint-4b): codemod blocker — test failure post-codemod (see logs)
 describe('nodeSerializer', () => {
   const { nodeSerializer, DqElement } = axe.utils;
   const fixture = document.querySelector('#fixture');

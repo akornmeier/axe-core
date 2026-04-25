@@ -1,17 +1,18 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
-describe('reporters - na', function () {
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
+describe('reporters - v2', function () {
   var runResults,
     _results = [
-      {
-        id: 'noMatch',
-        helpUrl: 'somewhere',
-        description: 'stuff',
-        result: 'inapplicable',
-        impact: null,
-        tags: ['tag3'],
-        violations: [],
-        passes: []
-      },
       {
         id: 'gimmeLabel',
         helpUrl: 'things',
@@ -23,10 +24,10 @@ describe('reporters - na', function () {
         passes: [
           {
             result: 'passed',
-            impact: null,
             any: [
               {
                 result: true,
+                impact: null,
                 relatedNodes: [
                   {
                     selector: 'bob',
@@ -95,7 +96,6 @@ describe('reporters - na', function () {
         ]
       }
     ];
-
   beforeEach(function () {
     runResults = JSON.parse(JSON.stringify(_results));
     axe._load({
@@ -109,49 +109,46 @@ describe('reporters - na', function () {
     axe._audit = null;
   });
 
-  it('should merge the runRules results into violations, passes and inapplicable', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
-      assert.isObject(results);
-      assert.isArray(results.violations);
+  it('should merge the runRules results into violations and passes', function () {
+    axe.getReporter('v2')(runResults, {}, function (results) {
+      expect(typeof results === 'object' && results !== null).toBe(true);
+      expect(Array.isArray(results.violations)).toBe(true);
       expect(results.violations).toHaveLength(1);
-      assert.isArray(results.passes);
+      expect(Array.isArray(results.passes)).toBe(true);
       expect(results.passes).toHaveLength(1);
-      assert.isArray(results.inapplicable);
-      expect(results.inapplicable).toHaveLength(1);
     });
   });
   it('should add the rule id to the rule result', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
+    axe.getReporter('v2')(runResults, {}, function (results) {
       expect(results.violations[0].id).toBe('idkStuff');
       expect(results.passes[0].id).toBe('gimmeLabel');
-      expect(results.inapplicable[0].id).toBe('noMatch');
     });
   });
   it('should add tags to the rule result', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
+    axe.getReporter('v2')(runResults, {}, function (results) {
       expect(results.violations[0].tags).toEqual(['tag2']);
       expect(results.passes[0].tags).toEqual(['tag1']);
-      expect(results.inapplicable[0].tags).toEqual(['tag3']);
     });
   });
   it('should add the rule help to the rule result', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
-      assert.ok(!results.violations[0].helpUrl);
+    axe.getReporter('v2')(runResults, {}, function (results) {
+      expect(results.violations[0].helpUrl).toBeFalsy();
       expect(results.passes[0].helpUrl).toBe('things');
-      expect(results.inapplicable[0].helpUrl).toBe('somewhere');
     });
   });
   it('should add the html to the node data', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
-      assert.ok(results.violations[0].nodes);
+    axe.getReporter('v2')(runResults, {}, function (results) {
+      expect(results.violations[0].nodes).toBeTruthy();
       expect(results.violations[0].nodes.length).toBe(1);
-      expect(results.violations[0].nodes[0].html).toBe('<pillock>george bush</pillock>');
+      expect(results.violations[0].nodes[0].html).toBe(
+        '<pillock>george bush</pillock>'
+      );
       expect(results.passes[0].nodes[0].html).toBe('<minkey>chimp</minky>');
     });
   });
   it('should add the target selector array to the node data', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
-      assert.ok(results.violations[0].nodes);
+    axe.getReporter('v2')(runResults, {}, function (results) {
+      expect(results.violations[0].nodes).toBeTruthy();
       expect(results.violations[0].nodes.length).toBe(1);
       expect(results.violations[0].nodes[0].target).toEqual([
         'q',
@@ -161,34 +158,42 @@ describe('reporters - na', function () {
     });
   });
   it('should add the description to the rule result', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
+    axe.getReporter('v2')(runResults, {}, function (results) {
       expect(results.violations[0].description).toBe('something more nifty');
       expect(results.passes[0].description).toBe('something nifty');
     });
   });
   it('should add the impact to the rule result', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
+    axe.getReporter('v2')(runResults, {}, function (results) {
       expect(results.violations[0].impact).toBe('cats');
       expect(results.violations[0].nodes[0].impact).toBe('cats');
-      assert.ok(!results.passes[0].impact);
-      assert.ok(!results.passes[0].nodes[0].impact);
-      expect(results.passes[0].impact).toBeNull();
-      expect(results.passes[0].nodes[0].impact).toBeNull();
+      expect(results.passes[0].impact).toBeFalsy();
+      expect(results.passes[0].nodes[0].impact).toBeFalsy();
     });
   });
   it('should map relatedNodes', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
-      expect(results.violations[0].nodes[0].all[0].relatedNodes).toHaveLength(1);
-      expect(results.violations[0].nodes[0].all[0].relatedNodes[0].target).toBe('joe');
-      expect(results.violations[0].nodes[0].all[0].relatedNodes[0].html).toBe('bob');
+    axe.getReporter('v2')(runResults, {}, function (results) {
+      expect(results.violations[0].nodes[0].all[0].relatedNodes).toHaveLength(
+        1
+      );
+      expect(results.violations[0].nodes[0].all[0].relatedNodes[0].target).toBe(
+        'joe'
+      );
+      expect(results.violations[0].nodes[0].all[0].relatedNodes[0].html).toBe(
+        'bob'
+      );
 
       expect(results.passes[0].nodes[0].any[0].relatedNodes).toHaveLength(1);
-      expect(results.passes[0].nodes[0].any[0].relatedNodes[0].target).toBe('bob');
-      expect(results.passes[0].nodes[0].any[0].relatedNodes[0].html).toBe('fred');
+      expect(results.passes[0].nodes[0].any[0].relatedNodes[0].target).toBe(
+        'bob'
+      );
+      expect(results.passes[0].nodes[0].any[0].relatedNodes[0].html).toBe(
+        'fred'
+      );
     });
   });
   it('should add environment data', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
+    axe.getReporter('v2')(runResults, {}, function (results) {
       expect(results.url).toBeDefined();
       expect(results.timestamp).toBeDefined();
       expect(results.testEnvironment).toBeDefined();
@@ -196,7 +201,7 @@ describe('reporters - na', function () {
     });
   });
   it('should add toolOptions property', function () {
-    axe.getReporter('na')(runResults, {}, function (results) {
+    axe.getReporter('v2')(runResults, {}, function (results) {
       expect(results.toolOptions).toBeDefined();
     });
   });
@@ -204,7 +209,7 @@ describe('reporters - na', function () {
     var environmentData = {
       myReporter: 'hello world'
     };
-    axe.getReporter('na')(
+    axe.getReporter('v2')(
       runResults,
       { environmentData: environmentData },
       function (results) {

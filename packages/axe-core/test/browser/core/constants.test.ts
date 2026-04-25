@@ -1,11 +1,23 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('axe.constants', function () {
   it('should create an object', function () {
-    assert.isObject(axe.constants);
+    expect(typeof axe.constants === 'object' && axe.constants !== null).toBe(
+      true
+    );
   });
 
   it('should have a results array', function () {
-    assert.isArray(axe.constants.results);
+    expect(Array.isArray(axe.constants.results)).toBe(true);
   });
 
   it('should have PASS', function () {
@@ -41,9 +53,9 @@ describe('axe.constants', function () {
   });
 
   it('has a serializableErrorProps array', function () {
-    assert.isArray(axe.constants.serializableErrorProps);
+    expect(Array.isArray(axe.constants.serializableErrorProps)).toBe(true);
     axe.constants.serializableErrorProps.forEach(prop => {
-      assert.typeOf(prop, 'string', `prop ${prop} is not a string`);
+      expect(typeof prop).toBe('string');
     });
   });
 });

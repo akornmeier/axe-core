@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.queryFixture (testUtils helper not exposed under Vitest)
 describe('identical-links-same-purpose-matches tests', function () {
   const fixture = document.getElementById('fixture');
   const queryFixture = axe.testUtils.queryFixture;

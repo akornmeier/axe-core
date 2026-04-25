@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses axe.run() (full audit — out of scope); uses chai-style 'assert.*' (codemod did not convert); uses chai-style 'assert(...)' (codemod did not convert); uses unknown axe.testUtils.captureError helper
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration)
 describe('axe.run', function () {
   var fixture = document.getElementById('fixture');
   var noop = function () {};

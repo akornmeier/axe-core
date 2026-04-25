@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses chai-style 'assert.*' (codemod did not convert)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.shadowSupport (testUtils helper not exposed under Vitest)
 function createContentGetSelector() {
   var group = document.createElement('div');
   group.innerHTML =

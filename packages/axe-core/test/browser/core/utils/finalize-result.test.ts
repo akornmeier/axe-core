@@ -1,4 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('axe.utils.finalizeRuleResult', function () {
   var original = axe._audit;
 
@@ -13,7 +24,7 @@ describe('axe.utils.finalizeRuleResult', function () {
   });
 
   it('should be a function', function () {
-    assert.isFunction(axe.utils.finalizeRuleResult);
+    expect(typeof axe.utils.finalizeRuleResult).toBe('function');
   });
 
   it('returns the first param object', function () {

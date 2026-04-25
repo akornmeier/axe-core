@@ -1,4 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('utils.getEnvironmentData', function () {
   var __audit;
   var getEnvironmentData = axe.utils.getEnvironmentData;
@@ -24,23 +35,29 @@ describe('utils.getEnvironmentData', function () {
 
   it('should return a `testEngine` property', function () {
     var data = getEnvironmentData();
-    assert.isObject(data.testEngine);
+    expect(
+      typeof data.testEngine === 'object' && data.testEngine !== null
+    ).toBe(true);
     expect(data.testEngine.name).toBe('axe-core');
     expect(data.testEngine.version).toBe(axe.version);
   });
 
   it('should return a `testRunner` property', function () {
     var data = getEnvironmentData();
-    assert.isObject(data.testRunner);
+    expect(
+      typeof data.testRunner === 'object' && data.testRunner !== null
+    ).toBe(true);
     expect(data.testRunner.name).toBe(axe._audit.brand);
   });
 
   it('should return a `testEnvironment` property', function () {
     var data = getEnvironmentData();
-    assert.isObject(data.testEnvironment);
-    assert.ok(data.testEnvironment.userAgent);
-    assert.ok(data.testEnvironment.windowWidth);
-    assert.ok(data.testEnvironment.windowHeight);
+    expect(
+      typeof data.testEnvironment === 'object' && data.testEnvironment !== null
+    ).toBe(true);
+    expect(data.testEnvironment.userAgent).toBeTruthy();
+    expect(data.testEnvironment.windowWidth).toBeTruthy();
+    expect(data.testEnvironment.windowHeight).toBeTruthy();
     expect(data.testEnvironment.orientationAngle).not.toBeNull();
     expect(data.testEnvironment.orientationType).not.toBeNull();
   });

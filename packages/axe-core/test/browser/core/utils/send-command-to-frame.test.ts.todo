@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses chai-style 'assert.*' (codemod did not convert); uses unknown axe.testUtils.captureError helper
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.captureError (testUtils helper not exposed under Vitest)
 describe('axe.utils.sendCommandToFrame', () => {
   const fixture = document.getElementById('fixture');
   let params;

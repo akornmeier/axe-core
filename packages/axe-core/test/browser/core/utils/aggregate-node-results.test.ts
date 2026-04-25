@@ -1,4 +1,14 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('axe.utils.aggregateNodeResults', function () {
   var FAIL = 'failed';
   var PASS = 'passed';
@@ -37,7 +47,7 @@ describe('axe.utils.aggregateNodeResults', function () {
   });
 
   it('should be a function', function () {
-    assert.isFunction(axe.utils.aggregateNodeResults);
+    expect(typeof axe.utils.aggregateNodeResults).toBe('function');
   });
 
   it('Should be `inapplicable` when no results are given', function () {

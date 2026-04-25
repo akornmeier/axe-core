@@ -1,4 +1,5 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses axe._memoizedFns (deprecated registry — see Sprint 4 Task #1)
+import { axe } from '@helpers/check-helpers';
+import { describe, it, expect } from 'vitest';
 describe('axe.teardown', function () {
   it('should reset the tree', function () {
     axe._tree = 'foo';

@@ -1,4 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('reporters - v1', function () {
   var runResults,
     _results = [
@@ -189,10 +200,10 @@ describe('reporters - v1', function () {
 
   it('should merge the runRules results into violations and passes', function () {
     axe.getReporter('v1')(runResults, {}, function (results) {
-      assert.isObject(results);
-      assert.isArray(results.violations);
+      expect(typeof results === 'object' && results !== null).toBe(true);
+      expect(Array.isArray(results.violations)).toBe(true);
       expect(results.violations).toHaveLength(2);
-      assert.isArray(results.passes);
+      expect(Array.isArray(results.passes)).toBe(true);
       expect(results.passes).toHaveLength(2);
     });
   });
@@ -214,33 +225,43 @@ describe('reporters - v1', function () {
   });
   it('should add the rule help to the rule result', function () {
     axe.getReporter('v1')(runResults, {}, function (results) {
-      assert.isNotOk(results.violations[0].helpUrl);
-      assert.isNotOk(results.violations[1].helpUrl);
+      expect(results.violations[0].helpUrl).toBeFalsy();
+      expect(results.violations[1].helpUrl).toBeFalsy();
       expect(results.passes[0].helpUrl).toBe('things');
-      assert.isNotOk(results.passes[1].helpUrl);
+      expect(results.passes[1].helpUrl).toBeFalsy();
     });
   });
   it('should add the html to the node data', function () {
     axe.getReporter('v1')(runResults, {}, function (results) {
-      assert.ok(results.violations[0].nodes);
+      expect(results.violations[0].nodes).toBeTruthy();
       expect(results.violations[0].nodes.length).toBe(1);
-      expect(results.violations[0].nodes[0].html).toBe('<pillock>george bush</pillock>');
-      expect(results.violations[1].nodes[0].html).toBe('<foon>telephone</foon>');
+      expect(results.violations[0].nodes[0].html).toBe(
+        '<pillock>george bush</pillock>'
+      );
+      expect(results.violations[1].nodes[0].html).toBe(
+        '<foon>telephone</foon>'
+      );
       expect(results.passes[0].nodes[0].html).toBe('<minkey>chimp</minky>');
-      expect(results.passes[1].nodes[0].html).toBe('<clueso>nincompoop</clueso>');
+      expect(results.passes[1].nodes[0].html).toBe(
+        '<clueso>nincompoop</clueso>'
+      );
     });
   });
   it('should add the failure summary to the node data', function () {
     axe.getReporter('v1')(runResults, {}, function (results) {
-      assert.ok(results.violations[0].nodes);
+      expect(results.violations[0].nodes).toBeTruthy();
       expect(results.violations[0].nodes.length).toBe(1);
-      expect(typeof results.violations[0].nodes[0].failureSummary).toBe('string');
-      expect(typeof results.incomplete[0].nodes[0].failureSummary).toBe('string');
+      expect(typeof results.violations[0].nodes[0].failureSummary).toBe(
+        'string'
+      );
+      expect(typeof results.incomplete[0].nodes[0].failureSummary).toBe(
+        'string'
+      );
     });
   });
   it('should add the target selector array to the node data', function () {
     axe.getReporter('v1')(runResults, {}, function (results) {
-      assert.ok(results.violations[0].nodes);
+      expect(results.violations[0].nodes).toBeTruthy();
       expect(results.violations[0].nodes.length).toBe(1);
       expect(results.violations[0].nodes[0].target).toEqual([
         'q',
@@ -252,7 +273,9 @@ describe('reporters - v1', function () {
   it('should add the description to the rule result', function () {
     axe.getReporter('v1')(runResults, {}, function (results) {
       expect(results.violations[0].description).toBe('something more nifty');
-      expect(results.violations[1].description).toBe('something even more nifty');
+      expect(results.violations[1].description).toBe(
+        'something even more nifty'
+      );
       expect(results.passes[0].description).toBe('something nifty');
       expect(results.passes[1].description).toBe('something awesome');
     });

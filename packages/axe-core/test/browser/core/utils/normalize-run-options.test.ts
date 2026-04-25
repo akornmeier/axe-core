@@ -1,4 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('axe.utils.normalizeRunOptions', () => {
   const mockChecks = [
     {
@@ -205,14 +216,14 @@ describe('axe.utils.normalizeRunOptions', () => {
   });
 
   it("doesn't throw an error when option.runOnly has an unknown tag", () => {
-    assert.doesNotThrow(() => {
+    expect(() => {
       axe.utils.normalizeRunOptions({
         runOnly: {
           type: 'tags',
           values: ['fakeTag']
         }
       });
-    });
+    }).not.toThrow();
   });
 
   it('throws an error when option.rules has an unknown rule', () => {
@@ -250,7 +261,13 @@ describe('axe.utils.normalizeRunOptions', () => {
         values: ['wcag23aaa']
       }
     });
-    assert.isEmpty(message);
+    expect(
+      message == null
+        ? 0
+        : typeof message === 'string' || Array.isArray(message)
+          ? message.length
+          : Object.keys(message).length
+    ).toBe(0);
   });
 
   it('logs an issue when a tag is unknown, together with a wcag level tag', () => {

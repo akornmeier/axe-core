@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.fixtureSetup (testUtils helper not exposed under Vitest)
 describe('html-namespace-matches', function () {
   let rule;
   let fixture;

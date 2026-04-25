@@ -1,4 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('axe.getRules', function () {
   var ver = axe.version.substring(0, axe.version.lastIndexOf('.'));
 
@@ -41,41 +52,47 @@ describe('axe.getRules', function () {
 
   it('should return rules', function () {
     var retValue = axe.getRules(['tag1']);
-    assert.isArray(retValue);
+    expect(Array.isArray(retValue)).toBe(true);
     expect(retValue).toHaveLength(2);
     expect(retValue[0].ruleId).toBe('awesomeRule1');
     expect(retValue[0].description).toBe('some interesting information');
     expect(retValue[0].help).toBe('halp');
-    expect(retValue[0].helpUrl).toBe('https://dequeuniversity.com/rules/axe/' +
+    expect(retValue[0].helpUrl).toBe(
+      'https://dequeuniversity.com/rules/axe/' +
         ver +
-        '/awesomeRule1?application=axeAPI');
+        '/awesomeRule1?application=axeAPI'
+    );
     expect(retValue[0].tags).toEqual(['tag1']);
 
     expect(retValue[1].ruleId).toBe('awesomeRule2');
     expect(retValue[1].description).toBe('also some interesting information');
     expect(retValue[1].help).toBe('halp me!');
-    expect(retValue[1].helpUrl).toBe('https://dequeuniversity.com/rules/axe/' +
+    expect(retValue[1].helpUrl).toBe(
+      'https://dequeuniversity.com/rules/axe/' +
         ver +
-        '/awesomeRule2?application=axeAPI');
+        '/awesomeRule2?application=axeAPI'
+    );
     expect(retValue[1].tags).toEqual(['tag1', 'tag2']);
     expect(retValue[1].actIds).toEqual(['abc123', 'xyz789']);
 
     retValue = axe.getRules(['tag2']);
-    assert.isArray(retValue);
+    expect(Array.isArray(retValue)).toBe(true);
     expect(retValue).toHaveLength(1);
     expect(retValue[0].ruleId).toBe('awesomeRule2');
     expect(retValue[0].description).toBe('also some interesting information');
     expect(retValue[0].help).toBe('halp me!');
-    expect(retValue[0].helpUrl).toBe('https://dequeuniversity.com/rules/axe/' +
+    expect(retValue[0].helpUrl).toBe(
+      'https://dequeuniversity.com/rules/axe/' +
         ver +
-        '/awesomeRule2?application=axeAPI');
+        '/awesomeRule2?application=axeAPI'
+    );
     expect(retValue[0].tags).toEqual(['tag1', 'tag2']);
     expect(retValue[0].actIds).toEqual(['abc123', 'xyz789']);
   });
 
   it('should not return nothing', function () {
     var retValue = axe.getRules(['bob']);
-    assert.isArray(retValue);
+    expect(Array.isArray(retValue)).toBe(true);
     expect(retValue).toHaveLength(0);
   });
 
@@ -84,17 +101,21 @@ describe('axe.getRules', function () {
     expect(retValue[0].ruleId).toBe('awesomeRule1');
     expect(retValue[0].description).toBe('some interesting information');
     expect(retValue[0].help).toBe('halp');
-    expect(retValue[0].helpUrl).toBe('https://dequeuniversity.com/rules/axe/' +
+    expect(retValue[0].helpUrl).toBe(
+      'https://dequeuniversity.com/rules/axe/' +
         ver +
-        '/awesomeRule1?application=axeAPI');
+        '/awesomeRule1?application=axeAPI'
+    );
     expect(retValue[0].tags).toEqual(['tag1']);
 
     expect(retValue[1].ruleId).toBe('awesomeRule2');
     expect(retValue[1].description).toBe('also some interesting information');
     expect(retValue[1].help).toBe('halp me!');
-    expect(retValue[1].helpUrl).toBe('https://dequeuniversity.com/rules/axe/' +
+    expect(retValue[1].helpUrl).toBe(
+      'https://dequeuniversity.com/rules/axe/' +
         ver +
-        '/awesomeRule2?application=axeAPI');
+        '/awesomeRule2?application=axeAPI'
+    );
     expect(retValue[1].tags).toEqual(['tag1', 'tag2']);
     expect(retValue[1].actIds).toEqual(['abc123', 'xyz789']);
   });
@@ -104,17 +125,21 @@ describe('axe.getRules', function () {
     expect(retValue[0].ruleId).toBe('awesomeRule1');
     expect(retValue[0].description).toBe('some interesting information');
     expect(retValue[0].help).toBe('halp');
-    expect(retValue[0].helpUrl).toBe('https://dequeuniversity.com/rules/axe/' +
+    expect(retValue[0].helpUrl).toBe(
+      'https://dequeuniversity.com/rules/axe/' +
         ver +
-        '/awesomeRule1?application=axeAPI');
+        '/awesomeRule1?application=axeAPI'
+    );
     expect(retValue[0].tags).toEqual(['tag1']);
 
     expect(retValue[1].ruleId).toBe('awesomeRule2');
     expect(retValue[1].description).toBe('also some interesting information');
     expect(retValue[1].help).toBe('halp me!');
-    expect(retValue[1].helpUrl).toBe('https://dequeuniversity.com/rules/axe/' +
+    expect(retValue[1].helpUrl).toBe(
+      'https://dequeuniversity.com/rules/axe/' +
         ver +
-        '/awesomeRule2?application=axeAPI');
+        '/awesomeRule2?application=axeAPI'
+    );
     expect(retValue[1].tags).toEqual(['tag1', 'tag2']);
     expect(retValue[1].actIds).toEqual(['abc123', 'xyz789']);
   });

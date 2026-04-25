@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+// FIXME(phase-3-sprint-4b): codemod blocker — test failure post-codemod (see logs)
 describe('axe.utils.queue', function () {
   it('should be a function', function () {
     assert.isFunction(axe.utils.queue);

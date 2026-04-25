@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration)
 /* global xit */
 describe('dom.getComposedParent', function () {
   var getComposedParent = axe.commons.dom.getComposedParent;

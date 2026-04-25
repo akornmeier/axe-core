@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration)
 function createContentHidden() {
   var group = document.createElement('div');
   group.innerHTML =

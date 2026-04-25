@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); destructures 'queryFixture' from axe.testUtils (testUtils helper not exposed under Vitest)
 describe('axe.utils.isNodeInContext', () => {
   const { queryFixture } = axe.testUtils;
   const { Context } = axe._thisWillBeDeletedDoNotUse.base;

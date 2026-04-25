@@ -1,11 +1,22 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('axe.utils.publishMetaData', function () {
   afterEach(function () {
     axe._audit = null;
   });
 
   it('should be a function', function () {
-    assert.isFunction(axe.utils.publishMetaData);
+    expect(typeof axe.utils.publishMetaData).toBe('function');
   });
 
   it('should pull data from rules from axe._audit.data', function () {

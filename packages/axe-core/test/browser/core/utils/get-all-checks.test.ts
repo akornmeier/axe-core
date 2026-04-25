@@ -1,7 +1,17 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('axe.utils.getAllChecks', function () {
   it('should be a function', function () {
-    assert.isFunction(axe.utils.getAllChecks);
+    expect(typeof axe.utils.getAllChecks).toBe('function');
   });
 
   it('should concatenate all 3 check collections', function () {

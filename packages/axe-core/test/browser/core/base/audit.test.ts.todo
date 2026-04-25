@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert); uses unknown axe.testUtils.captureError helper (destructure)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); destructures 'fixtureSetup' from axe.testUtils (testUtils helper not exposed under Vitest)
 describe('Audit', () => {
   const Audit = axe._thisWillBeDeletedDoNotUse.base.Audit;
   const Rule = axe._thisWillBeDeletedDoNotUse.base.Rule;

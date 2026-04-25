@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses sinon (replace with vi.fn / vi.spyOn); uses chai-style 'assert.*' (codemod did not convert)
+// FIXME(phase-3-sprint-4b): codemod blocker — test failure post-codemod (see logs)
 describe('axe.finishRun', function () {
   var fixture = document.querySelector('#fixture');
 

@@ -1,4 +1,14 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 function setShadowId(vNode, shadowId) {
   vNode.shadowId = shadowId;
   for (var i = 0; i < vNode.children.length; i++) {
@@ -265,11 +275,7 @@ describe('axe.utils.querySelectorAllFilter', function () {
         var ones = axe.utils.querySelectorAllFilter(dom, '#one');
         var divOnes = axe.utils.querySelectorAllFilter(dom, 'div, #one');
 
-        assert.isBelow(
-          divOnes.length,
-          divs.length + ones.length,
-          'Elements matching both parts of a selector should not be included twice'
-        );
+        expect(divOnes.length).toBeLessThan(divs.length + ones.length);
       });
       it('should return nodes sorted by document position', function () {
         var result = axe.utils.querySelectorAllFilter(dom, 'ul, #one');

@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._* internal state (Path-B)
 describe('axe.commons.color.getTextShadowColors', function () {
   var fixture = document.getElementById('fixture');
   var getTextShadowColors = axe.commons.color.getTextShadowColors;

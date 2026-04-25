@@ -1,4 +1,14 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('SerialVirtualNode', function () {
   var SerialVirtualNode = axe.SerialVirtualNode;
 
@@ -6,7 +16,7 @@ describe('SerialVirtualNode', function () {
     var vNode = new SerialVirtualNode({
       nodeName: 'div'
     });
-    assert.instanceOf(vNode, axe.AbstractVirtualNode);
+    expect(vNode).toBeInstanceOf(axe.AbstractVirtualNode);
   });
 
   describe('props', function () {
@@ -23,7 +33,9 @@ describe('SerialVirtualNode', function () {
 
     it('returns a frozen object', function () {
       var vNode = new SerialVirtualNode({ nodeName: 'div' });
-      expect(Object.isFrozen(vNode.props), 'Expect object to be frozen').toBe(true);
+      expect(Object.isFrozen(vNode.props), 'Expect object to be frozen').toBe(
+        true
+      );
     });
 
     it('takes 1 as its nodeType', function () {
@@ -49,13 +61,13 @@ describe('SerialVirtualNode', function () {
 
     it('does not throw if nodeType is falsy', function () {
       [null, undefined].forEach(function (nonThrowingNodeType) {
-        assert.doesNotThrow(function () {
+        expect(function () {
           // eslint-disable-next-line no-new
           new SerialVirtualNode({
             nodeType: nonThrowingNodeType,
             nodeName: 'div'
           });
-        });
+        }).not.toThrow();
       });
     });
 

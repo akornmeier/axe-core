@@ -1,4 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('axe.runVirtualRule', function () {
   beforeEach(function () {
     axe._load({
@@ -168,7 +179,7 @@ describe('axe.runVirtualRule', function () {
         id: 'aria-roles',
         runSync: function (context) {
           var node = context.include[0];
-          assert.instanceOf(node, axe.AbstractVirtualNode);
+          expect(node).toBeInstanceOf(axe.AbstractVirtualNode);
           expect(node.props.foo).toBe('bar');
           expect(node.attr('bar')).toBe('baz');
 

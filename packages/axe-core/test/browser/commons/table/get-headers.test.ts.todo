@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); residual fixture/closure issue after codemod (`fixture` is null at runtime)
 describe('table.getHeaders', function () {
   function $id(id) {
     return document.getElementById(id);

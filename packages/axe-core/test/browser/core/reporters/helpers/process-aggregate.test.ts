@@ -1,4 +1,14 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('helpers.processAggregate', function () {
   var results, options;
   const helpers = axe._thisWillBeDeletedDoNotUse.helpers;
@@ -224,11 +234,11 @@ describe('helpers.processAggregate', function () {
           }
         });
         results[0].passes[1].node = dqElm;
-        assert.doesNotThrow(() => {
+        expect(() => {
           helpers.processAggregate(results, {
             resultTypes: ['violations']
           });
-        });
+        }).not.toThrow();
       });
     });
 
@@ -325,9 +335,9 @@ describe('helpers.processAggregate', function () {
               }
             });
             results[0].passes[0].node = dqElm;
-            assert.doesNotThrow(() => {
+            expect(() => {
               helpers.processAggregate(results, options);
-            });
+            }).not.toThrow();
           });
         });
       });
@@ -391,9 +401,9 @@ describe('helpers.processAggregate', function () {
             }
           });
           results[0].passes[0].node = dqElm;
-          assert.doesNotThrow(() => {
+          expect(() => {
             helpers.processAggregate(results, options);
-          });
+          }).not.toThrow();
         });
       });
 
@@ -456,9 +466,9 @@ describe('helpers.processAggregate', function () {
             }
           });
           results[0].passes[0].node = dqElm;
-          assert.doesNotThrow(() => {
+          expect(() => {
             helpers.processAggregate(results, options);
-          });
+          }).not.toThrow();
         });
       });
     });

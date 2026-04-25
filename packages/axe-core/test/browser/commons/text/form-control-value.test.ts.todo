@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses unknown axe.testUtils.injectIntoFixture helper (destructure); uses unknown axe.testUtils.html helper (destructure)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); destructures 'queryFixture' from axe.testUtils (testUtils helper not exposed under Vitest)
 describe('text.formControlValue', () => {
   const formControlValue = axe.commons.text.formControlValue;
   const { queryFixture, fixtureSetup, injectIntoFixture, html } = axe.testUtils;

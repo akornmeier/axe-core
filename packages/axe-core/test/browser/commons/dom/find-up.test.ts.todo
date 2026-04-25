@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.shadowSupport (testUtils helper not exposed under Vitest)
 /* global xit */
 describe('dom.findUp', function () {
   var fixture = document.getElementById('fixture');

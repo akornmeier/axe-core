@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses chai-style 'assert.*' (codemod did not convert); uses unknown axe.testUtils.html helper (destructure)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); SyntaxError during import (codemod produced invalid TS — manual review)
 describe('text.accessibleTextVirtual', () => {
   const fixture = document.getElementById('fixture');
   const { html, shadowSupport } = axe.testUtils;

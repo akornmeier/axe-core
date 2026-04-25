@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+// FIXME(phase-3-sprint-4b): codemod blocker — test failure post-codemod (see logs)
 describe('performance timer', () => {
   const { performanceTimer } = axe.utils;
   const originalLog = performanceTimer._log;

@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
+// FIXME(phase-3-sprint-4b): codemod blocker — test failure post-codemod (see logs)
 describe('axe.configure', function () {
   // var Rule = axe._thisWillBeDeletedDoNotUse.base.Rule;
   // var Check = axe._thisWillBeDeletedDoNotUse.base.Check;

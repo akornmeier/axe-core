@@ -1,7 +1,17 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('AbstractVirtualNode', function () {
   it('should be a function', function () {
-    assert.isFunction(axe.AbstractVirtualNode);
+    expect(typeof axe.AbstractVirtualNode).toBe('function');
   });
 
   it('should throw an error when accessing props', function () {

@@ -1,4 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
 describe('axe.setup', function () {
   afterEach(function () {
     axe.teardown();
@@ -7,7 +18,7 @@ describe('axe.setup', function () {
   it('should setup the tree', function () {
     axe._tree = undefined;
     axe.setup();
-    assert.exists(axe._tree);
+    expect(axe._tree != null).toBe(true);
   });
 
   it('should default the tree to use html element', function () {
@@ -28,7 +39,7 @@ describe('axe.setup', function () {
   it('should setup selector data', function () {
     axe._selectorData = undefined;
     axe.setup();
-    assert.exists(axe._selectorData);
+    expect(axe._selectorData != null).toBe(true);
   });
 
   it('takes documentElement when passed the document', () => {

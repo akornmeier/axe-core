@@ -1,4 +1,14 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('utils.matchesSelector', function () {
   var matchesSelector = axe.utils.matchesSelector;
 
@@ -21,10 +31,18 @@ describe('utils.matchesSelector', function () {
 
   it('should check the prototype of the Element object for matching methods', function () {
     expect(matchesSelector(mockMethod('matches', 'test1'))).toBe('test1');
-    expect(matchesSelector(mockMethod('matchesSelector', 'test2'))).toBe('test2');
-    expect(matchesSelector(mockMethod('mozMatchesSelector', 'test3'))).toBe('test3');
-    expect(matchesSelector(mockMethod('webkitMatchesSelector', 'test4'))).toBe('test4');
-    expect(matchesSelector(mockMethod('msMatchesSelector', 'test5'))).toBe('test5');
+    expect(matchesSelector(mockMethod('matchesSelector', 'test2'))).toBe(
+      'test2'
+    );
+    expect(matchesSelector(mockMethod('mozMatchesSelector', 'test3'))).toBe(
+      'test3'
+    );
+    expect(matchesSelector(mockMethod('webkitMatchesSelector', 'test4'))).toBe(
+      'test4'
+    );
+    expect(matchesSelector(mockMethod('msMatchesSelector', 'test5'))).toBe(
+      'test5'
+    );
   });
 
   it('should actually work', function () {
@@ -33,7 +51,7 @@ describe('utils.matchesSelector', function () {
 
     fixture.innerHTML = '<div id="test">Hi</div>';
     target = document.getElementById('test');
-    assert.ok(matchesSelector(target, '#test'));
+    expect(matchesSelector(target, '#test')).toBeTruthy();
 
     fixture.innerHTML = '';
   });

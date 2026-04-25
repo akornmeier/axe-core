@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
+// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.shadowSupport (testUtils helper not exposed under Vitest)
 describe('landmark-unique-matches', function () {
   let rule;
   let fixture;

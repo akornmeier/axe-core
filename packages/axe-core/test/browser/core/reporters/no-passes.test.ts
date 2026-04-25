@@ -1,4 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
+import { axe } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('reporters - no-passes', function () {
   var runResults,
     _results = [
@@ -100,8 +111,8 @@ describe('reporters - no-passes', function () {
 
   it('should merge the runRules results into violations and  exclude passes', function () {
     axe.getReporter('no-passes')(runResults, {}, function (results) {
-      assert.isObject(results);
-      assert.isArray(results.violations);
+      expect(typeof results === 'object' && results !== null).toBe(true);
+      expect(Array.isArray(results.violations)).toBe(true);
       expect(results.violations).toHaveLength(1);
       expect(results.passes).toBeUndefined();
     });
@@ -118,19 +129,21 @@ describe('reporters - no-passes', function () {
   });
   it('should add the rule help to the rule result', function () {
     axe.getReporter('no-passes')(runResults, {}, function (results) {
-      assert.isNotOk(results.violations[0].helpUrl);
+      expect(results.violations[0].helpUrl).toBeFalsy();
     });
   });
   it('should add the html to the node data', function () {
     axe.getReporter('no-passes')(runResults, {}, function (results) {
-      assert.ok(results.violations[0].nodes);
+      expect(results.violations[0].nodes).toBeTruthy();
       expect(results.violations[0].nodes.length).toBe(1);
-      expect(results.violations[0].nodes[0].html).toBe('<pillock>george bush</pillock>');
+      expect(results.violations[0].nodes[0].html).toBe(
+        '<pillock>george bush</pillock>'
+      );
     });
   });
   it('should add the target selector array to the node data', function () {
     axe.getReporter('no-passes')(runResults, {}, function (results) {
-      assert.ok(results.violations[0].nodes);
+      expect(results.violations[0].nodes).toBeTruthy();
       expect(results.violations[0].nodes.length).toBe(1);
       expect(results.violations[0].nodes[0].target).toEqual([
         'q',
@@ -152,9 +165,15 @@ describe('reporters - no-passes', function () {
   });
   it('should map relatedNodes', function () {
     axe.getReporter('no-passes')(runResults, {}, function (results) {
-      expect(results.violations[0].nodes[0].all[0].relatedNodes).toHaveLength(1);
-      expect(results.violations[0].nodes[0].all[0].relatedNodes[0].target).toBe('joe');
-      expect(results.violations[0].nodes[0].all[0].relatedNodes[0].html).toBe('bob');
+      expect(results.violations[0].nodes[0].all[0].relatedNodes).toHaveLength(
+        1
+      );
+      expect(results.violations[0].nodes[0].all[0].relatedNodes[0].target).toBe(
+        'joe'
+      );
+      expect(results.violations[0].nodes[0].all[0].relatedNodes[0].html).toBe(
+        'bob'
+      );
     });
   });
   it('should add environment data', function () {
