@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses unknown axe.testUtils.injectIntoFixture helper
 describe('dom.getTabbableElements', function () {
   var queryFixture = axe.testUtils.queryFixture;
   var injectIntoFixture = axe.testUtils.injectIntoFixture;

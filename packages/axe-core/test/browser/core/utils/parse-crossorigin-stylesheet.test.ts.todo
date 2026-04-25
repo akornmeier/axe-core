@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert); uses unknown axe.testUtils.assertStylesheet helper
 describe('axe.utils.parseCrossOriginStylesheet', function () {
   var dynamicDoc;
   var convertDataToStylesheet;

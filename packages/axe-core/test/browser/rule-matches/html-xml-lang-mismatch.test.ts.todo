@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
 describe('xml-lang-mismatch-matches', function () {
   // nested this on a per rule basis, for future-proofing writing tests for multiple rules using the same matches
   describe('for rule: html-xml-lang-mismatch', function () {

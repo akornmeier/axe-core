@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — name collision: redeclares 'shadowSupport' which is imported from @helpers/check-helpers
 /* global xit */
 describe('dom.hasContentVirtual', function () {
   var hasContentVirtual = axe.commons.dom.hasContentVirtual;

@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
 describe('svg-namespace-matches', function () {
   let rule;
   let fixture;

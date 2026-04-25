@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('axe.utils.getCheckMessage', function () {
   var getCheckMessage = axe.utils.getCheckMessage;
 

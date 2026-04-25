@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses sinon (replace with vi.fn / vi.spyOn)
 describe('axe.utils.respondable', function () {
   var fixture = document.querySelector('#fixture');
   var respondable = axe.utils.respondable;

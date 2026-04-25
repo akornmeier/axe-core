@@ -1,2 +1,3 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved bare `axe` reference after rewrite
 // HACK: make "helpers" a global, as the tests rely on it.
 helpers = axe._thisWillBeDeletedDoNotUse.helpers;

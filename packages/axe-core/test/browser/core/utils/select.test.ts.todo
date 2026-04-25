@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses chai-style 'assert.*' (codemod did not convert)
 describe('axe.utils.select', () => {
   const $id = id => document.getElementById(id);
   const { Context } = axe._thisWillBeDeletedDoNotUse.base;

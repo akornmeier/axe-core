@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — name collision: redeclares 'shadowSupport' which is imported from @helpers/check-helpers
 describe('aria.isAccessibleRef', function () {
   var fixture = document.getElementById('fixture');
   var isAccessibleRef = axe.commons.aria.isAccessibleRef;

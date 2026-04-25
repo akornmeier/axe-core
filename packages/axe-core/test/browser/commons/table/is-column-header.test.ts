@@ -1,0 +1,45 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+import { axe, fixtureSetup } from '@helpers/check-helpers';
+
+describe('table.isColumnHeader', function () {
+  var table = axe.commons.table;
+
+  beforeEach(function () {
+    fixtureSetup(
+      '<table>' +
+        '<tr>' +
+        '<th id="ch1">column header 1</th>' +
+        '<th scope="col" id="ch2">column header 2</th>' +
+        '</tr>' +
+        '<tr>' +
+        '<th id="rh1">row header 1</th>' +
+        '<td id="cell1">cell 1</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<th scope="row" id="rh2">row header 2</th>' +
+        '<td id="cell2">cell 2</td>' +
+        '</tr>' +
+        '</table>'
+    );
+  });
+
+  it('returns false if not a column header', function () {
+    var cell = document.querySelector('#cell1');
+    expect(table.isColumnHeader(cell)).toBe(false);
+  });
+
+  it('returns true if scope="auto"', function () {
+    var cell = document.querySelector('#ch1');
+    expect(table.isColumnHeader(cell)).toBe(true);
+  });
+
+  it('returns true if scope="col"', function () {
+    var cell = document.querySelector('#ch2');
+    expect(table.isColumnHeader(cell)).toBe(true);
+  });
+
+  it('returns false if scope="row"', function () {
+    var cell = document.querySelector('#rh2');
+    expect(table.isColumnHeader(cell)).toBe(false);
+  });
+});

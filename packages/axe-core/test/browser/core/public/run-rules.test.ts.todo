@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses axe._audit (internal state); uses axe._memoizedFns (deprecated registry — see Sprint 4 Task #1); uses axe.run() (full audit — out of scope); uses chai-style 'assert.*' (codemod did not convert); uses unknown axe.testUtils.captureError helper (destructure)
 describe('runRules', () => {
   let ver = axe.version.substring(0, axe.version.lastIndexOf('.'));
   const { captureError } = axe.testUtils;

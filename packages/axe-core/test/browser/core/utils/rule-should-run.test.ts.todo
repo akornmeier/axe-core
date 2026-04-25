@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('axe.utils.ruleShouldRun', function () {
   it('should return false if rule.pageOnly and !context.page', function () {
     expect(

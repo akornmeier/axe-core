@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert); uses unknown axe.testUtils.captureError helper
 describe('axe._load', function () {
   var fixture = document.querySelector('#fixture');
   var captureError = axe.testUtils.captureError;

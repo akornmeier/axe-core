@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved bare `axe` reference after rewrite
 describe('helpers.failureSummary', function () {
   beforeEach(function () {
     axe._load({

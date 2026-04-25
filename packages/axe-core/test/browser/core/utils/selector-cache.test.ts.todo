@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod-output failed vitest — see Sprint 4b for residual blockers (likely Path-B Task #4 helper signature mismatch or test-side type/runtime delta).
 describe('utils.selector-cache', () => {
   const fixture = document.querySelector('#fixture');
   const cacheNodeSelectors =

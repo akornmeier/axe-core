@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod-output failed vitest — see Sprint 4b for residual blockers (likely Path-B Task #4 helper signature mismatch or test-side type/runtime delta).
 describe('object-is-loaded-matches', () => {
   let rule, fixture;
   const data = `data:text/html,Object%20content`;

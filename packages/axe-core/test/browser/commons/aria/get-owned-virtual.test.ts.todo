@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
 describe('aria.getOwnedVirtual', function () {
   var aria = axe.commons.aria;
   var fixtureSetup = axe.testUtils.fixtureSetup;

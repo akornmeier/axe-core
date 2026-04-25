@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
 /*global cleanup */
 describe('cleanup', function () {
   function createFrames(callback) {

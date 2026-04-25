@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
 describe('scrollable-region-focusable-matches', function () {
   const fixture = document.getElementById('fixture');
   const queryFixture = axe.testUtils.queryFixture;

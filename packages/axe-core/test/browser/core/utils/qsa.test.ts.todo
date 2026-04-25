@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
 function setShadowId(vNode, shadowId) {
   vNode.shadowId = shadowId;
   for (var i = 0; i < vNode.children.length; i++) {

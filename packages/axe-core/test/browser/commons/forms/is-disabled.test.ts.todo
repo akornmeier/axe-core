@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state)
 describe('forms.isDisabled', function () {
   var isDisabled = axe.commons.forms.isDisabled;
   var fixtureSetup = axe.testUtils.fixtureSetup;

@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses chai-style 'assert.*' (codemod did not convert)
 describe('Check', () => {
   const Check = axe._thisWillBeDeletedDoNotUse.base.Check;
   const CheckResult = axe._thisWillBeDeletedDoNotUse.base.CheckResult;

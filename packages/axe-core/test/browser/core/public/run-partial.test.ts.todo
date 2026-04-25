@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses axe._tree (internal state); uses axe._audit (internal state); uses chai-style 'assert.*' (codemod did not convert)
 describe('axe.runPartial', function () {
   var fixture = document.getElementById('fixture');
   var DqElement = axe.utils.DqElement;

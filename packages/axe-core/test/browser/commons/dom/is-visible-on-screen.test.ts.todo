@@ -1,3 +1,4 @@
+// FIXME(phase-3-sprint-4b): codemod blocker — uses unknown axe.testUtils.isIE11 helper
 describe('dom.isVisibleOnScreen', function () {
   var fixture = document.querySelector('#fixture');
   var queryFixture = axe.testUtils.queryFixture;
