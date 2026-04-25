@@ -326,6 +326,7 @@ Delete `karma.conf.js`. Remove all 12 dead devDependencies from `packages/axe-co
 - Convert Mocha-driven `*.spec.js` files to Vitest. Keep external `wcag-act-rules` and `aria-practices` GitHub deps as-is.
 - Convert `test/test-locales.js`, `test/test-virtual-rules.js`, `test/test-rule-help-version.js` to Vitest under `test/unit/`.
 - Convert `test/node/node.js` and `test/node/jsdom.js` to Vitest, gated behind a `legacy-jsdom` tag with a `console.warn` (per PRD-00 §4.4 — JSDOM deprecated, removal in v5).
+- **Sprint 4b carryover (2026-04-25):** delete the `test_node` matrix job from `.github/workflows/test.yml` once the migration above lands. Sprint 4b already trimmed the matrix from `[6, 18, 20, 22, 24]` to `[20, 22, 24]` to align with `engines: ">=20.0.0"` (commits trimmed Node 6 + 18 — EOL since 2019 and 2025). Once `test:node` runs under the Vitest `unit` project, the standalone matrix becomes redundant — the unit project on whatever Node version `.nvmrc` pins is enough; per-LTS coverage adds no signal because axe-core has no Node-version-specific code paths (the lib is browser-targeted; the Node path is JSDOM glue). Remove the entire `test_node:` job at this step.
 
 ### 13. Polyfill + jQuery purge
 

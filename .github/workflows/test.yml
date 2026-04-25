@@ -275,14 +275,16 @@ jobs:
         working-directory: packages/axe-core
 
   test_node:
-    # The package can't be built on Node 6 anymore, but should still run there.
-    # So we need to pull in a previous build artifact.
+    # Smoke-tests `axe.run()` against JSDOM on each supported Node major.
+    # Matrix is bounded to versions covered by package.json `engines: ">=20.0.0"`
+    # — Node 6 and 18 are EOL (2019, 2025) and were removed when CI was
+    # aligned with the engines field. Sprint 5 task #12 (per
+    # specs/phase-03-test-infrastructure-modernization-plan.md) will fold
+    # this matrix into the Vitest `unit` project entirely.
     needs: build
     strategy:
       matrix:
         node:
-          - 6
-          - 18
           - 20
           - 22
           - 24
