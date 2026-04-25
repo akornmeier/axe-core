@@ -25,11 +25,9 @@ describe('axe.utils.isValidLang', function () {
       expect(isValidLang('a')).toBe(false);
     });
 
-    // FIXME(phase-01-followup): isValidLang('abcd') returns `true` after the
-    // TS strict conversion (see commit 5b57d18c). The trie traversal returns
-    // early at depth 3 with `next === 1` and never validates the 4th char.
-    // Legacy Karma run asserted false; documented as Phase 1 carryover.
-    it.todo('should return false for invalid 4-character lang code');
+    it('should return false for invalid 4-character lang code', function () {
+      expect(isValidLang('abcd')).toBe(false);
+    });
 
     it('should return false for empty string', function () {
       expect(isValidLang('')).toBe(false);

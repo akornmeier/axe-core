@@ -75,7 +75,11 @@ function isValidLang(lang: string): boolean {
       return false;
     }
     if (next === 1) {
-      return true;
+      // Leaf marker: the trie has no longer prefix at this position. The
+      // input is valid only if we have consumed every character. A 4-char
+      // input that lands on a 3-char leaf (e.g. `'abcd'` against the leaf
+      // for `'abc'`) must return false.
+      return i === lang.length - 1;
     }
     array = next;
   }

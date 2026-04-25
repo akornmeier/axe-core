@@ -1,8 +1,8 @@
 import cache from '../base/cache';
 import { resetGlobals } from './run/globals-setup';
+import { clearAllMemoized } from '../utils/memoize';
 
 declare const axe: {
-  _memoizedFns: Array<{ clear: () => void }>;
   _tree: unknown[] | undefined;
   _selectorData: unknown;
   _selectCache: unknown;
@@ -14,7 +14,7 @@ declare const axe: {
 function teardown(): void {
   // Reset MUST to happen before the cache is cleared
   resetGlobals();
-  axe._memoizedFns.forEach(fn => fn.clear());
+  clearAllMemoized();
   cache.clear();
   axe._tree = undefined;
   axe._selectorData = undefined;
