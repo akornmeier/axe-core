@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { axe, fixtureSetup } from '@helpers/check-helpers';
 
 describe('table.isRowHeader', function () {
-  var table = axe.commons.table;
+  const table = axe.commons.table;
 
   beforeEach(function () {
     fixtureSetup(
@@ -24,22 +24,22 @@ describe('table.isRowHeader', function () {
   });
 
   it('returns false if not a row header', function () {
-    var cell = document.querySelector('#cell1');
+    const cell = document.querySelector('#cell1');
     expect(table.isRowHeader(cell)).toBe(false);
   });
 
   it('returns true if scope="auto"', function () {
-    var cell = document.querySelector('#rh1');
+    const cell = document.querySelector('#rh1');
     expect(table.isRowHeader(cell)).toBe(true);
   });
 
   it('returns false if scope="col"', function () {
-    var cell = document.querySelector('#ch1');
+    const cell = document.querySelector('#ch1');
     expect(table.isRowHeader(cell)).toBe(false);
   });
 
   it('returns true if scope="row"', function () {
-    var cell = document.querySelector('#rh2');
+    const cell = document.querySelector('#rh2');
     expect(table.isRowHeader(cell)).toBe(true);
   });
 });

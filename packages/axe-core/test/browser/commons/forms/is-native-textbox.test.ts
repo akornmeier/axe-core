@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { axe, queryFixture } from '@helpers/check-helpers';
 
 describe('forms.isNativeTextbox', function () {
-  var isNativeTextbox = axe.commons.forms.isNativeTextbox;
+  const isNativeTextbox = axe.commons.forms.isNativeTextbox;
 
   it('returns true for a text inputs', function () {
-    var textInputs = [
+    const textInputs = [
       'date',
       'datetime',
       'datetime-local',
@@ -21,7 +21,7 @@ describe('forms.isNativeTextbox', function () {
       'week'
     ];
     textInputs.forEach(function (type) {
-      var node = queryFixture('<input id="target" type="' + type + '"/>');
+      const node = queryFixture('<input id="target" type="' + type + '"/>');
       expect(
         isNativeTextbox(node),
         '<input type="' + type + '"> is a native text input'
@@ -30,12 +30,12 @@ describe('forms.isNativeTextbox', function () {
   });
 
   it('returns true for a textarea element', function () {
-    var node = queryFixture('<textarea id="target"/>');
+    const node = queryFixture('<textarea id="target"/>');
     expect(isNativeTextbox(node)).toBe(true);
   });
 
   it('returns false for non-text inputs', function () {
-    var nonTextInputs = [
+    const nonTextInputs = [
       'button',
       'checkbox',
       'file',
@@ -48,7 +48,7 @@ describe('forms.isNativeTextbox', function () {
       'color'
     ];
     nonTextInputs.forEach(function (type) {
-      var node = queryFixture('<input id="target" type="' + type + '"/>');
+      const node = queryFixture('<input id="target" type="' + type + '"/>');
 
       expect(
         isNativeTextbox(node),
@@ -58,12 +58,12 @@ describe('forms.isNativeTextbox', function () {
   });
 
   it('return false for aria textbox elements', function () {
-    var node = queryFixture('<div id="target" role="textbox"></div>');
+    const node = queryFixture('<div id="target" role="textbox"></div>');
     expect(isNativeTextbox(node)).toBe(false);
   });
 
   it('should ignore type case', function () {
-    var node = queryFixture('<input id="target" type="TEXT"/>');
+    const node = queryFixture('<input id="target" type="TEXT"/>');
     expect(isNativeTextbox(node)).toBe(true);
   });
 });

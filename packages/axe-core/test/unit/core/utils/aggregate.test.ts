@@ -10,9 +10,9 @@ import {
 import aggregate from '../../../../lib/core/utils/aggregate';
 
 describe('aggregate', function () {
-  var map = ['youngling', 'padawan', 'knight', 'master', 'grand master'];
+  const map = ['youngling', 'padawan', 'knight', 'master', 'grand master'];
 
-  var values = ['knight', 'master', 'padawan'];
+  const values = ['knight', 'master', 'padawan'];
 
   it('takes a map, values array and initial value', function () {
     assert.isFunction(aggregate);
@@ -24,18 +24,18 @@ describe('aggregate', function () {
   });
 
   it('does not change the values array', function () {
-    var copy = [].concat(values);
+    const copy = [].concat(values);
     aggregate(map, values, 'youngling');
     expect(values).toEqual(copy);
   });
 
   it('picks the value with the highest index in the map, from the list of values', function () {
-    var result = aggregate(map, ['knight', 'master', 'youngling']);
+    const result = aggregate(map, ['knight', 'master', 'youngling']);
     expect(result).toBe('master');
   });
 
   it('considers the initial value in addition to the other values', function () {
-    var result = aggregate(
+    const result = aggregate(
       map,
       ['knight', 'master', 'youngling'],
       'grand master'
@@ -44,7 +44,7 @@ describe('aggregate', function () {
   });
 
   it('ignores values not on the map', function () {
-    var result = aggregate(map, ['bounty hunter', 'sith lord'], 'youngling');
+    const result = aggregate(map, ['bounty hunter', 'sith lord'], 'youngling');
     expect(result).toBe('youngling');
   });
 

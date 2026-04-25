@@ -11,7 +11,7 @@ import {
 } from 'vitest';
 // FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('reporters - v1', function () {
-  var runResults,
+  let runResults,
     _results = [
       {
         id: 'gimmeLabel',
@@ -154,10 +154,10 @@ describe('reporters - v1', function () {
         failureSummaries: {
           none: {
             failureMessage: function anonymous(it) {
-              var out = 'Fix any of the following: \n';
-              var arr1 = it;
+              let out = 'Fix any of the following: \n';
+              const arr1 = it;
               if (arr1) {
-                var value,
+                let value,
                   i1 = -1,
                   l1 = arr1.length - 1;
                 while (i1 < l1) {
@@ -175,10 +175,10 @@ describe('reporters - v1', function () {
           },
           any: {
             failureMessage: function anonymous(it) {
-              var out = 'Fix all of the following: \n';
-              var arr1 = it;
+              let out = 'Fix all of the following: \n';
+              const arr1 = it;
               if (arr1) {
-                var value,
+                let value,
                   i1 = -1,
                   l1 = arr1.length - 1;
                 while (i1 < l1) {
@@ -302,7 +302,7 @@ describe('reporters - v1', function () {
     });
   });
   it('uses the environmentData option instead of environment data if specified', function () {
-    var environmentData = {
+    const environmentData = {
       myReporter: 'hello world'
     };
     axe.getReporter('v1')(

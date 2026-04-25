@@ -13,9 +13,9 @@ describe('aria-valid-attr-value', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
   const shadowSupported = shadowSupport.v1;
-  var validAttrValueCheck = getCheckEvaluate('aria-valid-attr-value');
+  const validAttrValueCheck = getCheckEvaluate('aria-valid-attr-value');
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -23,7 +23,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should not check the validity of attribute names', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" aria-cats="true" aria-selected="true"></div>'
     );
 
@@ -34,7 +34,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should return true if all values are valid', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" aria-selected="true" aria-checked="true" aria-relevant="additions removals"></div>'
     );
 
@@ -45,7 +45,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should return true if idref(s) values are valid', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" aria-owns="test_tgt1 test_tgt2" aria-activedescendant="test_tgt1"></div>' +
         '<div id="test_tgt1"></div>' +
         '<div id="test_tgt2"></div>'
@@ -58,7 +58,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should return false if any values are invalid', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" aria-live="polite" aria-selected="0"></div>'
     );
 
@@ -69,12 +69,12 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should allow empty strings rather than idref', () => {
-    var tree = fixtureSetup(
+    const tree = fixtureSetup(
       '<button aria-controls="">Button</button>' +
         '<div aria-activedescendant=""></div>'
     );
-    var passing1 = tree.children[0];
-    var passing2 = tree.children[1];
+    const passing1 = tree.children[0];
+    const passing2 = tree.children[1];
     expect(validAttrValueCheck.call(checkContext, null, null, passing1)).toBe(
       true
     );
@@ -84,11 +84,11 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should allow empty strings rather than idrefs', () => {
-    var tree = fixtureSetup(
+    const tree = fixtureSetup(
       '<button aria-labelledby="">Button</button>' + '<div aria-owns=""></div>'
     );
-    var passing1 = tree.children[0];
-    var passing2 = tree.children[1];
+    const passing1 = tree.children[0];
+    const passing2 = tree.children[1];
     expect(validAttrValueCheck.call(checkContext, null, null, passing1)).toBe(
       true
     );
@@ -98,7 +98,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should pass on aria-controls and aria-expanded=false when the element is not in the DOM', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-controls="test" aria-expanded="false">Button</button>'
     );
     expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -107,7 +107,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should pass on aria-controls and aria-selected=false when the element is not in the DOM', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-controls="test" aria-selected="false">Button</button>'
     );
     expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -116,7 +116,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should fail on aria-controls and aria-expanded=true when the element is not in the DOM', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-controls="test" aria-expanded="true">Button</button>'
     );
     expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -125,7 +125,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should fail on aria-controls and aria-selected=true when the element is not in the DOM', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-controls="test" aria-selected="true">Button</button>'
     );
     expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -134,7 +134,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should fail on aria-controls when the element is not in the DOM', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-controls="test">Button</button>'
     );
     expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -143,7 +143,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should return undefined on aria-controls with aria-haspopup as we cannot determine if it is in the DOM later', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-controls="test" aria-haspopup="true">Button</button>'
     );
     expect(
@@ -156,7 +156,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should pass on aria-owns and aria-expanded=false when the element is not in the DOM', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-owns="test" aria-expanded="false">Button</button>'
     );
     expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -165,7 +165,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should fail on aria-owns and aria-expanded=true when the element is not in the DOM', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-owns="test" aria-expanded="true">Button</button>'
     );
     expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -174,7 +174,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should fail on aria-owns when the element is not in the DOM', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-owns="test">Button</button>'
     );
     expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -183,7 +183,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should fail on aria-level when the value is less than 1', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" role="heading" aria-level="0">Heading</div>'
     );
     expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -192,7 +192,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should return undefined on aria-describedby when the element is not in the DOM', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-describedby="test">Button</button>'
     );
     expect(
@@ -207,7 +207,7 @@ describe('aria-valid-attr-value', () => {
   (shadowSupported ? it : it.skip)(
     'should return undefined on aria-describedby when the element is in a different shadow tree',
     function () {
-      var params = shadowCheckSetup(
+      const params = shadowCheckSetup(
         '<div></div>',
         '<button id="target" aria-describedby="test">Button</button>'
       );
@@ -222,7 +222,7 @@ describe('aria-valid-attr-value', () => {
   );
 
   it('should return undefined on aria-labelledby when the element is not in the DOM', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-labelledby="test">Button</button>'
     );
     expect(
@@ -237,7 +237,7 @@ describe('aria-valid-attr-value', () => {
   (shadowSupported ? it : it.skip)(
     'should return undefined on aria-labelledby when the element is in a different shadow tree',
     function () {
-      var params = shadowCheckSetup(
+      const params = shadowCheckSetup(
         '<div></div>',
         '<button id="target" aria-labelledby="test">Button</button>'
       );
@@ -252,7 +252,7 @@ describe('aria-valid-attr-value', () => {
   );
 
   it('should return undefined on aria-current with invalid value', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" aria-current="test">Button</button>'
     );
     expect(
@@ -261,7 +261,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should return true on valid aria-labelledby value within img elm', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="foo">hello world</div>' +
         '<img id="target" role="button" aria-labelledby="foo"/>'
     );
@@ -271,7 +271,7 @@ describe('aria-valid-attr-value', () => {
   });
 
   it('should return undefined on invalid aria-labelledby value within img elm', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="foo">hello world</div>' +
         '<img id="target" role="button" aria-labelledby="hazaar"/>'
     );
@@ -286,7 +286,7 @@ describe('aria-valid-attr-value', () => {
     });
 
     it('returns undefined when a boolean attribute is null', () => {
-      var vNode = queryFixture(
+      const vNode = queryFixture(
         '<div id="target" role="checkbox" aria-checked></div>'
       );
       expect(
@@ -299,7 +299,7 @@ describe('aria-valid-attr-value', () => {
     });
 
     it('returns undefined when a boolean attribute is empty', () => {
-      var vNode = queryFixture(
+      const vNode = queryFixture(
         '<div id="target" role="checkbox" aria-checked=""></div>'
       );
       expect(
@@ -321,7 +321,7 @@ describe('aria-valid-attr-value', () => {
           }
         }
       });
-      var vNode = queryFixture(
+      const vNode = queryFixture(
         '<div id="target" aria-valuetext="" role="range"></div>'
       );
       expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -330,7 +330,7 @@ describe('aria-valid-attr-value', () => {
     });
 
     it('returns false if there are other issues', () => {
-      var vNode = queryFixture(
+      const vNode = queryFixture(
         '<div id="target" role="checkbox" aria-checked aria-invalid="none"></div>'
       );
       expect(validAttrValueCheck.call(checkContext, null, null, vNode)).toBe(
@@ -342,7 +342,7 @@ describe('aria-valid-attr-value', () => {
 
   describe('options', () => {
     it('should exclude supplied attributes', () => {
-      var vNode = queryFixture(
+      const vNode = queryFixture(
         '<div id="target" aria-live="nope" aria-describedby="no exist k thx"></div>'
       );
       expect(
@@ -358,7 +358,7 @@ describe('aria-valid-attr-value', () => {
 
   describe('SerialVirtualNode', () => {
     it('should return undefined for idref attribute', () => {
-      var vNode = new axe.SerialVirtualNode({
+      const vNode = new axe.SerialVirtualNode({
         nodeName: 'button',
         attributes: {
           'aria-owns': 'test'
@@ -375,7 +375,7 @@ describe('aria-valid-attr-value', () => {
     });
 
     it('should return true for empty idref attribute', () => {
-      var vNode = new axe.SerialVirtualNode({
+      const vNode = new axe.SerialVirtualNode({
         nodeName: 'button',
         attributes: {
           'aria-owns': ''

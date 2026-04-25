@@ -11,7 +11,7 @@ import extendMetaData from '../../../../lib/core/utils/extend-meta-data';
 
 describe('axe.utils.extend', function () {
   it('should merge properties', function () {
-    var src = {
+    const src = {
       cats: 'fail',
       dogs: 'fail'
     };
@@ -26,7 +26,7 @@ describe('axe.utils.extend', function () {
   });
 
   it('should execute any found functions', function () {
-    var src = {
+    const src = {
       cats: 'fail',
       dogs: 'fail'
     };
@@ -42,7 +42,7 @@ describe('axe.utils.extend', function () {
     expect(src.dogs).toBe('woof');
   });
   it('should catch exceptions in functions and default to `null`', function () {
-    var src = {
+    const src = {
       cats: 'fail',
       dogs: 'fail'
     };

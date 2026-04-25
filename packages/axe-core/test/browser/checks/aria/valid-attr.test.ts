@@ -6,14 +6,14 @@ import {
 } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('aria-valid-attr', () => {
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     checkContext.reset();
   });
 
   it('should return false if any invalid ARIA attributes are found', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" tabindex="1" aria-cats="true" aria-dogs="true"></div>'
     );
     expect(
@@ -23,7 +23,7 @@ describe('aria-valid-attr', () => {
   });
 
   it('should return true if no invalid ARIA attributes are found', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" tabindex="1" aria-selected="true"></div>'
     );
     expect(
@@ -43,7 +43,7 @@ describe('aria-valid-attr', () => {
       }
     });
 
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" tabindex="1" aria-mccheddarton="true"></div>'
     );
     expect(
@@ -54,7 +54,7 @@ describe('aria-valid-attr', () => {
 
   describe('options', () => {
     it('should exclude provided attribute names', () => {
-      var vNode = queryFixture(
+      const vNode = queryFixture(
         '<div id="target" aria-bats="cat" aria-puppies="2"></div>'
       );
       expect(

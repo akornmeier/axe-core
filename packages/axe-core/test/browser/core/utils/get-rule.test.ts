@@ -16,7 +16,7 @@ describe('axe.utils.getRule', function () {
   });
 
   it('should return the rule by the id', function () {
-    var rule = axe.utils.getRule('rule1');
+    const rule = axe.utils.getRule('rule1');
     expect(rule.id === 'rule1').toBe(true);
   });
 

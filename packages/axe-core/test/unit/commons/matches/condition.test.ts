@@ -7,10 +7,10 @@ const matches: any = {};
 // FIXME(phase-01-followup): test deferred to .todo — unresolved <cat>.foo lookup (likely Phase-1 export gap)
 
 describe.todo('matches.condition', function () {
-  var condition = matches.condition;
+  const condition = matches.condition;
 
   it('passes the first argument to the condition', function () {
-    var count = 0;
+    let count = 0;
     condition('foo', function (foo) {
       expect('foo').toBe(foo);
       count++;

@@ -11,7 +11,7 @@ import {
 } from 'vitest';
 // FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('axe.getRules', function () {
-  var ver = axe.version.substring(0, axe.version.lastIndexOf('.'));
+  const ver = axe.version.substring(0, axe.version.lastIndexOf('.'));
 
   beforeEach(function () {
     axe._load({
@@ -51,7 +51,7 @@ describe('axe.getRules', function () {
   });
 
   it('should return rules', function () {
-    var retValue = axe.getRules(['tag1']);
+    let retValue = axe.getRules(['tag1']);
     expect(Array.isArray(retValue)).toBe(true);
     expect(retValue).toHaveLength(2);
     expect(retValue[0].ruleId).toBe('awesomeRule1');
@@ -91,13 +91,13 @@ describe('axe.getRules', function () {
   });
 
   it('should not return nothing', function () {
-    var retValue = axe.getRules(['bob']);
+    const retValue = axe.getRules(['bob']);
     expect(Array.isArray(retValue)).toBe(true);
     expect(retValue).toHaveLength(0);
   });
 
   it('should return all rules if given no tags - undefined', function () {
-    var retValue = axe.getRules();
+    const retValue = axe.getRules();
     expect(retValue[0].ruleId).toBe('awesomeRule1');
     expect(retValue[0].description).toBe('some interesting information');
     expect(retValue[0].help).toBe('halp');
@@ -121,7 +121,7 @@ describe('axe.getRules', function () {
   });
 
   it('should return all rules if given empty array', function () {
-    var retValue = axe.getRules([]);
+    const retValue = axe.getRules([]);
     expect(retValue[0].ruleId).toBe('awesomeRule1');
     expect(retValue[0].description).toBe('some interesting information');
     expect(retValue[0].help).toBe('halp');

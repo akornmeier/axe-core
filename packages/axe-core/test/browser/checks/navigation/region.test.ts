@@ -18,9 +18,9 @@ describe('region', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkEvaluate = getCheckEvaluate('region');
+  const checkEvaluate = getCheckEvaluate('region');
 
-  var checkContext = new createMockCheckContext();
+  const checkContext = new createMockCheckContext();
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -29,7 +29,7 @@ describe('region', () => {
   });
 
   it('should return true when content is inside the region', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div role="main"><a id="target" href="a.html#mainheader">Click Here</a><div><h1 id="mainheader" tabindex="0">Introduction</h1></div></div>'
     );
 
@@ -46,7 +46,7 @@ describe('region', () => {
         }
       }
     });
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div role="feed" id="target">This is random content.</div>' +
         '<div role="main"><h1 id="mainheader">Introduction</h1></div>'
     );
@@ -135,7 +135,7 @@ describe('region', () => {
   });
 
   it('should return true when textless text content is outside the region', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<p id="target"></p><div role="main"><h1 id="mainheader" tabindex="0">Introduction</h1></div>'
     );
 
@@ -143,7 +143,7 @@ describe('region', () => {
   });
 
   it('should return true when wrapper content is outside the region', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div id="target"><div role="main"><h1 id="mainheader" tabindex="0">Introduction</h1></div></div>'
     );
 
@@ -151,7 +151,7 @@ describe('region', () => {
   });
 
   it('should return true when invisible content is outside the region', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<p id="target" style="display: none">Click Here</p><div role="main"><h1 id="mainheader" tabindex="0">Introduction</h1></div>'
     );
 
@@ -159,7 +159,7 @@ describe('region', () => {
   });
 
   it('should return true when there is a skiplink', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<a id="target" href="#mainheader">Click Here</a><div role="main"><h1 id="mainheader" tabindex="0">Introduction</h1></div>'
     );
 
@@ -167,7 +167,7 @@ describe('region', () => {
   });
 
   it('should return true when there is an Angular skiplink', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<a id="target" href="/#mainheader">Click Here</a><div role="main"><h1 id="mainheader" tabindex="0">Introduction</h1></div>'
     );
 
@@ -175,7 +175,7 @@ describe('region', () => {
   });
 
   it('should return false when there is a non-region element', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div id="target">This is random content.</div><div role="main"><h1 id="mainheader">Introduction</h1></div>'
     );
 
@@ -183,7 +183,7 @@ describe('region', () => {
   });
 
   it('should return false when there is a non-skiplink', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<a id="target" href="something.html#mainheader">Click Here</a><div role="main"><h1 id="mainheader">Introduction</h1></div>'
     );
 
@@ -191,7 +191,7 @@ describe('region', () => {
   });
 
   it('should return true if the non-region element is a script', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<script id="target">axe.run()</script><div role="main">Content</div>'
     );
 
@@ -199,7 +199,7 @@ describe('region', () => {
   });
 
   it('should considered aria labelled elements as content', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div id="target" aria-label="axe-core logo" role="img"></div><div role="main">Content</div>'
     );
 
@@ -207,7 +207,7 @@ describe('region', () => {
   });
 
   it('should allow native header elements', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<header id="target">branding</header><main>Content </main><aside>stuff</aside><footer>copyright</footer>'
     );
 
@@ -215,7 +215,7 @@ describe('region', () => {
   });
 
   it('should allow native main elements', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<header>branding</header><main id="target">Content </main><aside>stuff</aside><footer>copyright</footer>'
     );
 
@@ -223,7 +223,7 @@ describe('region', () => {
   });
 
   it('should allow native aside elements', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<header>branding</header><main>Content </main><aside id="target">stuff</aside><footer>copyright</footer>'
     );
 
@@ -231,7 +231,7 @@ describe('region', () => {
   });
 
   it('should allow native footer elements', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<header>branding</header><main>Content </main><aside>stuff</aside><footer id="target">copyright</footer>'
     );
 
@@ -239,7 +239,7 @@ describe('region', () => {
   });
 
   it('ignores native landmark elements with an overwriting role', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<main id="target" role="none">Content</main><div role="main">Content</div>'
     );
 
@@ -247,7 +247,7 @@ describe('region', () => {
   });
 
   it('ignores native landmark elements with an overwriting role with a nested child', () => {
-    var checkArgs = checkSetup(`
+    const checkArgs = checkSetup(`
       <main id="target" role="none"><p>Content</p></main>
 			<div role="main">Content</div>
     `);
@@ -256,7 +256,7 @@ describe('region', () => {
   });
 
   it('returns false for content outside of form tags with accessible names', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<p id="target">Text</p><form aria-label="form"></form>'
     );
 
@@ -264,7 +264,7 @@ describe('region', () => {
   });
 
   it('ignores unlabeled forms as they are not landmarks', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<form id="target"><fieldset>foo</fieldset></form><div role="main">Content</div>'
     );
 
@@ -272,21 +272,21 @@ describe('region', () => {
   });
 
   it('treats <forms> with aria label as landmarks', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<form id="target" aria-label="foo"><p>This is random content.</p></form><div role="main">Content</div>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
   });
 
   it('treats role=forms with aria label as landmarks', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div role="form" id="target" aria-label="foo"><p>This is random content.</p></div><div role="main">Content</div>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
   });
 
   it('treats forms without aria label as not a landmarks', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<form id="target"><p>This is random content.</p></form><div role="main">Content</div>'
     );
 
@@ -294,7 +294,7 @@ describe('region', () => {
   });
 
   it('treats forms with an empty aria label as not a landmarks', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<form id="target" aria-label=" "><p>This is random content.</p></form><div role="main">Content</div>'
     );
 
@@ -302,7 +302,7 @@ describe('region', () => {
   });
 
   it('treats forms with empty titles not as landmarks', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<form id="target" title=""><p>This is random content.</p></form><div role="main">Content</div>'
     );
 
@@ -310,7 +310,7 @@ describe('region', () => {
   });
 
   it('treats ARIA forms with no label or title as landmarks', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div role="form" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
 
@@ -318,63 +318,63 @@ describe('region', () => {
   });
 
   it('allows content in aria-live=assertive', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div aria-live="assertive" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
   });
 
   it('allows content in aria-live=polite', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div aria-live="polite" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
   });
 
   it('does not allow content in aria-live=off', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div aria-live="off" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(false);
   });
 
   it('allows content in aria-live=assertive with explicit role set', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div aria-live="assertive" role="alert" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
   });
 
   it('allows content in aria-live=polite with explicit role set', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div aria-live="polite" role="status" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
   });
 
   it('allows content in implicit aria-live role alert', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div role="alert" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
   });
 
   it('allows content in implicit aria-live role log', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div role="log" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
   });
 
   it('allows content in implicit aria-live role status', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div role="status" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
   });
 
   it('treats role=dialog elements as regions', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div role="dialog" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
 
@@ -382,7 +382,7 @@ describe('region', () => {
   });
 
   it('treats role=alertdialog elements as regions', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div role="alertdialog" id="target"><p>This is random content.</p></div><div role="main">Content</div>'
     );
 
@@ -390,7 +390,7 @@ describe('region', () => {
   });
 
   it('treats svg elements as regions', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<svg id="target"></svg><div role="main">Content</div>'
     );
 
@@ -398,7 +398,7 @@ describe('region', () => {
   });
 
   it('returns the outermost element as the error', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div id="target"><p>This is random content.</p></div><div role="main"><h1 id="mainheader" tabindex="0">Introduction</h1></div>'
     );
 
@@ -406,7 +406,7 @@ describe('region', () => {
   });
 
   it('supports options.regionMatcher', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div aria-live="off" id="target"><p>This is random content.</p></div><div role="main">Content</div>',
       {
         regionMatcher: {
@@ -423,7 +423,7 @@ describe('region', () => {
   it('should return true when there is a button', () => {
     // Some pages have a skiplink menu, that opens through a button
     // ARIA practices is an example of this.
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<button id="target">Skip menu</button><main><h1>Introduction</h1></main>'
     );
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
@@ -432,11 +432,11 @@ describe('region', () => {
   (shadowSupport.v1 ? it : it.skip)(
     'should test Shadow tree content',
     function () {
-      var div = document.createElement('div');
-      var shadow = div.attachShadow({ mode: 'open' });
+      const div = document.createElement('div');
+      const shadow = div.attachShadow({ mode: 'open' });
       shadow.innerHTML = 'Some text';
       fixtureSetup(div);
-      var virutalNode = axe._tree[0];
+      const virutalNode = axe._tree[0];
 
       // fixture is the outermost element
       expect(
@@ -451,11 +451,11 @@ describe('region', () => {
   );
 
   (shadowSupport.v1 ? it : it.skip)('should test slotted content', function () {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     div.innerHTML = 'Some content';
-    var shadow = div.attachShadow({ mode: 'open' });
+    const shadow = div.attachShadow({ mode: 'open' });
     shadow.innerHTML = '<div role="main"><slot></slot></div>';
-    var checkArgs = checkSetup(div);
+    const checkArgs = checkSetup(div);
 
     expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
   });
@@ -463,14 +463,16 @@ describe('region', () => {
   (shadowSupport.v1 ? it : it.skip)(
     'should ignore skiplink targets inside shadow trees',
     function () {
-      var div = document.createElement('div');
+      const div = document.createElement('div');
       div.innerHTML =
         '<a id="target" href="#foo">skiplink</a><div>Content</div>';
 
-      var shadow = div.querySelector('div').attachShadow({ mode: 'open' });
+      const shadow = div.querySelector('div').attachShadow({ mode: 'open' });
       shadow.innerHTML = '<div role="main" id=#foo"><slot></slot></div>';
       fixtureSetup(div);
-      var virutalNode = axe.utils.getNodeFromTree(div.querySelector('#target'));
+      const virutalNode = axe.utils.getNodeFromTree(
+        div.querySelector('#target')
+      );
 
       expect(
         checkEvaluate.call(
@@ -486,12 +488,12 @@ describe('region', () => {
   (shadowSupport.v1 ? it : it.skip)(
     'should find the skiplink in shadow DOM',
     function () {
-      var div = document.createElement('div');
+      const div = document.createElement('div');
       div.innerHTML = '<span id="foo">Content!</span>';
-      var shadow = div.attachShadow({ mode: 'open' });
+      const shadow = div.attachShadow({ mode: 'open' });
       shadow.innerHTML =
         '<a href="#foo">skiplink</a><div role="main"><slot></slot></div>';
-      var checkArgs = checkSetup(div);
+      const checkArgs = checkSetup(div);
 
       expect(checkEvaluate.apply(checkContext, checkArgs)).toBe(true);
       expect(checkContext._relatedNodes).toHaveLength(0);

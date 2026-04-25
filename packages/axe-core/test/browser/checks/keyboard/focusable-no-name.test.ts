@@ -12,7 +12,7 @@ describe('focusable-no-name', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -21,28 +21,28 @@ describe('focusable-no-name', () => {
   });
 
   it('should pass if tabindex < 0', () => {
-    var params = checkSetup('<a href="#" tabindex="-1" id="target"></a>');
+    const params = checkSetup('<a href="#" tabindex="-1" id="target"></a>');
     expect(
       getCheckEvaluate('focusable-no-name').apply(checkContext, params as any)
     ).toBe(false);
   });
 
   it('should pass element is not natively focusable', () => {
-    var params = checkSetup('<span role="link" href="#" id="target"></span>');
+    const params = checkSetup('<span role="link" href="#" id="target"></span>');
     expect(
       getCheckEvaluate('focusable-no-name').apply(checkContext, params as any)
     ).toBe(false);
   });
 
   it('should fail if element is tabbable with no name - native', () => {
-    var params = checkSetup('<a href="#" id="target"></a>');
+    const params = checkSetup('<a href="#" id="target"></a>');
     expect(
       getCheckEvaluate('focusable-no-name').apply(checkContext, params as any)
     ).toBe(true);
   });
 
   it('should fail if element is tabbable with no name - ARIA', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<span tabindex="0" role="link" id="target" href="#"></spam>'
     );
     expect(
@@ -51,7 +51,7 @@ describe('focusable-no-name', () => {
   });
 
   it('should pass if the element is tabbable but has an accessible name', () => {
-    var params = checkSetup('<a href="#" title="Hello" id="target"></a>');
+    const params = checkSetup('<a href="#" title="Hello" id="target"></a>');
     expect(
       getCheckEvaluate('focusable-no-name').apply(checkContext, params as any)
     ).toBe(false);
@@ -60,7 +60,7 @@ describe('focusable-no-name', () => {
   (shadowSupport.v1 ? it : it.skip)(
     'should pass if the content is passed in with shadow DOM',
     function () {
-      var params = shadowCheckSetup(
+      const params = shadowCheckSetup(
         '<div>Content!</div>',
         '<a href="#" id="target"><slot></slot></a>'
       );
@@ -73,7 +73,7 @@ describe('focusable-no-name', () => {
 
   describe('Serial Virtual Node', () => {
     it('should pass if tabindex < 0', () => {
-      var serialNode = new axe.SerialVirtualNode({
+      const serialNode = new axe.SerialVirtualNode({
         nodeName: 'a',
         attributes: {
           tabindex: '-1',
@@ -87,7 +87,7 @@ describe('focusable-no-name', () => {
     });
 
     it('should pass element is not natively focusable', () => {
-      var serialNode = new axe.SerialVirtualNode({
+      const serialNode = new axe.SerialVirtualNode({
         nodeName: 'span',
         attributes: {
           role: 'link',
@@ -101,7 +101,7 @@ describe('focusable-no-name', () => {
     });
 
     it('should fail if element is tabbable with no name - native', () => {
-      var serialNode = new axe.SerialVirtualNode({
+      const serialNode = new axe.SerialVirtualNode({
         nodeName: 'a',
         attributes: {
           href: '#'
@@ -115,7 +115,7 @@ describe('focusable-no-name', () => {
     });
 
     it('should return undefined if element is tabbable with no name nor children - native', () => {
-      var serialNode = new axe.SerialVirtualNode({
+      const serialNode = new axe.SerialVirtualNode({
         nodeName: 'a',
         attributes: {
           href: '#'
@@ -128,7 +128,7 @@ describe('focusable-no-name', () => {
     });
 
     it('should pass if the element is tabbable but has an accessible name', () => {
-      var serialNode = new axe.SerialVirtualNode({
+      const serialNode = new axe.SerialVirtualNode({
         nodeName: 'a',
         attributes: {
           href: '#',

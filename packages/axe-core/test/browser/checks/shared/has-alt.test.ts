@@ -13,22 +13,22 @@ describe('has-alt', () => {
   });
 
   it('should return true if an alt is present', () => {
-    var checkArgs = checkSetup('<img id="target" alt="woohoo" />');
+    const checkArgs = checkSetup('<img id="target" alt="woohoo" />');
     expect(hasAltEvaluateESM.apply(null, checkArgs)).toBe(true);
   });
 
   it('should return true if an empty alt is present', () => {
-    var checkArgs = checkSetup('<img id="target" alt="" />');
+    const checkArgs = checkSetup('<img id="target" alt="" />');
     expect(hasAltEvaluateESM.apply(null, checkArgs)).toBe(true);
   });
 
   it('should return true if a null alt is present', () => {
-    var checkArgs = checkSetup('<img id="target" alt />');
+    const checkArgs = checkSetup('<img id="target" alt />');
     expect(hasAltEvaluateESM.apply(null, checkArgs)).toBe(true);
   });
 
   it('should return false if an alt is not present', () => {
-    var checkArgs = checkSetup('<img id="target" />');
+    const checkArgs = checkSetup('<img id="target" />');
     expect(hasAltEvaluateESM.apply(null, checkArgs)).toBe(false);
   });
 });

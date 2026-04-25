@@ -1,9 +1,9 @@
 import { createMockCheckContext, checks } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('css-orientation-lock tests', () => {
-  var checkContext = createMockCheckContext();
-  var check = checks['css-orientation-lock'];
-  var dynamicDoc = document.implementation.createHTMLDocument(
+  const checkContext = createMockCheckContext();
+  const check = checks['css-orientation-lock'];
+  const dynamicDoc = document.implementation.createHTMLDocument(
     'Dynamic document for CSS Orientation Lock tests'
   );
 
@@ -12,7 +12,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   function getSheet(data) {
-    var style = dynamicDoc.createElement('style');
+    const style = dynamicDoc.createElement('style');
     style.type = 'text/css';
     style.appendChild(dynamicDoc.createTextNode(data));
     dynamicDoc.head.appendChild(style);
@@ -20,19 +20,19 @@ describe('css-orientation-lock tests', () => {
   }
 
   it('returns undefined when CSSOM is undefined', () => {
-    var actual = check.evaluate.call(checkContext, document);
+    const actual = check.evaluate.call(checkContext, document);
     expect(actual).toBeUndefined();
   });
 
   it('returns undefined when CSSOM is empty', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [] // pass context with cssom as empty
     });
     expect(actual).toBeUndefined();
   });
 
   it('returns true when CSSOM has no rules', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: 'a',
@@ -44,7 +44,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns true when CSSOM has no CSS media features', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: 'a',
@@ -56,7 +56,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns true when CSSOM has no CSS media features targeting orientation', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: undefined,
@@ -74,7 +74,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns true when CSSOM has empty Orientation CSS media features', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: undefined,
@@ -92,7 +92,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns true when CSSOM has Orientation CSS media features that does not target transform property', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: 'a',
@@ -106,7 +106,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns true when CSSOM has Orientation CSS media features with transform property and transformation function of translateX, which does not affect rotation', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: undefined,
@@ -120,7 +120,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns true when CSSOM has Orientation CSS media features with transform property and tranformation function of rotate, which affects rotation but does not lock orientation (rotate(180deg))', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: 'a',
@@ -135,7 +135,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns true when CSSOM has Orientation CSS media features with transform property and tranformation function of rotate, which affects rotation but does not lock orientation (rotate(-178deg))', () => {
-    var actual = check.evaluate.call(
+    const actual = check.evaluate.call(
       checkContext,
       document,
       { degreeThreshold: 3 },
@@ -156,7 +156,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns true when CSSOM has Orientation CSS media features with transform property and tranformation function of rotateZ, which affects rotation but does not lock orientation (rotateZ(1turn))', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: 'a',
@@ -171,7 +171,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns true when CSSOM has Orientation CSS media features with transform property and tranformation function of rotate3d, which affects rotation but does not lock orientation (rotate3d(0,0,0,400grad))', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: 'a',
@@ -187,7 +187,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns true when CSSOM has Orientation CSS media features with transform property and tranformation function of matrix3d, which affects rotation but does not lock orientation (matrix3d(-1,0,0.00,0,0.00,-1,0.00,0,0,0,1,0,0,0,0,1))', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: 'a',
@@ -203,7 +203,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns false when CSSOM has Orientation CSS media features with transform property and transformation function of rotate, which affects rotation and locks orientation (rotate(270deg))', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: undefined,
@@ -218,7 +218,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns false when CSSOM has Orientation CSS media features with transform property and transformation function of rotate3d, which affects rotation and locks orientation (rotate3d(0,0,1,90deg))', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: undefined,
@@ -234,7 +234,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns false when CSSOM has Orientation CSS media features with transform property and transformation function of rotate3d, which affects rotation and locks orientation (rotate3d(0,0,1,93deg))', () => {
-    var actual = check.evaluate.call(
+    const actual = check.evaluate.call(
       checkContext,
       document,
       { degreeThreshold: 3 },
@@ -256,7 +256,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns false when CSSOM has Orientation CSS media features with transform property and transformation function of rotate3d, which affects rotation and locks orientation (rotate3d(0,0,1,1.5708rad))', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: undefined,
@@ -271,7 +271,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns false when CSSOM has Orientation CSS media features with transform property and transformation function of matrix, which affects rotation and locks orientation (matrix(0.00,1.00,-1.00,0.00,0,0))', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: undefined,
@@ -287,7 +287,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns false when CSSOM has Orientation CSS media features with transform property and transformation function of matrix3d, which affects rotation and locks orientation (matrix3d(0,-1,0.00,0,1.00,0,0.00,0,0,0,1,0,0,0,0,1);)', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: undefined,
@@ -303,7 +303,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns false when CSSOM has Orientation CSS media features with rotate property', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: 'a',
@@ -318,7 +318,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns false when CSSOM has Orientation CSS media features with rotate property matrix', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: 'a',
@@ -333,7 +333,7 @@ describe('css-orientation-lock tests', () => {
   });
 
   it('returns false when CSSOM has Orientation CSS media features with transform: rotate and rotate property', () => {
-    var actual = check.evaluate.call(checkContext, document, {}, undefined, {
+    const actual = check.evaluate.call(checkContext, document, {}, undefined, {
       cssom: [
         {
           shadowId: 'a',

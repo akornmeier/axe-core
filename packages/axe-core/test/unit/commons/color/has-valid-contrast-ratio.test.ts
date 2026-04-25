@@ -4,9 +4,9 @@ import hasValidContrastRatio from '../../../../lib/commons/color/has-valid-contr
 
 describe('Color', function () {
   it('should give sensible results for WCAG compliance', function () {
-    var black = new Color(0, 0, 0, 1);
-    var white = new Color(255, 255, 255, 1);
-    var gray = new Color(128, 128, 128, 1);
+    const black = new Color(0, 0, 0, 1);
+    const white = new Color(255, 255, 255, 1);
+    const gray = new Color(128, 128, 128, 1);
 
     expect(hasValidContrastRatio(black, white, 8, false).isValid).toBe(true);
     expect(
@@ -43,7 +43,7 @@ describe('Color', function () {
   });
 
   it('should count 1-1 ratios as visually hidden', function () {
-    var black = new Color(0, 0, 0, 1);
+    const black = new Color(0, 0, 0, 1);
 
     expect(hasValidContrastRatio(black, black, 16, true).isValid).toBe(false);
     expect(

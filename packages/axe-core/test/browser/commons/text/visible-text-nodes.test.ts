@@ -7,18 +7,18 @@ describe('text.visibleTextNodes', function () {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
 
-  var shadowSupported = shadowSupport.v1;
-  var visibleTextNodes = axe.commons.text.visibleTextNodes;
+  const shadowSupported = shadowSupport.v1;
+  const visibleTextNodes = axe.commons.text.visibleTextNodes;
 
   afterEach(function () {
     fixture.innerHTML = '';
   });
 
   it('should handle multiple text nodes to a single parent', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target">Hello<span>Hi</span>Goodbye</div>'
     );
-    var nodes = visibleTextNodes(vNode);
+    const nodes = visibleTextNodes(vNode);
     expect(nodes.length).toBe(3);
     expect(nodes[0].actualNode.nodeValue).toBe('Hello');
     expect(nodes[1].actualNode.nodeValue).toBe('Hi');
@@ -26,64 +26,64 @@ describe('text.visibleTextNodes', function () {
   });
 
   it('should handle recursive calls', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target">Hello<span><span>Hi</span></span></div>'
     );
-    var nodes = visibleTextNodes(vNode);
+    const nodes = visibleTextNodes(vNode);
     expect(nodes.length).toBe(2);
     expect(nodes[0].actualNode.nodeValue).toBe('Hello');
     expect(nodes[1].actualNode.nodeValue).toBe('Hi');
   });
 
   it('should not return elements with visibility: hidden', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target">Hello<span style="visibility: hidden;">Hi</span></div>'
     );
-    var nodes = visibleTextNodes(vNode);
+    const nodes = visibleTextNodes(vNode);
     expect(nodes.length).toBe(1);
     expect(nodes[0].actualNode.nodeValue).toBe('Hello');
   });
 
   it('should know how visibility works', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target">Hello<span style="visibility: hidden;">' +
         '<span style="visibility: visible;">Hi</span>' +
         '</span></div>'
     );
-    var nodes = visibleTextNodes(vNode);
+    const nodes = visibleTextNodes(vNode);
     expect(nodes.length).toBe(2);
     expect(nodes[0].actualNode.nodeValue).toBe('Hello');
     expect(nodes[1].actualNode.nodeValue).toBe('Hi');
   });
 
   it('should not return elements with display: none', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target">Hello<span style="display: none;">Hi</span></div>'
     );
-    var nodes = visibleTextNodes(vNode);
+    const nodes = visibleTextNodes(vNode);
     expect(nodes.length).toBe(1);
     expect(nodes[0].actualNode.nodeValue).toBe('Hello');
   });
 
   it('should ignore script and style tags', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target"><script> // hello </script><style> /*hello */</style>' +
         'Hello</div>'
     );
-    var nodes = visibleTextNodes(vNode);
+    const nodes = visibleTextNodes(vNode);
     expect(nodes.length).toBe(1);
     expect(nodes[0].actualNode.nodeValue).toBe('Hello');
   });
 
   it('should not take into account position of parents', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target">' +
         '<div style="position: absolute; top: -9999px;">' +
         '<div style="position: absolute; top: 10000px;">Hello</div>' +
         '</div>' +
         '</div>'
     );
-    var nodes = visibleTextNodes(vNode);
+    const nodes = visibleTextNodes(vNode);
     expect(nodes.length).toBe(1);
     expect(nodes[0].actualNode.nodeValue).toBe('Hello');
   });
@@ -92,20 +92,20 @@ describe('text.visibleTextNodes', function () {
     'should correctly handle slotted elements',
     function () {
       function createContentSlotted() {
-        var group = document.createElement('div');
+        const group = document.createElement('div');
         group.innerHTML = '<div id="target">Stuff<slot></slot></div>';
         return group;
       }
       function makeShadowTree(node) {
-        var root = node.attachShadow({ mode: 'open' });
-        var div = document.createElement('div');
+        const root = node.attachShadow({ mode: 'open' });
+        const div = document.createElement('div');
         root.appendChild(div);
         div.appendChild(createContentSlotted());
       }
       fixture.innerHTML = '<div><a>hello</a></div>';
       makeShadowTree(fixture.firstChild);
-      var tree = axe.utils.getFlattenedTree(fixture.firstChild);
-      var nodes = visibleTextNodes(tree[0]);
+      const tree = axe.utils.getFlattenedTree(fixture.firstChild);
+      const nodes = visibleTextNodes(tree[0]);
       expect(nodes.length).toBe(2);
       expect(nodes[0].actualNode.nodeValue).toBe('Stuff');
       expect(nodes[1].actualNode.nodeValue).toBe('hello');

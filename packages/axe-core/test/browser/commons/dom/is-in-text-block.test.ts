@@ -17,7 +17,7 @@ describe('dom.isInTextBlock', function () {
         '  <a href="" id="link">link</a>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(true);
   });
 
@@ -27,13 +27,13 @@ describe('dom.isInTextBlock', function () {
         '  <a href="" id="link" style="display:block">link</a>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
   it('returns false if the element has the only text in the block', function () {
     fixtureSetup('<p><a href="" id="link">link</a></p>');
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -43,7 +43,7 @@ describe('dom.isInTextBlock', function () {
         '  <a href="" id="link">on a link with a very long text</a>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -54,7 +54,7 @@ describe('dom.isInTextBlock', function () {
         '  <a href="">other link</a>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -65,7 +65,7 @@ describe('dom.isInTextBlock', function () {
         '  <span style="display:none">some hidden text</span>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -76,7 +76,7 @@ describe('dom.isInTextBlock', function () {
         '  <a href="" id="link">link</a>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -87,7 +87,7 @@ describe('dom.isInTextBlock', function () {
         '  <a href="" id="link">link</a>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -98,7 +98,7 @@ describe('dom.isInTextBlock', function () {
         '  <a href="" id="link">link</a>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -108,7 +108,7 @@ describe('dom.isInTextBlock', function () {
         '  <a href="" id="link">link</a>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -119,7 +119,7 @@ describe('dom.isInTextBlock', function () {
         '  Some paragraph with text ' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -130,7 +130,7 @@ describe('dom.isInTextBlock', function () {
         '  Some paragraph with text ' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -145,7 +145,7 @@ describe('dom.isInTextBlock', function () {
         '  <select><option>My first choice</option></select>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -156,7 +156,7 @@ describe('dom.isInTextBlock', function () {
         '  Some paragraph with text ' +
         '</div>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
@@ -166,44 +166,44 @@ describe('dom.isInTextBlock', function () {
         '  <a href="" id="link">link</a>' +
         '</p>'
     );
-    var link = document.getElementById('link');
+    const link = document.getElementById('link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
   });
 
   (shadowSupport.v1 ? it : xit)('can reach outside a shadow tree', function () {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     div.innerHTML = 'Some paragraph with text <span></span> ';
-    var shadow = div.querySelector('span').attachShadow({ mode: 'open' });
+    const shadow = div.querySelector('span').attachShadow({ mode: 'open' });
     shadow.innerHTML = '<a href="" id="link">link</a>';
     fixtureSetup(div);
 
-    var link = shadow.querySelector('#link');
+    const link = shadow.querySelector('#link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(true);
   });
 
   (shadowSupport.v1 ? it : xit)('can reach into a shadow tree', function () {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     div.innerHTML = '<a href="" id="link">link</a>';
-    var shadow = div.attachShadow({ mode: 'open' });
+    const shadow = div.attachShadow({ mode: 'open' });
     shadow.innerHTML = '<p>Some paragraph with text <slot></slot> </p>';
     fixtureSetup(div);
 
-    var link = fixture.querySelector('#link');
+    const link = fixture.querySelector('#link');
     expect(axe.commons.dom.isInTextBlock(link)).toBe(true);
   });
 
   (shadowSupport.v1 ? it : xit)(
     'treats shadow DOM slots as siblings',
     function () {
-      var div = document.createElement('div');
+      const div = document.createElement('div');
       div.innerHTML = '<br>';
-      var shadow = div.attachShadow({ mode: 'open' });
+      const shadow = div.attachShadow({ mode: 'open' });
       shadow.innerHTML =
         '<p>Some paragraph with text ' +
         '<slot></slot> <a href="" id="link">link</a></p>';
       fixtureSetup(div);
 
-      var link = shadow.querySelector('#link');
+      const link = shadow.querySelector('#link');
       expect(axe.commons.dom.isInTextBlock(link)).toBe(false);
     }
   );
@@ -211,7 +211,7 @@ describe('dom.isInTextBlock', function () {
   describe('options.noLengthCompare', function () {
     it('returns true if there is any text outside the link', function () {
       fixtureSetup('<p>amy <a href="" id="link">link text is longer</a></p>');
-      var link = document.getElementById('link');
+      const link = document.getElementById('link');
       expect(
         axe.commons.dom.isInTextBlock(link, {
           noLengthCompare: true
@@ -228,7 +228,7 @@ describe('dom.isInTextBlock', function () {
           ' <a href="">link 4</a>' +
           '</p>'
       );
-      var link = document.getElementById('link');
+      const link = document.getElementById('link');
       expect(
         axe.commons.dom.isInTextBlock(link, {
           noLengthCompare: true

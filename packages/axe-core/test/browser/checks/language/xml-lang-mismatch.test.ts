@@ -6,7 +6,7 @@ import {
 } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('xml-lang-mismatch', () => {
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
   beforeEach(() => {
     // using a div element (instead of html), as the check is agnostic of element type
   });
@@ -20,23 +20,23 @@ describe('xml-lang-mismatch', () => {
   // rather than node type match - hence the check can be re-used.
 
   it('should return false if a only lang is supplied', () => {
-    var vNode = queryFixture('<div id="target" lang="en"></div>');
+    const vNode = queryFixture('<div id="target" lang="en"></div>');
     expect(
       getCheckEvaluate('xml-lang-mismatch').call(checkContext, null, {}, vNode)
     ).toBe(false);
   });
 
   it('should return false if a only xml:lang is supplied albeit with region', () => {
-    var vNode = queryFixture('<div id="target" xml:lang="fr-FR"></div>');
+    const vNode = queryFixture('<div id="target" xml:lang="fr-FR"></div>');
     expect(
       getCheckEvaluate('xml-lang-mismatch').call(checkContext, null, {}, vNode)
     ).toBe(false);
   });
 
   it('should return false if lang is undefined', () => {
-    var node = document.createElement('div');
+    const node = document.createElement('div');
     node.setAttribute('lang', undefined);
-    var tree = flatTreeSetup(node);
+    const tree = flatTreeSetup(node);
     expect(
       getCheckEvaluate('xml-lang-mismatch').call(
         checkContext,
@@ -48,7 +48,7 @@ describe('xml-lang-mismatch', () => {
   });
 
   it('should return true if lang and xml:lang is identical', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" xml:lang="en-GB" lang="en-GB"></div>'
     );
     expect(
@@ -57,7 +57,7 @@ describe('xml-lang-mismatch', () => {
   });
 
   it('should return true if lang and xml:lang have identical primary sub tag', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" xml:lang="en-US" lang="en-GB"></div>'
     );
     expect(
@@ -66,10 +66,10 @@ describe('xml-lang-mismatch', () => {
   });
 
   it('should return false if lang and xml:lang are not identical', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target" xml:lang="fr-FR" lang="en"></div>'
     );
-    var actual = getCheckEvaluate('xml-lang-mismatch').call(
+    const actual = getCheckEvaluate('xml-lang-mismatch').call(
       checkContext,
       null,
       {},

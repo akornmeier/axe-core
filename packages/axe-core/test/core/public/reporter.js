@@ -1,7 +1,7 @@
 describe('axe.reporter', function () {
   'use strict';
 
-  var orig = {};
+  const orig = {};
   before(function () {
     orig.reporters = window.reporters;
   });

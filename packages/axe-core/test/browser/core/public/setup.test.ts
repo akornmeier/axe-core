@@ -32,7 +32,7 @@ describe('axe.setup', function () {
   });
 
   it('should return the root node', function () {
-    var vNode = axe.setup(document.body);
+    const vNode = axe.setup(document.body);
     expect(vNode.actualNode).toBe(document.body);
   });
 

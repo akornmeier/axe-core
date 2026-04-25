@@ -8,15 +8,15 @@ import { describe, it, expect, afterEach } from 'vitest';
 
 const ariaHiddenBodyEvaluateESM = getCheckEvaluateESM(ariaHiddenBodyEvaluate);
 describe('aria-hidden', () => {
-  var checkContext = createMockCheckContext();
-  var body = document.body;
+  const checkContext = createMockCheckContext();
+  const body = document.body;
   afterEach(() => {
     checkContext.reset();
     body.removeAttribute('aria-hidden');
   });
 
   it('should not be present on document.body', () => {
-    var tree = flatTreeSetup(body);
+    const tree = flatTreeSetup(body);
     expect(
       ariaHiddenBodyEvaluateESM.call(checkContext, null, {}, tree[0])
     ).toBe(true);
@@ -24,7 +24,7 @@ describe('aria-hidden', () => {
 
   it('fails appropriately if aria-hidden=true on document.body', () => {
     body.setAttribute('aria-hidden', true);
-    var tree = flatTreeSetup(body);
+    const tree = flatTreeSetup(body);
     expect(
       ariaHiddenBodyEvaluateESM.call(checkContext, null, {}, tree[0])
     ).toBe(false);
@@ -32,7 +32,7 @@ describe('aria-hidden', () => {
 
   it('passes if aria-hidden=false on document.body', () => {
     body.setAttribute('aria-hidden', 'false');
-    var tree = flatTreeSetup(body);
+    const tree = flatTreeSetup(body);
     expect(
       ariaHiddenBodyEvaluateESM.call(checkContext, null, {}, tree[0])
     ).toBe(true);

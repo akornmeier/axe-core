@@ -1,9 +1,9 @@
 describe('axe.utils.getScrollState', function () {
   'use strict';
-  var mockWin;
-  var getScrollState = axe.utils.getScrollState;
+  let mockWin;
+  const getScrollState = axe.utils.getScrollState;
 
-  var fixture = document.getElementById('fixture');
+  const fixture = document.getElementById('fixture');
 
   beforeEach(function () {
     mockWin = {
@@ -40,7 +40,7 @@ describe('axe.utils.getScrollState', function () {
   it('returns the html as the first item, if pageXOffset is not supported', function () {
     mockWin.pageYOffset = undefined;
     mockWin.pageXOffset = undefined;
-    var html = mockWin.document.documentElement;
+    const html = mockWin.document.documentElement;
 
     assert.deepEqual(getScrollState(mockWin)[0], {
       elm: html,
@@ -58,12 +58,12 @@ describe('axe.utils.getScrollState', function () {
       '</div>' +
       '</div>';
 
-    var tgt1 = document.getElementById('tgt1');
-    var tgt2 = document.getElementById('tgt2');
+    const tgt1 = document.getElementById('tgt1');
+    const tgt2 = document.getElementById('tgt2');
     tgt1.scrollTop = 10;
     tgt2.scrollTop = 20;
 
-    var scrollState = getScrollState();
+    const scrollState = getScrollState();
 
     assert.deepEqual(
       scrollState.find(function (scroll) {
@@ -85,9 +85,9 @@ describe('axe.utils.getScrollState', function () {
       '<div style="height: 100px" id="tgt2"> Han Solo </div>' +
       '</div>';
 
-    var tgt1 = document.getElementById('tgt1');
-    var tgt2 = document.getElementById('tgt2');
-    var scrollState = getScrollState();
+    const tgt1 = document.getElementById('tgt1');
+    const tgt2 = document.getElementById('tgt2');
+    const scrollState = getScrollState();
 
     assert.isUndefined(
       scrollState.find(function (scroll) {
@@ -110,9 +110,9 @@ describe('axe.utils.getScrollState', function () {
       '</div>' +
       '</div>';
 
-    var tgt1 = document.getElementById('tgt1');
-    var tgt2 = document.getElementById('tgt2');
-    var scrollState = getScrollState();
+    const tgt1 = document.getElementById('tgt1');
+    const tgt2 = document.getElementById('tgt2');
+    const scrollState = getScrollState();
 
     assert.isUndefined(
       scrollState.find(function (scroll) {
@@ -140,9 +140,9 @@ describe('axe.utils.getScrollState', function () {
 
 describe('axe.utils.setScrollState', function () {
   'use strict';
-  var setScrollState = axe.utils.setScrollState;
+  const setScrollState = axe.utils.setScrollState;
 
-  var fixture = document.getElementById('fixture');
+  const fixture = document.getElementById('fixture');
   afterEach(function () {
     fixture.innerHTML = '';
   });
@@ -152,7 +152,7 @@ describe('axe.utils.setScrollState', function () {
   });
 
   it('sets scrollTop and scrollLeft for regular nodes', function () {
-    var elm1 = {},
+    const elm1 = {},
       elm2 = {};
     setScrollState([
       { elm: elm1, top: 10, left: 20 },
@@ -164,8 +164,8 @@ describe('axe.utils.setScrollState', function () {
   });
 
   it('calls scroll() for the window element', function () {
-    var called;
-    var winScroll = window.scroll;
+    let called;
+    const winScroll = window.scroll;
     window.scroll = function (left, top) {
       called = { top: top, left: left };
     };

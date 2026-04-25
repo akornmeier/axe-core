@@ -5,38 +5,38 @@ import {
 } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('aria-allowed-role', () => {
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     checkContext.reset();
   });
 
   it('returns true if given element is an ignoredTag in options', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<article id="target" role="presentation"></article>'
     );
-    var options = {
+    const options = {
       ignoredTags: ['article']
     };
-    var actual = getCheckEvaluate('aria-allowed-role').call(
+    const actual = getCheckEvaluate('aria-allowed-role').call(
       checkContext,
       null,
       options,
       vNode
     );
-    var expected = true;
+    const expected = true;
     expect(actual).toBe(expected);
     expect(checkContext._data, null).toBeNull();
   });
 
   it('returns false with implicit role of row for TR when allowImplicit is set to false via options', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<table role="grid"><tr id="target" role="row"></tr></table>'
     );
-    var options = {
+    const options = {
       allowImplicit: false
     };
-    var outcome = getCheckEvaluate('aria-allowed-role').call(
+    const outcome = getCheckEvaluate('aria-allowed-role').call(
       checkContext,
       null,
       options,
@@ -48,11 +48,11 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns undefined (needs review) when element is hidden and has unallowed role', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" type="button" aria-hidden="true"' +
         'role="presentation"></button>'
     );
-    var actual = getCheckEvaluate('aria-allowed-role').call(
+    const actual = getCheckEvaluate('aria-allowed-role').call(
       checkContext,
       null,
       null,
@@ -62,13 +62,13 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns undefined (needs review) when element is with in hidden parent and has unallowed role', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div style="display:none">' +
         '<button id="target" class="mm-tabstart" type="button"' +
         'role="presentation"></button>' +
         '</div>'
     );
-    var actual = getCheckEvaluate('aria-allowed-role').call(
+    const actual = getCheckEvaluate('aria-allowed-role').call(
       checkContext,
       null,
       null,
@@ -78,7 +78,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when BUTTON has type menu and role as menuitem', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" type="menu" role="menuitem"></button>'
     );
     expect(
@@ -92,7 +92,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when img has no alt and role="presentation"', () => {
-    var vNode = queryFixture('<img id="target" role="presentation"/>');
+    const vNode = queryFixture('<img id="target" role="presentation"/>');
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -105,7 +105,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when img has no alt and role="none"', () => {
-    var vNode = queryFixture('<img id="target" role="none"/>');
+    const vNode = queryFixture('<img id="target" role="none"/>');
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -118,7 +118,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when img has empty alt and role="presentation"', () => {
-    var vNode = queryFixture('<img id="target" alt="" role="presentation"/>');
+    const vNode = queryFixture('<img id="target" alt="" role="presentation"/>');
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -131,7 +131,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when img has empty alt and role="none"', () => {
-    var vNode = queryFixture('<img id="target" alt="" role="none"/>');
+    const vNode = queryFixture('<img id="target" alt="" role="none"/>');
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -144,7 +144,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns false when img has alt and role="presentation"', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<img id="target" alt="not empty" role="presentation"/>'
     );
     expect(
@@ -159,7 +159,9 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns false when img has alt and role="none"', () => {
-    var vNode = queryFixture('<img id="target" alt="not empty" role="none"/>');
+    const vNode = queryFixture(
+      '<img id="target" alt="not empty" role="none"/>'
+    );
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -172,7 +174,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when img has aria-label and a valid role, role="button"', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<img id="target" aria-label="foo" role="button"/>'
     );
     expect(
@@ -187,7 +189,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns false when img has aria-label and a invalid role, role="alert"', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<img id="target" aria-label="foo" role="alert"/>'
     );
     expect(
@@ -202,7 +204,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when img has aria-labelledby and a valid role, role="menuitem"', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="foo">hello world</div>' +
         '<img id="target" aria-labelledby="foo" role="menuitem"/>'
     );
@@ -218,7 +220,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns false when img has aria-labelledby and a invalid role, role="rowgroup"', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="foo">hello world</div>' +
         '<img id="target" aria-labelledby="foo" role="rowgroup"/>'
     );
@@ -234,7 +236,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when img has title and a valid role, role="link"', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="foo">hello world</div>' +
         '<img id="target" title="foo" role="link"/>'
     );
@@ -250,7 +252,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns false when img has title and a invalid role, role="radiogroup"', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="foo">hello world</div>' +
         '<img id="target" title="foo" role="radiogroup"/>'
     );
@@ -266,7 +268,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when input of type image and no role', () => {
-    var vNode = queryFixture('<input id="target" type="image"/>');
+    const vNode = queryFixture('<input id="target" type="image"/>');
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -279,7 +281,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when INPUT type is checkbox and has aria-pressed attribute', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input id="target" type="checkbox" aria-pressed="">'
     );
     expect(
@@ -293,7 +295,9 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when INPUT type is text with role combobox', () => {
-    var vNode = queryFixture('<input id="target" type="text" role="combobox">');
+    const vNode = queryFixture(
+      '<input id="target" type="text" role="combobox">'
+    );
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -305,7 +309,9 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when INPUT type is tel with role combobox', () => {
-    var vNode = queryFixture('<input id="target" type="tel" role="combobox">');
+    const vNode = queryFixture(
+      '<input id="target" type="tel" role="combobox">'
+    );
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -317,7 +323,9 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when INPUT type is url with role combobox', () => {
-    var vNode = queryFixture('<input id="target" type="url" role="combobox">');
+    const vNode = queryFixture(
+      '<input id="target" type="url" role="combobox">'
+    );
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -329,7 +337,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when INPUT type is search with role combobox', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input id="target" type="search" role="combobox">'
     );
     expect(
@@ -343,7 +351,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when INPUT type is email with role combobox', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input id="target" type="email" role="combobox">'
     );
     expect(
@@ -357,7 +365,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when INPUT type is text with role spinbutton', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input id="target" type="text" role="spinbutton">'
     );
     expect(
@@ -371,7 +379,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when INPUT type is number with role spinbutton', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input id="target" type="number" role="spinbutton">'
     );
     expect(
@@ -385,7 +393,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when INPUT type is tel with role spinbutton', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input id="target" type="tel" role="spinbutton">'
     );
     expect(
@@ -399,7 +407,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when INPUT type is text with role searchbox', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input id="target" type="text" role="searchbox">'
     );
     expect(
@@ -413,7 +421,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns false when a role is set on an element that does not allow any role', () => {
-    var vNode = queryFixture('<dd id="target" role="link">');
+    const vNode = queryFixture('<dd id="target" role="link">');
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -426,7 +434,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true when a role is set on an element that can have any role', () => {
-    var vNode = queryFixture('<div id="target" role="link"></dd>');
+    const vNode = queryFixture('<div id="target" role="link"></dd>');
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -438,7 +446,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true an <a> without a href to have any role', () => {
-    var vNode = queryFixture('<a id="target" role="presentation"></a>');
+    const vNode = queryFixture('<a id="target" role="presentation"></a>');
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -450,8 +458,8 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true <a> with a empty href to have any valid role', () => {
-    var vNode = queryFixture('<a id="target" role="link" href=""></a>');
-    var actual = getCheckEvaluate('aria-allowed-role').call(
+    const vNode = queryFixture('<a id="target" role="link" href=""></a>');
+    const actual = getCheckEvaluate('aria-allowed-role').call(
       checkContext,
       null,
       null,
@@ -461,7 +469,9 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true <img> with a non-empty alt', () => {
-    var vNode = queryFixture('<img id="target" role="button" alt="some text">');
+    const vNode = queryFixture(
+      '<img id="target" role="button" alt="some text">'
+    );
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -473,7 +483,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('should allow <select> without a multiple and size attribute to have a menu role', () => {
-    var vNode = queryFixture('<select id="target" role="menu">');
+    const vNode = queryFixture('<select id="target" role="menu">');
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -486,8 +496,8 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true custom element <my-navbar> with a role of navigation', () => {
-    var vNode = queryFixture('<my-navbar id="target" role="navigation">');
-    var actual = getCheckEvaluate('aria-allowed-role').call(
+    const vNode = queryFixture('<my-navbar id="target" role="navigation">');
+    const actual = getCheckEvaluate('aria-allowed-role').call(
       checkContext,
       null,
       null,
@@ -498,7 +508,7 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns false if a dpub role’s type is not the element’s implicit role', () => {
-    var vNode = queryFixture('<article id="target" role="doc-biblioref">');
+    const vNode = queryFixture('<article id="target" role="doc-biblioref">');
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,
@@ -510,7 +520,9 @@ describe('aria-allowed-role', () => {
   });
 
   it('returns true if a dpub role’s type is the element’s implicit role', () => {
-    var vNode = queryFixture('<a id="target" href="foo" role="doc-biblioref">');
+    const vNode = queryFixture(
+      '<a id="target" href="foo" role="doc-biblioref">'
+    );
     expect(
       getCheckEvaluate('aria-allowed-role').call(
         checkContext,

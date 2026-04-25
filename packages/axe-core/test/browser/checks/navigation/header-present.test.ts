@@ -13,7 +13,7 @@ describe('header-present', () => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   const shadowSupported = shadowSupport.v1;
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
   afterEach(() => {
     fixture.innerHTML = '';
     axe._tree = undefined;
@@ -21,7 +21,7 @@ describe('header-present', () => {
   });
 
   it('should return true if h1-h6 is found', () => {
-    var params = checkSetup('<h1 id="target">Hi</h1>');
+    let params = checkSetup('<h1 id="target">Hi</h1>');
     expect(
       getCheckEvaluate('header-present').apply(checkContext, params as any)
     ).toBe(true);
@@ -53,21 +53,21 @@ describe('header-present', () => {
   });
 
   it('should return true if role=heading is found', () => {
-    var params = checkSetup('<div role="heading" id="target">Hi</div>');
+    const params = checkSetup('<div role="heading" id="target">Hi</div>');
     expect(
       getCheckEvaluate('header-present').apply(checkContext, params as any)
     ).toBe(true);
   });
 
   it('should otherwise return false', () => {
-    var params = checkSetup('<p id="target">Some stuff and stuff</p>');
+    const params = checkSetup('<p id="target">Some stuff and stuff</p>');
     expect(
       getCheckEvaluate('header-present').apply(checkContext, params as any)
     ).toBe(false);
   });
 
   it('should return false if heading has a different role', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<h1 role="none" id="target">Some stuff and stuff</h1>'
     );
     expect(
@@ -78,7 +78,7 @@ describe('header-present', () => {
   (shadowSupported ? it : it.skip)(
     'should return true if heading is in shadow dom',
     function () {
-      var params = shadowCheckSetup('<div id="target"><div>', '<h1></h1>');
+      const params = shadowCheckSetup('<div id="target"><div>', '<h1></h1>');
       expect(
         getCheckEvaluate('header-present').apply(checkContext, params as any)
       ).toBe(true);

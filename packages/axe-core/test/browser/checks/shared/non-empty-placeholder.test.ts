@@ -9,8 +9,8 @@ describe('non-empty-placeholder', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkEvaluate = getCheckEvaluate('non-empty-placeholder');
-  var checkContext = createMockCheckContext();
+  const checkEvaluate = getCheckEvaluate('non-empty-placeholder');
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -18,27 +18,27 @@ describe('non-empty-placeholder', () => {
   });
 
   it('should return true if a placeholder is present', () => {
-    var params = checkSetup('<input id="target" placeholder="woohoo" />');
+    const params = checkSetup('<input id="target" placeholder="woohoo" />');
 
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(true);
   });
 
   it('should return false if a placeholder is not present', () => {
-    var params = checkSetup('<input id="target" />');
+    const params = checkSetup('<input id="target" />');
 
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
     expect(checkContext._data.messageKey).toBe('noAttr');
   });
 
   it('should return false if a placeholder is present, but empty', () => {
-    var params = checkSetup('<input id="target" placeholder=" " />');
+    const params = checkSetup('<input id="target" placeholder=" " />');
 
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
     expect(checkContext._data.messageKey).toBe('emptyAttr');
   });
 
   it('should collapse whitespace', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<input id="target" placeholder=" \t \n \r \t  \t\r\n " />'
     );
 

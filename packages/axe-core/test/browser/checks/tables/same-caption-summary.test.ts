@@ -8,7 +8,7 @@ import {
 } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('same-caption-summary', () => {
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     checkContext.reset();
@@ -16,7 +16,7 @@ describe('same-caption-summary', () => {
   });
 
   it('should return false there is no caption', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<table summary="hi" id="target"><tr><td></td></tr></table>'
     );
 
@@ -29,7 +29,7 @@ describe('same-caption-summary', () => {
   });
 
   it('should return false there is no summary', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<table id="target"><caption>Hi</caption><tr><td></td></tr></table>'
     );
 
@@ -42,7 +42,7 @@ describe('same-caption-summary', () => {
   });
 
   it('should return false if summary and caption are different', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<table summary="bye" id="target"><caption>Hi</caption><tr><td></td></tr></table>'
     );
 
@@ -55,7 +55,7 @@ describe('same-caption-summary', () => {
   });
 
   it('should return true if summary and caption are the same', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<table summary="Hi" id="target"><caption>Hi</caption><tr><td></td></tr></table>'
     );
 
@@ -68,7 +68,7 @@ describe('same-caption-summary', () => {
   });
 
   it('should return true if summary and caption are the same with mixed casing', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<table summary="My Table" id="target">' +
         '<caption> my table </caption>' +
         '<thead>' +
@@ -91,7 +91,7 @@ describe('same-caption-summary', () => {
   (shadowSupport.v1 ? it : it.skip)(
     'should match slotted caption elements',
     function () {
-      var params = shadowCheckSetup(
+      const params = shadowCheckSetup(
         '<div>' +
           '<span slot="caption">Caption</span>' +
           '<span slot="one">Data element 1</span>' +

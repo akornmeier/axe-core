@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { axe, queryFixture } from '@helpers/check-helpers';
 
 describe('aria.getRoleType', function () {
-  var getRoleType = axe.commons.aria.getRoleType;
+  const getRoleType = axe.commons.aria.getRoleType;
 
   beforeEach(function () {
     axe._load({});
@@ -38,12 +38,12 @@ describe('aria.getRoleType', function () {
   });
 
   it('returns the type from the role of a virtual node', function () {
-    var vNode = queryFixture('<span id="target" role="cats"></span>');
+    const vNode = queryFixture('<span id="target" role="cats"></span>');
     expect(getRoleType(vNode)).toBe('stuff');
   });
 
   it('returns the type from the role of a DOM node', function () {
-    var domNode = queryFixture(
+    const domNode = queryFixture(
       '<span id="target" role="cats"></span>'
     ).actualNode;
     expect(getRoleType(domNode)).toBe('stuff');

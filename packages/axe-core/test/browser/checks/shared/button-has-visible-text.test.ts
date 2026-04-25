@@ -10,7 +10,7 @@ describe('button-has-visible-text', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -18,7 +18,7 @@ describe('button-has-visible-text', () => {
   });
 
   it('should return false if button element is empty', () => {
-    var checkArgs = checkSetup('<button></button>', 'button');
+    const checkArgs = checkSetup('<button></button>', 'button');
 
     expect(
       getCheckEvaluate('button-has-visible-text').apply(checkContext, checkArgs)
@@ -26,7 +26,7 @@ describe('button-has-visible-text', () => {
   });
 
   it('should return true if a button element has text', () => {
-    var checkArgs = checkSetup('<button>Name</button>', 'button');
+    const checkArgs = checkSetup('<button>Name</button>', 'button');
 
     expect(
       getCheckEvaluate('button-has-visible-text').apply(checkContext, checkArgs)
@@ -34,7 +34,7 @@ describe('button-has-visible-text', () => {
   });
 
   it('should return true if ARIA button has text', () => {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<div role="button">Text</div>',
       '[role=button]'
     );
@@ -45,7 +45,7 @@ describe('button-has-visible-text', () => {
   });
 
   it('should return false if ARIA button has no text', () => {
-    var checkArgs = checkSetup('<div role="button"></div>', '[role=button]');
+    const checkArgs = checkSetup('<div role="button"></div>', '[role=button]');
 
     expect(
       getCheckEvaluate('button-has-visible-text').apply(checkContext, checkArgs)
@@ -54,7 +54,7 @@ describe('button-has-visible-text', () => {
 
   describe('SerialVirtualNode', () => {
     it('should return incomplete if no children are passed', () => {
-      var node = new axe.SerialVirtualNode({
+      const node = new axe.SerialVirtualNode({
         nodeName: 'button'
       });
 
@@ -64,7 +64,7 @@ describe('button-has-visible-text', () => {
     });
 
     it('should return false if button element is empty', () => {
-      var node = new axe.SerialVirtualNode({
+      const node = new axe.SerialVirtualNode({
         nodeName: 'button'
       });
       node.children = [];
@@ -75,10 +75,10 @@ describe('button-has-visible-text', () => {
     });
 
     it('should return true if a button element has text', () => {
-      var node = new axe.SerialVirtualNode({
+      const node = new axe.SerialVirtualNode({
         nodeName: 'button'
       });
-      var child = new axe.SerialVirtualNode({
+      const child = new axe.SerialVirtualNode({
         nodeName: '#text',
         nodeType: 3,
         nodeValue: 'Text'

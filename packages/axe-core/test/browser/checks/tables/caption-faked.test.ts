@@ -9,7 +9,7 @@ describe('caption-faked', () => {
     fixture.innerHTML = '';
   });
 
-  var captionFaked;
+  let captionFaked;
   beforeEach(() => {
     captionFaked = checks['caption-faked'];
   });
@@ -21,7 +21,7 @@ describe('caption-faked', () => {
       '  <tr> <td></td> <td></td> </tr>' +
       '</table>';
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(captionFaked.evaluate(node)).toBe(true);
   });
 
@@ -32,7 +32,7 @@ describe('caption-faked', () => {
       '  <tr> <td></td> </tr>' +
       '</table>';
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(captionFaked.evaluate(node)).toBe(true);
   });
 
@@ -43,7 +43,7 @@ describe('caption-faked', () => {
       '  <tr> <td rowspan="2" colspan="2"></td> </tr>' +
       '</table>';
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(captionFaked.evaluate(node)).toBe(true);
   });
 
@@ -54,7 +54,7 @@ describe('caption-faked', () => {
       '  <tr> <td></td> <td></td> </tr>' +
       '</table>';
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(captionFaked.evaluate(node)).toBe(true);
   });
 
@@ -65,7 +65,7 @@ describe('caption-faked', () => {
       '  <tr> <td></td> <td></td> </tr>' +
       '</table>';
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(captionFaked.evaluate(node)).toBe(false);
   });
 
@@ -76,7 +76,7 @@ describe('caption-faked', () => {
       '  <tr> <td></td> <td></td> </tr>' +
       '</table>';
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(captionFaked.evaluate(node)).toBe(false);
   });
 });

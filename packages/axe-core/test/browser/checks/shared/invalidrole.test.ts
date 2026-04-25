@@ -9,7 +9,7 @@ describe('invalidrole', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -17,7 +17,7 @@ describe('invalidrole', () => {
   });
 
   it('should return true if applied to an empty role', () => {
-    var virtualNode = queryFixture('<div id="target" role="">Contents</div>');
+    const virtualNode = queryFixture('<div id="target" role="">Contents</div>');
     expect(
       checks.invalidrole.evaluate.call(
         checkContext,
@@ -30,7 +30,7 @@ describe('invalidrole', () => {
   });
 
   it('should return true if applied to a nonsensical role', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="foo">Contents</div>'
     );
     expect(
@@ -45,7 +45,7 @@ describe('invalidrole', () => {
   });
 
   it('should return false if applied to a concrete role', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="alert">Contents</div>'
     );
     expect(
@@ -60,7 +60,7 @@ describe('invalidrole', () => {
   });
 
   it('should return false if applied to an abstract role', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="widget">Contents</div>'
     );
     expect(
@@ -75,7 +75,7 @@ describe('invalidrole', () => {
   });
 
   it('should return false if applied to multiple valid roles', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="alert button">Contents</div>'
     );
     expect(
@@ -90,7 +90,7 @@ describe('invalidrole', () => {
   });
 
   it('should return false if atleast one role is valid', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="alert button foo bar">Contents</div>'
     );
     expect(
@@ -104,7 +104,7 @@ describe('invalidrole', () => {
   });
 
   it('should return true if all roles are invalid', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="foo bar">Contents</div>'
     );
     expect(
@@ -119,7 +119,7 @@ describe('invalidrole', () => {
   });
 
   it('should return true if applied to an uppercase nonsensical role', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="FOO">Contents</div>'
     );
     expect(
@@ -134,7 +134,7 @@ describe('invalidrole', () => {
   });
 
   it('should return false if applied to an uppercase valid role', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="BUTTON">Contents</div>'
     );
     expect(

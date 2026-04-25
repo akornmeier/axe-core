@@ -11,7 +11,7 @@ import {
 } from 'vitest';
 // FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('axe.utils.finalizeRuleResult', function () {
-  var original = axe._audit;
+  const original = axe._audit;
 
   beforeEach(function () {
     axe._audit = {
@@ -28,10 +28,10 @@ describe('axe.utils.finalizeRuleResult', function () {
   });
 
   it('returns the first param object', function () {
-    var goingIn = {
+    const goingIn = {
       nodes: []
     };
-    var comingOut = axe.utils.finalizeRuleResult(goingIn);
+    const comingOut = axe.utils.finalizeRuleResult(goingIn);
 
     expect(goingIn).toBe(comingOut);
   });
@@ -41,7 +41,7 @@ describe('axe.utils.finalizeRuleResult', function () {
       rules: [{ id: 'foo', impact: 'critical' }]
     };
 
-    var output = axe.utils.finalizeRuleResult({
+    const output = axe.utils.finalizeRuleResult({
       id: 'foo',
       nodes: [
         {
@@ -67,7 +67,7 @@ describe('axe.utils.finalizeRuleResult', function () {
       rules: [{ id: 'foo', impact: 'critical' }]
     };
 
-    var output = axe.utils.finalizeRuleResult({
+    const output = axe.utils.finalizeRuleResult({
       id: 'foo',
       nodes: [
         {

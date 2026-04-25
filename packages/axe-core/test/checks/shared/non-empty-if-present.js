@@ -1,15 +1,15 @@
 describe('non-empty-if-present', function () {
   'use strict';
 
-  var fixture = document.getElementById('fixture');
+  const fixture = document.getElementById('fixture');
 
   // These defaults are only available in IE and Edge
-  var input = document.createElement('input');
+  const input = document.createElement('input');
   input.type = 'submit';
-  var isEdgeOrIe = typeof input.getAttribute('value') === 'string';
+  const isEdgeOrIe = typeof input.getAttribute('value') === 'string';
 
-  var checkContext = axe.testUtils.MockCheckContext();
-  var queryFixture = axe.testUtils.queryFixture;
+  const checkContext = axe.testUtils.MockCheckContext();
+  const queryFixture = axe.testUtils.queryFixture;
 
   afterEach(function () {
     fixture.innerHTML = '';
@@ -17,7 +17,7 @@ describe('non-empty-if-present', function () {
   });
 
   it('should return false if a value is present', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input id="target" type="submit" value="woohoo" />'
     );
 
@@ -32,7 +32,7 @@ describe('non-empty-if-present', function () {
   (isEdgeOrIe ? xit : it)(
     'should return true if a value is not present',
     function () {
-      var vNode = queryFixture('<input id="target" type="submit" />');
+      const vNode = queryFixture('<input id="target" type="submit" />');
 
       assert.isTrue(
         axe.testUtils
@@ -44,7 +44,7 @@ describe('non-empty-if-present', function () {
   );
 
   it('should return false if an value is present, but empty', function () {
-    var vNode = queryFixture('<input id="target" type="submit" value="" />');
+    const vNode = queryFixture('<input id="target" type="submit" value="" />');
 
     assert.isFalse(
       axe.testUtils
@@ -54,21 +54,21 @@ describe('non-empty-if-present', function () {
   });
 
   it('should return false if the element is not a submit or reset input', function () {
-    var vNode = queryFixture('<input id="target" type="text" />');
+    const vNode = queryFixture('<input id="target" type="text" />');
     assert.isFalse(
       axe.testUtils
         .getCheckEvaluate('non-empty-if-present')
         .call(checkContext, null, {}, vNode)
     );
 
-    var vNode = queryFixture('<input id="target" type="button" />');
+    const vNode = queryFixture('<input id="target" type="button" />');
     assert.isFalse(
       axe.testUtils
         .getCheckEvaluate('non-empty-if-present')
         .call(checkContext, null, {}, vNode)
     );
 
-    var vNode = queryFixture('<button id="target" type="submit"></button');
+    const vNode = queryFixture('<button id="target" type="submit"></button');
     assert.isFalse(
       axe.testUtils
         .getCheckEvaluate('non-empty-if-present')

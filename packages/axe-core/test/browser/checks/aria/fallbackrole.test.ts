@@ -10,7 +10,7 @@ describe('fallbackrole', () => {
   });
 
   it('should return true if fallback role is used', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="button foobar">Foo</div>'
     );
     expect(
@@ -19,28 +19,34 @@ describe('fallbackrole', () => {
   });
 
   it('should return false if fallback role is not used', () => {
-    var virtualNode = queryFixture('<div id="target" role="button">Foo</div>');
+    const virtualNode = queryFixture(
+      '<div id="target" role="button">Foo</div>'
+    );
     expect(
       checks.fallbackrole.evaluate(virtualNode.actualNode, null, virtualNode)
     ).toBe(false);
   });
 
   it('should return false if applied to an invalid role', () => {
-    var virtualNode = queryFixture('<div id="target" role="foobar">Foo</div>');
+    const virtualNode = queryFixture(
+      '<div id="target" role="foobar">Foo</div>'
+    );
     expect(
       checks.fallbackrole.evaluate(virtualNode.actualNode, null, virtualNode)
     ).toBe(false);
   });
 
   it('should return false if applied to an invalid role', () => {
-    var virtualNode = queryFixture('<div id="target" role="foobar">Foo</div>');
+    const virtualNode = queryFixture(
+      '<div id="target" role="foobar">Foo</div>'
+    );
     expect(
       checks.fallbackrole.evaluate(virtualNode.actualNode, null, virtualNode)
     ).toBe(false);
   });
 
   it('should return undefined/needs review if an element with no implicit role uses both none and presentation', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="none presentation">Foo</div>'
     );
     expect(
@@ -49,7 +55,7 @@ describe('fallbackrole', () => {
   });
 
   it('should return undefined/needs review if an element with no implicit role uses both presentation and none', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="presentation none">Foo</div>'
     );
     expect(
@@ -58,7 +64,7 @@ describe('fallbackrole', () => {
   });
 
   it('should return true if an element with an implicit role uses both presentation and none', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<input type="text" id="target" role="presentation none"/>'
     );
     expect(

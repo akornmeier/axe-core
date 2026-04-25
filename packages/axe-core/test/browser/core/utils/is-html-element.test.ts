@@ -3,52 +3,52 @@ import { axe, queryFixture } from '@helpers/check-helpers';
 
 /* global axe */
 describe('axe.utils.isHtmlElement', function () {
-  var isHtmlElement = axe.utils.isHtmlElement;
+  const isHtmlElement = axe.utils.isHtmlElement;
 
   it('returns true if given ul', function () {
-    var node = document.createElement('ul');
+    const node = document.createElement('ul');
     expect(isHtmlElement(node)).toBe(true);
   });
 
   it('returns true if given nav', function () {
-    var node = document.createElement('nav');
+    const node = document.createElement('nav');
     expect(isHtmlElement(node)).toBe(true);
   });
 
   it('returns true if given iframe', function () {
-    var node = document.createElement('iframe');
+    const node = document.createElement('iframe');
     expect(isHtmlElement(node)).toBe(true);
   });
 
   it('returns false if given custom element', function () {
-    var node = document.createElement('myElement');
+    const node = document.createElement('myElement');
     expect(isHtmlElement(node)).toBe(false);
   });
 
   it('returns false if given svg namespace', function () {
-    var node = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+    const node = document.createElementNS('http://www.w3.org/2000/svg', 'a');
     expect(isHtmlElement(node)).toBe(false);
   });
 
   it('returns false if node has inherited svg namespace', function () {
-    var svgNameSpace = 'http://www.w3.org/2000/svg';
-    var node = document.createElementNS(svgNameSpace, 'svg');
-    var child = document.createElementNS(svgNameSpace, 'a');
+    const svgNameSpace = 'http://www.w3.org/2000/svg';
+    const node = document.createElementNS(svgNameSpace, 'svg');
+    const child = document.createElementNS(svgNameSpace, 'a');
     child.setAttribute('href', '');
     child.textContent = 'Child Node';
     node.appendChild(child);
 
-    var childNode = node.querySelector('a');
+    const childNode = node.querySelector('a');
     expect(isHtmlElement(childNode)).toBe(false);
   });
 
   it('works with VirtualNodes', function () {
-    var vNode = queryFixture('<ul id="target"></ul>');
+    const vNode = queryFixture('<ul id="target"></ul>');
     expect(isHtmlElement(vNode)).toBe(true);
   });
 
   it('works with SerialVirtualNode', function () {
-    var vNode = new axe.SerialVirtualNode({ nodeName: 'ul' });
+    const vNode = new axe.SerialVirtualNode({ nodeName: 'ul' });
     expect(isHtmlElement(vNode)).toBe(true);
   });
 });

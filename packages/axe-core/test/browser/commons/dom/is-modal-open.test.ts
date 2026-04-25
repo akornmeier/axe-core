@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { axe, fixtureSetup } from '@helpers/check-helpers';
 
 describe('dom.isModalOpen', function () {
-  var isModalOpen = axe.commons.dom.isModalOpen;
-  var dialogElSupport =
+  const isModalOpen = axe.commons.dom.isModalOpen;
+  const dialogElSupport =
     typeof document.createElement('dialog').open !== 'undefined';
 
   it('returns true if there is a visible element with role=dialog', function () {

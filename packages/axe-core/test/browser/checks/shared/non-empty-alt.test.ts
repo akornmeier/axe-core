@@ -9,8 +9,8 @@ describe('non-empty-alt', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkEvaluate = getCheckEvaluate('non-empty-alt');
-  var checkContext = createMockCheckContext();
+  const checkEvaluate = getCheckEvaluate('non-empty-alt');
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -18,24 +18,26 @@ describe('non-empty-alt', () => {
   });
 
   it('should return true if an alt is present', () => {
-    var params = checkSetup('<img id="target" alt="woohoo" />');
+    const params = checkSetup('<img id="target" alt="woohoo" />');
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(true);
   });
 
   it('should return false if an alt is not present', () => {
-    var params = checkSetup('<img id="target" />');
+    const params = checkSetup('<img id="target" />');
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
     expect(checkContext._data.messageKey).toBe('noAttr');
   });
 
   it('should return false if an alt is present, but empty', () => {
-    var params = checkSetup('<img id="target" alt=" " />');
+    const params = checkSetup('<img id="target" alt=" " />');
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
     expect(checkContext._data.messageKey).toBe('emptyAttr');
   });
 
   it('should collapse whitespace', () => {
-    var params = checkSetup('<img id="target" alt=" \t \n \r \t  \t\r\n " />');
+    const params = checkSetup(
+      '<img id="target" alt=" \t \n \r \t  \t\r\n " />'
+    );
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
     expect(checkContext._data.messageKey).toBe('emptyAttr');
   });

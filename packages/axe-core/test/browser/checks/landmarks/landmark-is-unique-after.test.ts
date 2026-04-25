@@ -1,7 +1,7 @@
 import { createMockCheckContext, checks, axe } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('landmark-is-unique-after', () => {
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
   function createResult(result, data) {
     return {
       result: result,
@@ -27,7 +27,7 @@ describe('landmark-is-unique-after', () => {
   });
 
   it('should update duplicate landmarks with failed result', () => {
-    var result = checks['landmark-is-unique'].after([
+    const result = checks['landmark-is-unique'].after([
       createResultWithSameRelatedNodes(true, {
         role: 'some role',
         accessibleText: 'some accessibleText'
@@ -46,7 +46,7 @@ describe('landmark-is-unique-after', () => {
       })
     ]);
 
-    var expectedResult = [
+    const expectedResult = [
       createResultWithProvidedRelatedNodes(
         false,
         {

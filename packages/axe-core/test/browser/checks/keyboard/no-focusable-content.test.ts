@@ -7,31 +7,33 @@ import {
 } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('no-focusable-content tests', () => {
-  var noFocusableContent = getCheckEvaluate('no-focusable-content');
-  var check = checks['no-focusable-content'];
-  var checkContext = new createMockCheckContext();
+  const noFocusableContent = getCheckEvaluate('no-focusable-content');
+  const check = checks['no-focusable-content'];
+  const checkContext = new createMockCheckContext();
 
   afterEach(() => {
     checkContext.reset();
   });
 
   it('should return true if element has no focusable content', () => {
-    var vNode = queryFixture('<button id="target"><span>Hello</span></button>');
+    const vNode = queryFixture(
+      '<button id="target"><span>Hello</span></button>'
+    );
     expect(noFocusableContent(null, null, vNode)).toBe(true);
   });
 
   it('should return true if element is empty', () => {
-    var vNode = queryFixture('<button id="target"></button>');
+    const vNode = queryFixture('<button id="target"></button>');
     expect(noFocusableContent(null, null, vNode)).toBe(true);
   });
 
   it('should return true if element only has text content', () => {
-    var vNode = queryFixture('<button id="target">Hello</button>');
+    const vNode = queryFixture('<button id="target">Hello</button>');
     expect(noFocusableContent(null, null, vNode)).toBe(true);
   });
 
   it('should return true if element has content which is focusable (tabindex=0) and does not have a widget role', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<button id="target"><span tabindex="0">Hello</span></button>'
     );
 
@@ -39,14 +41,14 @@ describe('no-focusable-content tests', () => {
   });
 
   it('should return true if element has content which has negative tabindex and non-widget role', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target"><span tabindex="-1">Hello</span></button>'
     );
     expect(noFocusableContent(null, null, vNode)).toBe(true);
   });
 
   it('should return false if element has content which has negative tabindex and an explicit widget role', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<button id="target"><span role="link" tabindex="-1">Hello</span></button>'
     );
 
@@ -56,7 +58,7 @@ describe('no-focusable-content tests', () => {
   });
 
   it('should return false if element has content which is natively focusable and has a widget role', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<button id="target"><a href="foo.html">Hello</a></button>'
     );
 
@@ -66,7 +68,7 @@ describe('no-focusable-content tests', () => {
   });
 
   it('should add each focusable child as related nodes', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<button id="target"><input type="checkbox"><a href="foo.html">Hello</a></button>'
     );
 
@@ -79,7 +81,7 @@ describe('no-focusable-content tests', () => {
   });
 
   it('should return false if element has natively focusable widget role content with negative tabindex', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<button id="target"><a href="foo.html" tabindex="-1">Hello</a></button>'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBe(false);
@@ -88,21 +90,21 @@ describe('no-focusable-content tests', () => {
   });
 
   it('should return true if element has content which is natively focusable and has a widget role but is disabled', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target"><input value="hello" disabled></button>'
     );
     expect(noFocusableContent(null, null, vNode)).toBe(true);
   });
 
   it('should return false if "disabled" is specified on an element which doesn\'t allow it', function () {
-    var params = checkSetup(
+    const params = checkSetup(
       '<button id="target"><a href="foo.html" disabled>Hello</a></button>'
     );
     expect(noFocusableContent.apply(checkContext, params as any)).toBe(false);
   });
 
   it('should return true on span with negative tabindex (focusable, does not have a widget role)', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<span id="target" role="text"> some text ' +
         '<span tabIndex="-1">JavaScript is able to focus this</span> ' +
         '</span>'
@@ -111,7 +113,7 @@ describe('no-focusable-content tests', () => {
   });
 
   it('should return true on aria-hidden span with negative tabindex (focusable, does not have a widget role)', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<span id="target" role="text"> some text ' +
         '<span tabIndex="-1" aria-hidden="true">JavaScript is able to focus this</span> ' +
         '</span>'
@@ -120,7 +122,7 @@ describe('no-focusable-content tests', () => {
   });
 
   it('should return true on nested span with tabindex=0 (focusable, does not have a widget role)', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<span id="target" role="text"> some text ' +
         '<span tabIndex="0">anyone is able to focus this</span> ' +
         '</span>'

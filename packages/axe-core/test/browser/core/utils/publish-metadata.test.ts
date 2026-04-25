@@ -20,7 +20,7 @@ describe('axe.utils.publishMetaData', function () {
   });
 
   it('should pull data from rules from axe._audit.data', function () {
-    var expected = {
+    const expected = {
       foo: 'bar',
       bob: 'loblaw'
     };
@@ -34,7 +34,7 @@ describe('axe.utils.publishMetaData', function () {
       }
     });
 
-    var result = {
+    const result = {
       id: 'cats',
       nodes: []
     };
@@ -45,7 +45,7 @@ describe('axe.utils.publishMetaData', function () {
   });
 
   it('should pull data from checks from axe._audit.data', function () {
-    var expected = {
+    const expected = {
       foo: 'bar',
       bob: 'loblaw'
     };
@@ -59,7 +59,7 @@ describe('axe.utils.publishMetaData', function () {
       }
     });
 
-    var result = {
+    const result = {
       id: 'foo',
       nodes: [
         {
@@ -124,7 +124,7 @@ describe('axe.utils.publishMetaData', function () {
       }
     });
 
-    var result = {
+    const result = {
       id: 'cats',
       nodes: [
         {
@@ -289,7 +289,7 @@ describe('axe.utils.publishMetaData', function () {
       }
     });
 
-    var result = {
+    const result = {
       id: 'cats',
       nodes: [
         {
@@ -405,7 +405,7 @@ describe('axe.utils.publishMetaData', function () {
       }
     });
 
-    var result = {
+    const result = {
       id: 'cats',
       nodes: [
         {
@@ -533,7 +533,7 @@ describe('axe.utils.publishMetaData', function () {
       }
     });
 
-    var result = {
+    const result = {
       id: 'cats',
       nodes: [
         {
@@ -673,7 +673,7 @@ describe('axe.utils.publishMetaData', function () {
       }
     });
 
-    var result = {
+    const result = {
       id: 'cats',
       nodes: [
         {
@@ -835,7 +835,7 @@ describe('axe.utils.publishMetaData', function () {
   });
 
   it('should pull tags off rule object', function () {
-    var expected = {
+    const expected = {
       foo: 'bar',
       bob: 'loblaw'
     };
@@ -854,7 +854,7 @@ describe('axe.utils.publishMetaData', function () {
       }
     });
 
-    var result = {
+    const result = {
       id: 'foo',
       nodes: [
         {
@@ -893,7 +893,7 @@ describe('axe.utils.publishMetaData', function () {
         }
       });
 
-      var result = {
+      const result = {
         id: 'cats',
         nodes: [
           {
@@ -982,7 +982,7 @@ describe('axe.utils.publishMetaData', function () {
         }
       });
 
-      var result = {
+      const result = {
         id: 'cats',
         nodes: [
           {
@@ -1082,7 +1082,7 @@ describe('axe.utils.publishMetaData', function () {
         }
       });
 
-      var result = {
+      const result = {
         id: 'cats',
         nodes: [
           {
@@ -1198,7 +1198,7 @@ describe('axe.utils.publishMetaData', function () {
       }
     });
 
-    var result = {
+    const result = {
       id: 'cats',
       nodes: [
         {

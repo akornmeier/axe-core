@@ -1,5 +1,6 @@
 describe('standards.getElementsByContentType', function () {
-  var getElementsByContentType = axe.commons.standards.getElementsByContentType;
+  const getElementsByContentType =
+    axe.commons.standards.getElementsByContentType;
 
   before(function () {
     axe._load({});
@@ -11,13 +12,13 @@ describe('standards.getElementsByContentType', function () {
 
   it('should return a list of node names by content type', function () {
     // Source: https://html.spec.whatwg.org/multipage/dom.html#sectioning-content
-    var sectioningContent = getElementsByContentType('sectioning');
+    const sectioningContent = getElementsByContentType('sectioning');
     assert.deepEqual(sectioningContent, ['article', 'aside', 'nav', 'section']);
   });
 
   it('should return a default variants', function () {
     // Source: https://html.spec.whatwg.org/multipage/dom.html#embedded-content-2
-    var sectioningContent = getElementsByContentType('embedded');
+    const sectioningContent = getElementsByContentType('embedded');
     assert.deepEqual(sectioningContent, [
       'audio',
       'canvas',
@@ -42,7 +43,7 @@ describe('standards.getElementsByContentType', function () {
       }
     });
 
-    var structureRoles = getElementsByContentType('sectioning');
+    const structureRoles = getElementsByContentType('sectioning');
     assert.include(structureRoles, 'myElm');
   });
 
@@ -57,7 +58,7 @@ describe('standards.getElementsByContentType', function () {
       }
     });
 
-    var structureRoles = getElementsByContentType('sectioning');
+    const structureRoles = getElementsByContentType('sectioning');
     assert.notInclude(structureRoles, 'article');
   });
 });

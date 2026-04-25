@@ -11,7 +11,7 @@ import findBy from '../../../../lib/core/utils/find-by';
 
 describe('findBy', function () {
   it('should find the first matching object', function () {
-    var array = [
+    const array = [
       {
         id: 'monkeys',
         foo: 'bar'
@@ -29,7 +29,7 @@ describe('findBy', function () {
   });
 
   it('should return undefined with no match', function () {
-    var array = [
+    const array = [
       {
         id: 'monkeys',
         foo: 'bar'

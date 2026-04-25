@@ -10,21 +10,21 @@ describe('doc-has-title', () => {
   });
 
   it('should return false if title is empty', () => {
-    var orig = document.title;
+    const orig = document.title;
     document.title = '';
     expect(getCheckEvaluate('doc-has-title')(fixture)).toBe(false);
     document.title = orig;
   });
 
   it('should return false if title contains only whitespace', () => {
-    var orig = document.title;
+    const orig = document.title;
     document.title = ' \t\r\n \n   \r \n\t';
     expect(getCheckEvaluate('doc-has-title')(fixture)).toBe(false);
     document.title = orig;
   });
 
   it('should return true if title is non-empty', () => {
-    var orig = document.title;
+    const orig = document.title;
     document.title = 'Bananas';
 
     expect(getCheckEvaluate('doc-has-title')(fixture)).toBe(true);

@@ -11,7 +11,7 @@ describe('multiple-label', () => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   const shadowSupported = shadowSupport.v1;
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
   afterEach(() => {
     checkContext.reset();
   });
@@ -20,9 +20,9 @@ describe('multiple-label', () => {
     fixtureSetup(
       '<label id="l2"><label id="l1"><input type="text" id="target"></label></label>'
     );
-    var target = fixture.querySelector('#target');
-    var l1 = fixture.querySelector('#l1');
-    var l2 = fixture.querySelector('#l2');
+    const target = fixture.querySelector('#target');
+    const l1 = fixture.querySelector('#l1');
+    const l2 = fixture.querySelector('#l2');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -31,8 +31,8 @@ describe('multiple-label', () => {
 
   it('should return false if there is only one implicit label', () => {
     fixtureSetup('<label id="l1"><input type="text" id="target"></label>');
-    var target = fixture.querySelector('#target');
-    var l1 = fixture.querySelector('#l1');
+    const target = fixture.querySelector('#target');
+    const l1 = fixture.querySelector('#l1');
     expect(getCheckEvaluate('multiple-label').call(checkContext, target)).toBe(
       false
     );
@@ -46,10 +46,10 @@ describe('multiple-label', () => {
         '<label id="l3" for="target">Bat</label>' +
         '<input type="text" id="target">'
     );
-    var target = fixture.querySelector('#target');
-    var l1 = fixture.querySelector('#l1');
-    var l2 = fixture.querySelector('#l2');
-    var l3 = fixture.querySelector('#l3');
+    const target = fixture.querySelector('#target');
+    const l1 = fixture.querySelector('#l1');
+    const l2 = fixture.querySelector('#l2');
+    const l3 = fixture.querySelector('#l3');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -60,8 +60,8 @@ describe('multiple-label', () => {
     fixtureSetup(
       '<label id="l1" for="target">Foo</label><input type="text" id="target">'
     );
-    var target = fixture.querySelector('#target');
-    var l1 = fixture.querySelector('#l1');
+    const target = fixture.querySelector('#target');
+    const l1 = fixture.querySelector('#l1');
     expect(getCheckEvaluate('multiple-label').call(checkContext, target)).toBe(
       false
     );
@@ -74,8 +74,8 @@ describe('multiple-label', () => {
         '<label for="test-input2" style="display:none" id="lnone">label two</label>' +
         '<input id="test-input2" type="text">'
     );
-    var target = fixture.querySelector('#test-input2');
-    var l1 = fixture.querySelector('#l1');
+    const target = fixture.querySelector('#test-input2');
+    const l1 = fixture.querySelector('#l1');
     expect(getCheckEvaluate('multiple-label').call(checkContext, target)).toBe(
       false
     );
@@ -86,9 +86,9 @@ describe('multiple-label', () => {
     fixtureSetup(
       '<label id="l2"><label id="l1" style="opacity: 0"><input type="text" id="target"></label></label>'
     );
-    var target = fixture.querySelector('#target');
-    var l1 = fixture.querySelector('#l1');
-    var l2 = fixture.querySelector('#l2');
+    const target = fixture.querySelector('#target');
+    const l1 = fixture.querySelector('#l1');
+    const l2 = fixture.querySelector('#l2');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -102,9 +102,9 @@ describe('multiple-label', () => {
         '<label for="me" id="l3">visible</label>' +
         '<input id="me" type="text">'
     );
-    var target = fixture.querySelector('#me');
-    var l1 = fixture.querySelector('#l1');
-    var l3 = fixture.querySelector('#l3');
+    const target = fixture.querySelector('#me');
+    const l1 = fixture.querySelector('#l1');
+    const l3 = fixture.querySelector('#l3');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -117,9 +117,9 @@ describe('multiple-label', () => {
         '<label for="me" id="l2" style="opacity: 0">visible</label>' +
         '<input id="me" type="text">'
     );
-    var target = fixture.querySelector('#me');
-    var l1 = fixture.querySelector('#l1');
-    var l2 = fixture.querySelector('#l2');
+    const target = fixture.querySelector('#me');
+    const l1 = fixture.querySelector('#l1');
+    const l2 = fixture.querySelector('#l2');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -132,9 +132,9 @@ describe('multiple-label', () => {
         '<label for="me" id="l2" aria-hidden="true">visible</label>' +
         '<input id="me" type="text">'
     );
-    var target = fixture.querySelector('#me');
-    var l1 = fixture.querySelector('#l1');
-    var l2 = fixture.querySelector('#l2');
+    const target = fixture.querySelector('#me');
+    const l1 = fixture.querySelector('#l1');
+    const l2 = fixture.querySelector('#l2');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -145,9 +145,9 @@ describe('multiple-label', () => {
     fixtureSetup(
       '<label id="l1" for="target">Foo</label><label id="l2"><input type="text" id="target"></label>'
     );
-    var target = fixture.querySelector('#target');
-    var l1 = fixture.querySelector('#l1');
-    var l2 = fixture.querySelector('#l2');
+    const target = fixture.querySelector('#target');
+    const l1 = fixture.querySelector('#l1');
+    const l2 = fixture.querySelector('#l2');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -158,7 +158,7 @@ describe('multiple-label', () => {
     fixtureSetup(
       '<label for="target">Foo<input type="text" id="target"></label>'
     );
-    var target = fixture.querySelector('#target');
+    const target = fixture.querySelector('#target');
     expect(getCheckEvaluate('multiple-label').call(checkContext, target)).toBe(
       false
     );
@@ -174,7 +174,7 @@ describe('multiple-label', () => {
         '<label for="A">Aunt</label>' +
         '<label for="A">Sally</label>'
     );
-    var target = fixture.querySelector('#A');
+    const target = fixture.querySelector('#A');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -190,7 +190,7 @@ describe('multiple-label', () => {
         '<label for="B" aria-hidden="true">Aunt</label>' +
         '<label for="B" aria-hidden="true">Sally</label>'
     );
-    var target = fixture.querySelector('#B');
+    const target = fixture.querySelector('#B');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -202,7 +202,7 @@ describe('multiple-label', () => {
         '<label for="D" aria-hidden="true">Please</label>' +
         '<label for="D" id="E">Excuse</label>'
     );
-    var target = fixture.querySelector('#D');
+    const target = fixture.querySelector('#D');
     expect(getCheckEvaluate('multiple-label').call(checkContext, target)).toBe(
       false
     );
@@ -214,7 +214,7 @@ describe('multiple-label', () => {
         '<label for="F" id="G" aria-hidden="true">Please</label>' +
         '<label for="F" id="H">Excuse</label>'
     );
-    var target = fixture.querySelector('#F');
+    const target = fixture.querySelector('#F');
     expect(getCheckEvaluate('multiple-label').call(checkContext, target)).toBe(
       false
     );
@@ -226,7 +226,7 @@ describe('multiple-label', () => {
         '<label for="I" style="display:none">Please</label>' +
         '<label for="I" >Excuse</label>'
     );
-    var target = fixture.querySelector('#I');
+    const target = fixture.querySelector('#I');
     expect(getCheckEvaluate('multiple-label').call(checkContext, target)).toBe(
       false
     );
@@ -242,7 +242,7 @@ describe('multiple-label', () => {
         '<label for="J" id="O">Aunt</label>' +
         '<label for="J" id="P">Sally</label>'
     );
-    var target = fixture.querySelector('#J');
+    const target = fixture.querySelector('#J');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -254,7 +254,7 @@ describe('multiple-label', () => {
         '<label for="Q" aria-hidden="true"></label>' +
         '<label for="Q" >Excuse</label>'
     );
-    var target = fixture.querySelector('#Q');
+    const target = fixture.querySelector('#Q');
     expect(
       getCheckEvaluate('multiple-label').call(checkContext, target)
     ).toBeUndefined();
@@ -264,11 +264,11 @@ describe('multiple-label', () => {
     'should consider labels in the same document/shadow tree',
     function () {
       fixture.innerHTML = '<div id="target"></div>';
-      var target = document.querySelector('#target');
-      var shadowRoot = target.attachShadow({ mode: 'open' });
+      const target = document.querySelector('#target');
+      const shadowRoot = target.attachShadow({ mode: 'open' });
       shadowRoot.innerHTML =
         '<input id="myinput" /><label for="myinput">normal</label>';
-      var shadowTarget = target.shadowRoot;
+      const shadowTarget = target.shadowRoot;
       fixtureSetup();
       expect(
         getCheckEvaluate('multiple-label').call(
@@ -283,14 +283,14 @@ describe('multiple-label', () => {
     'should return false for valid multiple labels in the same document/shadow tree',
     function () {
       fixture.innerHTML = '<div id="target"></div>';
-      var target = document.querySelector('#target');
-      var shadowRoot = target.attachShadow({ mode: 'open' });
-      var innerHTML = '<input type="checkbox" id="D" aria-labelledby="E"/>';
+      const target = document.querySelector('#target');
+      const shadowRoot = target.attachShadow({ mode: 'open' });
+      let innerHTML = '<input type="checkbox" id="D" aria-labelledby="E"/>';
       innerHTML += '<label for="D" aria-hidden="true">Please</label>';
       innerHTML += '<label for="D" id="E">Excuse</label>';
       shadowRoot.innerHTML = innerHTML;
       fixtureSetup();
-      var shadowTarget = target.shadowRoot;
+      const shadowTarget = target.shadowRoot;
       expect(
         getCheckEvaluate('multiple-label').call(
           checkContext,
@@ -304,14 +304,14 @@ describe('multiple-label', () => {
     'should return undefined for invalid multiple labels in the same document/shadow tree',
     function () {
       fixture.innerHTML = '<div id="target"></div>';
-      var target = document.querySelector('#target');
-      var shadowRoot = target.attachShadow({ mode: 'open' });
-      var innerHTML = '<input type="checkbox" id="Q"/>';
+      const target = document.querySelector('#target');
+      const shadowRoot = target.attachShadow({ mode: 'open' });
+      let innerHTML = '<input type="checkbox" id="Q"/>';
       innerHTML += '<label for="Q" aria-hidden="true"></label>';
       innerHTML += '<label for="Q" >Excuse</label>';
       shadowRoot.innerHTML = innerHTML;
       fixtureSetup();
-      var shadowTarget = target.shadowRoot;
+      const shadowTarget = target.shadowRoot;
       expect(
         getCheckEvaluate('multiple-label').call(
           checkContext,

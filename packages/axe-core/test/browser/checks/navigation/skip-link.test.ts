@@ -9,14 +9,14 @@ describe('skip-link', () => {
     fixture.innerHTML =
       '<a href="#target">Click Here</a><h1 id="target">Introduction</h1>';
     axe._tree = axe.utils.getFlattenedTree(fixture);
-    var node = fixture.querySelector('a');
+    const node = fixture.querySelector('a');
     expect(getCheckEvaluate('skip-link')(node)).toBe(true);
   });
 
   it('should return true if the href points to an element with an name', () => {
     fixture.innerHTML = '<a href="#target">Click Here</a><a name="target"></a>';
     axe._tree = axe.utils.getFlattenedTree(fixture);
-    var node = fixture.querySelector('a');
+    const node = fixture.querySelector('a');
     expect(getCheckEvaluate('skip-link')(node)).toBe(true);
   });
 
@@ -24,7 +24,7 @@ describe('skip-link', () => {
     fixture.innerHTML =
       '<a href="#spacecamp">Click Here</a><h1 id="mainheader">Introduction</h1>';
     axe._tree = axe.utils.getFlattenedTree(fixture);
-    var node = fixture.querySelector('a');
+    const node = fixture.querySelector('a');
     expect(getCheckEvaluate('skip-link')(node)).toBe(false);
   });
 
@@ -33,7 +33,7 @@ describe('skip-link', () => {
       '<a href="#target">Click Here</a>' +
       '<h1 id="target" style="display:none">Introduction</h1>';
     axe._tree = axe.utils.getFlattenedTree(fixture);
-    var node = fixture.querySelector('a');
+    const node = fixture.querySelector('a');
     expect(getCheckEvaluate('skip-link')(node)).toBeUndefined();
   });
 
@@ -42,7 +42,7 @@ describe('skip-link', () => {
       '<a href="#target">Click Here</a>' +
       '<h1 id="target" aria-hidden="true">Introduction</h1>';
     axe._tree = axe.utils.getFlattenedTree(fixture);
-    var node = fixture.querySelector('a');
+    const node = fixture.querySelector('a');
     expect(getCheckEvaluate('skip-link')(node)).toBeUndefined();
   });
 });

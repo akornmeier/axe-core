@@ -1,15 +1,15 @@
 describe('unique-frame-title', function () {
   'use strict';
 
-  var checkContext = axe.testUtils.MockCheckContext();
-  var queryFixture = axe.testUtils.queryFixture;
+  const checkContext = axe.testUtils.MockCheckContext();
+  const queryFixture = axe.testUtils.queryFixture;
 
   afterEach(function () {
     checkContext.reset();
   });
 
   it('should log title to data and return true', function () {
-    var vNode = queryFixture('<iframe id="target" title="bananas"></iframe>');
+    const vNode = queryFixture('<iframe id="target" title="bananas"></iframe>');
     assert.isTrue(
       axe.testUtils
         .getCheckEvaluate('unique-frame-title')
@@ -19,7 +19,7 @@ describe('unique-frame-title', function () {
   });
 
   it('should convert text to lower case', function () {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<iframe id="target" title="\t  app\t \n \rle  "></iframe>'
     );
     axe.testUtils
@@ -29,7 +29,7 @@ describe('unique-frame-title', function () {
   });
 
   it('should take out space differences', function () {
-    var vNode = queryFixture('<iframe id="target" title="APPLE"></iframe>');
+    const vNode = queryFixture('<iframe id="target" title="APPLE"></iframe>');
     axe.testUtils
       .getCheckEvaluate('unique-frame-title')
       .call(checkContext, null, {}, vNode);

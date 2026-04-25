@@ -16,14 +16,14 @@ describe('scope-value', () => {
 
   it('should return true if scope is "col"', () => {
     fixture.innerHTML = '<table><tr><td scope="col"></td></tr></table>';
-    var node = fixture.querySelector('td');
+    const node = fixture.querySelector('td');
 
     expect(scopeValueEvaluateESM(node)).toBe(true);
   });
 
   it('should return true if scope is "row"', () => {
     fixture.innerHTML = '<table><tr><td scope="row"></td></tr></table>';
-    var node = fixture.querySelector('td');
+    const node = fixture.querySelector('td');
 
     expect(scopeValueEvaluateESM(node)).toBe(true);
   });
@@ -31,7 +31,7 @@ describe('scope-value', () => {
   it('should return false otherwise', () => {
     fixture.innerHTML =
       '<table><tr><td scope="hahahahanothx"></td></tr></table>';
-    var node = fixture.querySelector('td');
+    const node = fixture.querySelector('td');
 
     expect(scopeValueEvaluateESM(node)).toBe(false);
   });
@@ -39,7 +39,7 @@ describe('scope-value', () => {
   it('should support options.values', () => {
     fixture.innerHTML =
       '<table><tr><td scope="hahahahanothx"></td></tr></table>';
-    var node = fixture.querySelector('td');
+    const node = fixture.querySelector('td');
 
     expect(
       scopeValueEvaluateESM(node, {

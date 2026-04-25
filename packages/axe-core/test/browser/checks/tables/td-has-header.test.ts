@@ -11,7 +11,7 @@ describe('td-has-header', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -46,8 +46,8 @@ describe('td-has-header', () => {
       '  </tbody>' +
       '</table>';
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
-    var result = getCheckEvaluate('td-has-header').call(checkContext, node);
+    const node = fixture.querySelector('table');
+    const result = getCheckEvaluate('td-has-header').call(checkContext, node);
 
     expect(result).toBe(false);
     expect(checkContext._relatedNodes.length).toBe(4);
@@ -58,7 +58,7 @@ describe('td-has-header', () => {
       '<table>' + '  <tr> <th>hi</th> <td>hello</td> </tr>' + '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       true
     );
@@ -72,7 +72,7 @@ describe('td-has-header', () => {
       '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       true
     );
@@ -86,7 +86,7 @@ describe('td-has-header', () => {
       '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       true
     );
@@ -101,7 +101,7 @@ describe('td-has-header', () => {
       '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       true
     );
@@ -117,7 +117,7 @@ describe('td-has-header', () => {
       '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       true
     );
@@ -131,7 +131,7 @@ describe('td-has-header', () => {
       '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       true
     );
@@ -142,7 +142,7 @@ describe('td-has-header', () => {
       '<table>' + '  <tr> <td></td> <td></td> </tr>' + '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       true
     );
@@ -153,7 +153,7 @@ describe('td-has-header', () => {
       '<table>' + '  <tr> <td>hi</td> <td>hello</td> </tr>' + '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
 
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       false
@@ -172,7 +172,7 @@ describe('td-has-header', () => {
       '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
 
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       false
@@ -192,7 +192,7 @@ describe('td-has-header', () => {
       '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
 
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       true
@@ -206,7 +206,7 @@ describe('td-has-header', () => {
       '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
 
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       true
@@ -221,7 +221,7 @@ describe('td-has-header', () => {
       '</table>';
 
     flatTreeSetup(fixture);
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       false
     );
@@ -229,7 +229,7 @@ describe('td-has-header', () => {
 
   (shadowSupport ? it : it.skip)('recognizes shadow tree content', function () {
     fixture.innerHTML = '<div id="shadow"> <b>header</b> </div>';
-    var shadow = fixture
+    const shadow = fixture
       .querySelector('#shadow')
       .attachShadow({ mode: 'open' });
     shadow.innerHTML =
@@ -239,7 +239,7 @@ describe('td-has-header', () => {
       '</table>';
 
     flatTreeSetup(fixture);
-    var node = axe.utils.querySelectorAll(axe._tree, 'table')[0].actualNode;
+    const node = axe.utils.querySelectorAll(axe._tree, 'table')[0].actualNode;
     expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
       true
     );

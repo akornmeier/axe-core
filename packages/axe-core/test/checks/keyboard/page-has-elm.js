@@ -1,11 +1,11 @@
 describe('page-has-*', function () {
   'use strict';
 
-  var fixture = document.getElementById('fixture');
-  var checkContext = new axe.testUtils.MockCheckContext();
-  var checkSetup = axe.testUtils.checkSetup;
-  var shadowSupported = axe.testUtils.shadowSupport.v1;
-  var shadowCheckSetup = axe.testUtils.shadowCheckSetup;
+  const fixture = document.getElementById('fixture');
+  const checkContext = new axe.testUtils.MockCheckContext();
+  const checkSetup = axe.testUtils.checkSetup;
+  const shadowSupported = axe.testUtils.shadowSupport.v1;
+  const shadowCheckSetup = axe.testUtils.shadowCheckSetup;
 
   afterEach(function () {
     fixture.innerHTML = '';
@@ -14,41 +14,47 @@ describe('page-has-*', function () {
   });
 
   describe('evaluate', function () {
-    var evaluate = axe.testUtils.getCheckEvaluate('page-has-main');
+    const evaluate = axe.testUtils.getCheckEvaluate('page-has-main');
 
     it('throws if there is no selector', function () {
       assert.throws(function () {
-        var params = checkSetup('<div id="target">No role</div>', undefined);
+        const params = checkSetup('<div id="target">No role</div>', undefined);
         checks['page-has-main'].evaluate.apply(checkContext, params);
       });
 
       assert.throws(function () {
-        var params = checkSetup('<div id="target">No role</div>', {});
+        const params = checkSetup('<div id="target">No role</div>', {});
         checks['page-has-main'].evaluate.apply(checkContext, params);
       });
 
       assert.throws(function () {
-        var badOptions = { selector: [] };
-        var params = checkSetup('<div id="target">No role</div>', badOptions);
+        const badOptions = { selector: [] };
+        const params = checkSetup('<div id="target">No role</div>', badOptions);
         checks['page-has-main'].evaluate.apply(checkContext, params);
       });
     });
 
     it('returns true if there are any matching elements', function () {
-      var options = { selector: 'b' };
-      var params = checkSetup('<div id="target"><b>No role</b></div>', options);
+      const options = { selector: 'b' };
+      const params = checkSetup(
+        '<div id="target"><b>No role</b></div>',
+        options
+      );
       assert.isTrue(evaluate.apply(checkContext, params));
     });
 
     it('returns false if there are no matching elements', function () {
-      var options = { selector: 'i' };
-      var params = checkSetup('<div id="target"><b>No role</b></div>', options);
+      const options = { selector: 'i' };
+      const params = checkSetup(
+        '<div id="target"><b>No role</b></div>',
+        options
+      );
       assert.isFalse(evaluate.apply(checkContext, params));
     });
 
     it('does not find hidden elements', function () {
-      var options = { selector: 'b' };
-      var params = checkSetup(
+      const options = { selector: 'b' };
+      const params = checkSetup(
         '<div id="target"><b style="display: none;">No role</b></div>',
         options
       );
@@ -56,8 +62,8 @@ describe('page-has-*', function () {
     });
 
     it('does find screen-reader only elements', function () {
-      var options = { selector: 'b' };
-      var params = checkSetup(
+      const options = { selector: 'b' };
+      const params = checkSetup(
         '<style type="text/css">' +
           '.sr-only {' +
           'border: 0;' +
@@ -81,10 +87,10 @@ describe('page-has-*', function () {
   });
 
   describe('after', function () {
-    var after = checks['page-has-main'].after;
+    const after = checks['page-has-main'].after;
 
     it('sets all results to true if any are true', function () {
-      var results = [
+      const results = [
         { result: true },
         { result: false },
         { result: undefined }
@@ -97,7 +103,7 @@ describe('page-has-*', function () {
     });
 
     it('Leave the results as is if none of them were true', function () {
-      var results = [
+      const results = [
         { result: false },
         { result: false },
         { result: undefined }
@@ -107,100 +113,106 @@ describe('page-has-*', function () {
   });
 
   describe('page-has-main', function () {
-    var check = checks['page-has-main'];
+    const check = checks['page-has-main'];
 
     it('should return false if no div has role property', function () {
-      var params = checkSetup('<div id="target">No role</div>', check.options);
-      var mainIsFound = check.evaluate.apply(checkContext, params);
+      const params = checkSetup(
+        '<div id="target">No role</div>',
+        check.options
+      );
+      const mainIsFound = check.evaluate.apply(checkContext, params);
       assert.isFalse(mainIsFound);
     });
 
     it('should return false if div has role not equal to main', function () {
-      var params = checkSetup(
+      const params = checkSetup(
         '<div id="target" role="bananas">Wrong role</div>',
         check.options
       );
-      var mainIsFound = check.evaluate.apply(checkContext, params);
+      const mainIsFound = check.evaluate.apply(checkContext, params);
       assert.isFalse(mainIsFound);
     });
 
     it('should return true if main landmark exists', function () {
-      var params = checkSetup(
+      const params = checkSetup(
         '<main id="target">main landmark</main>',
         check.options
       );
-      var mainIsFound = check.evaluate.apply(checkContext, params);
+      const mainIsFound = check.evaluate.apply(checkContext, params);
       assert.isTrue(mainIsFound);
     });
 
     it('should return true if one div has role equal to main', function () {
-      var params = checkSetup(
+      const params = checkSetup(
         '<div id="target" role="main">Div with role main</div>',
         check.options
       );
-      var mainIsFound = check.evaluate.apply(checkContext, params);
+      const mainIsFound = check.evaluate.apply(checkContext, params);
       assert.isTrue(mainIsFound);
     });
 
     (shadowSupported ? it : xit)(
       'should return true if main is inside of shadow dom',
       function () {
-        var params = shadowCheckSetup(
+        const params = shadowCheckSetup(
           '<div id="target"></div>',
           '<main>main landmark</main>',
           check.options
         );
-        var mainIsFound = check.evaluate.apply(checkContext, params);
+        const mainIsFound = check.evaluate.apply(checkContext, params);
         assert.isTrue(mainIsFound);
       }
     );
   });
 
   describe('page-has-heading-one', function () {
-    var check = checks['page-has-heading-one'];
+    const check = checks['page-has-heading-one'];
 
     it('should return false if div has role not equal to heading', function () {
-      var params = checkSetup(
+      const params = checkSetup(
         '<div id="target" role="bananas">Wrong role</div>',
         check.options
       );
-      var h1IsFound = check.evaluate.apply(checkContext, params);
+      const h1IsFound = check.evaluate.apply(checkContext, params);
       assert.isFalse(h1IsFound);
     });
 
     it('should return false if div has role heading but not aria-level=1', function () {
-      var params = checkSetup(
+      const params = checkSetup(
         '<div id="target" role="heading" aria-level="one">Wrong role</div>',
         check.options
       );
-      var h1IsFound = check.evaluate.apply(checkContext, params);
+      const h1IsFound = check.evaluate.apply(checkContext, params);
       assert.isFalse(h1IsFound);
     });
 
     it('should return true if h1 exists', function () {
-      var params = checkSetup('<h1 id="target">My heading</h1>', check.options);
-      var h1IsFound = check.evaluate.apply(checkContext, params);
+      const params = checkSetup(
+        '<h1 id="target">My heading</h1>',
+        check.options
+      );
+      const h1IsFound = check.evaluate.apply(checkContext, params);
       assert.isTrue(h1IsFound);
     });
 
     it('should return true if a div has role=heading and aria-level=1', function () {
-      var params = checkSetup(
+      const params = checkSetup(
         '<div id="target" role="heading" aria-level="1">Diversity heading</div>',
         check.options
       );
-      var h1IsFound = check.evaluate.apply(checkContext, params);
+      const h1IsFound = check.evaluate.apply(checkContext, params);
       assert.isTrue(h1IsFound);
     });
 
     (shadowSupported ? it : xit)(
       'should return true if h1 is inside of shadow dom',
       function () {
-        var params = shadowCheckSetup(
+        const params = shadowCheckSetup(
           '<div id="target"></div>',
           '<h1>Shady Heading</h1>',
           check.options
         );
-        var h1IsFound = check.evaluate.apply(checkContext, params);
+        const h1IsFound = check.evaluate.apply(checkContext, params);
         assert.isTrue(h1IsFound);
       }
     );

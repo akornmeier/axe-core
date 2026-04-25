@@ -11,42 +11,44 @@ const metaRefreshEvaluateESM = getCheckEvaluateESM(metaRefreshEvaluate, {
   maxDelay: 72000
 });
 describe('meta-refresh', () => {
-  var checkContext = createMockCheckContext();
-  var metaRefreshCheck = metaRefreshEvaluateESM;
+  const checkContext = createMockCheckContext();
+  const metaRefreshCheck = metaRefreshEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();
   });
 
   it('returns false if there is a number', () => {
-    var checkArgs = checkSetup('<meta id="target" name="refresh" content="3">');
+    const checkArgs = checkSetup(
+      '<meta id="target" name="refresh" content="3">'
+    );
     expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(false);
   });
 
   describe('returns false when valid', () => {
     it('there is a decimal', () => {
-      var checkArgs = checkSetup(
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="3.1">'
       );
       expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(false);
     });
 
     it('there is a number followed by a dot', () => {
-      var checkArgs = checkSetup(
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="3.">'
       );
       expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(false);
     });
 
     it('there is a dot followed by a number', () => {
-      var checkArgs = checkSetup(
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content=".5">'
       );
       expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(false);
     });
 
     it('there is whitespace before the number', () => {
-      var checkArgs = checkSetup(
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="  \n\t3">'
       );
       expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(false);
@@ -54,35 +56,35 @@ describe('meta-refresh', () => {
 
     describe('with a valid separator', () => {
       it('the number is followed by a semicolon', () => {
-        var checkArgs = checkSetup(
+        const checkArgs = checkSetup(
           '<meta id="target" name="refresh" content="3;">'
         );
         expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(false);
       });
 
       it('the number is followed by a comma', () => {
-        var checkArgs = checkSetup(
+        const checkArgs = checkSetup(
           '<meta id="target" name="refresh" content="3,">'
         );
         expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(false);
       });
 
       it('the number is followed spaces, and then a separator', () => {
-        var checkArgs = checkSetup(
+        const checkArgs = checkSetup(
           '<meta id="target" name="refresh" content="3 \t\n;">'
         );
         expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(false);
       });
 
       it('the separator is followed by non-separator characters', () => {
-        var checkArgs = checkSetup(
+        const checkArgs = checkSetup(
           '<meta id="target" name="refresh" content="3; https://deque.com/">'
         );
         expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(false);
       });
 
       it('the separator is a space', () => {
-        var checkArgs = checkSetup(
+        const checkArgs = checkSetup(
           '<meta id="target" name="refresh" content="3 https://deque.com/">'
         );
         expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(false);
@@ -92,28 +94,28 @@ describe('meta-refresh', () => {
 
   describe('returns true when invalid', () => {
     it('the number is prefaced with a plus', () => {
-      var checkArgs = checkSetup(
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="+3">'
       );
       expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(true);
     });
 
     it('the number is prefaced with a minus', () => {
-      var checkArgs = checkSetup(
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="-3">'
       );
       expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(true);
     });
 
     it('the number is prefaced with a letter', () => {
-      var checkArgs = checkSetup(
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="a3">'
       );
       expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(true);
     });
 
     it('the number is followed by an invalid separator character', () => {
-      var checkArgs = checkSetup(
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="3: https://deque.com/">'
       );
       expect(metaRefreshCheck.apply(checkContext, checkArgs)).toBe(true);
@@ -122,8 +124,8 @@ describe('meta-refresh', () => {
 
   describe('options.minDelay', () => {
     it('returns false when the redirect number is greater than minDelay', () => {
-      var options = { minDelay: 2 };
-      var checkArgs = checkSetup(
+      const options = { minDelay: 2 };
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="3">',
         options
       );
@@ -131,8 +133,8 @@ describe('meta-refresh', () => {
     });
 
     it('returns true when the redirect number equals minDelay', () => {
-      var options = { minDelay: 3 };
-      var checkArgs = checkSetup(
+      const options = { minDelay: 3 };
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="3">',
         options
       );
@@ -140,8 +142,8 @@ describe('meta-refresh', () => {
     });
 
     it('returns true when the redirect number is less than minDelay', () => {
-      var options = { minDelay: 4 };
-      var checkArgs = checkSetup(
+      const options = { minDelay: 4 };
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="3">',
         options
       );
@@ -149,8 +151,8 @@ describe('meta-refresh', () => {
     });
 
     it('ignores minDelay when set to false', () => {
-      var options = { minDelay: false };
-      var checkArgs = checkSetup(
+      const options = { minDelay: false };
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="0">',
         options
       );
@@ -160,8 +162,8 @@ describe('meta-refresh', () => {
 
   describe('options.maxDelay', () => {
     it('returns true when the redirect number is greater than maxDelay', () => {
-      var options = { maxDelay: 2 };
-      var checkArgs = checkSetup(
+      const options = { maxDelay: 2 };
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="3">',
         options
       );
@@ -169,8 +171,8 @@ describe('meta-refresh', () => {
     });
 
     it('returns false when the redirect number equals maxDelay', () => {
-      var options = { maxDelay: 3 };
-      var checkArgs = checkSetup(
+      const options = { maxDelay: 3 };
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="3">',
         options
       );
@@ -178,8 +180,8 @@ describe('meta-refresh', () => {
     });
 
     it('returns false when the redirect number is less than maxDelay', () => {
-      var options = { maxDelay: 4 };
-      var checkArgs = checkSetup(
+      const options = { maxDelay: 4 };
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="3">',
         options
       );
@@ -187,8 +189,8 @@ describe('meta-refresh', () => {
     });
 
     it('ignores maxDelay when set to false', () => {
-      var options = { maxDelay: false };
-      var checkArgs = checkSetup(
+      const options = { maxDelay: false };
+      const checkArgs = checkSetup(
         '<meta id="target" name="refresh" content="9999">',
         options
       );

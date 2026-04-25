@@ -10,7 +10,7 @@ import {
   vi
 } from 'vitest';
 describe('RuleResult', function () {
-  var RuleResult = axe._thisWillBeDeletedDoNotUse.base.RuleResult;
+  const RuleResult = axe._thisWillBeDeletedDoNotUse.base.RuleResult;
 
   it('should be a function', function () {
     expect(typeof RuleResult).toBe('function');
@@ -21,7 +21,7 @@ describe('RuleResult', function () {
   });
 
   it('should grab id from passed in rule', function () {
-    var result = new RuleResult({ id: 'monkeys' });
+    const result = new RuleResult({ id: 'monkeys' });
     expect(result.id).toBe('monkeys');
   });
 });

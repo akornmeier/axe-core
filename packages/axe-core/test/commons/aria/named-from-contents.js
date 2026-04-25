@@ -1,8 +1,8 @@
 describe('aria.namedFromContents', function () {
-  var aria = axe.commons.aria;
-  var namedFromContents = aria.namedFromContents;
-  var fixture = document.querySelector('#fixture');
-  var flatTreeSetup = axe.testUtils.flatTreeSetup;
+  const aria = axe.commons.aria;
+  const namedFromContents = aria.namedFromContents;
+  const fixture = document.querySelector('#fixture');
+  const flatTreeSetup = axe.testUtils.flatTreeSetup;
 
   afterEach(function () {
     fixture.innerHTML = '';
@@ -15,7 +15,7 @@ describe('aria.namedFromContents', function () {
   });
 
   it('works on virtual nodes', function () {
-    var vNode = axe.testUtils.queryFixture(
+    const vNode = axe.testUtils.queryFixture(
       '<div id="target" role="foo"></div>'
     );
     assert.isTrue(namedFromContents(vNode));

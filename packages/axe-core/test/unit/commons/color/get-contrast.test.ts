@@ -4,10 +4,10 @@ import getContrast from '../../../../lib/commons/color/get-contrast';
 
 describe('getContrast', function () {
   it('should calculate contrast sensibly', function () {
-    var black = new Color(0, 0, 0, 1);
-    var transparent = new Color(0, 0, 0, 0);
-    var white = new Color(255, 255, 255, 1);
-    var yellow = new Color(255, 255, 0, 1);
+    const black = new Color(0, 0, 0, 1);
+    const transparent = new Color(0, 0, 0, 0);
+    const white = new Color(255, 255, 255, 1);
+    const yellow = new Color(255, 255, 0, 1);
 
     //Same foreground/background gives 1
     expect(getContrast(black, black)).toBe(1);

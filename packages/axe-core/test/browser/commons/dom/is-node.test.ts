@@ -3,7 +3,7 @@ import { axe } from '@helpers/check-helpers';
 
 describe('dom.isNode', function () {
   it('nodes', function () {
-    var node;
+    let node;
     node = document;
     expect(axe.commons.dom.isNode(node), 'Document').toBe(true);
 
@@ -27,7 +27,7 @@ describe('dom.isNode', function () {
   });
 
   it('non-nodes', function () {
-    var node;
+    let node;
 
     node = {};
     expect(axe.commons.dom.isNode(node)).toBe(false);

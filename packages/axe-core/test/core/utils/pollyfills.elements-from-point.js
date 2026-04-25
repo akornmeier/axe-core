@@ -1,7 +1,7 @@
 describe('document.elementsFromPoint pollyfills', function () {
   'use strict';
 
-  var fixture = document.getElementById('fixture');
+  const fixture = document.getElementById('fixture');
 
   afterEach(function () {
     document.getElementById('fixture').innerHTML = '';
@@ -12,26 +12,26 @@ describe('document.elementsFromPoint pollyfills', function () {
   });
 
   it('returns document.elementsFromPoint if it is set', function () {
-    var orig = document.elementsFromPoint;
+    const orig = document.elementsFromPoint;
     document.elementsFromPoint = function () {
       return 123;
     };
 
-    var elmFromPt = axe.utils.pollyfillElementsFromPoint();
+    const elmFromPt = axe.utils.pollyfillElementsFromPoint();
     assert.equal(elmFromPt(), 123);
     document.elementsFromPoint = orig;
   });
 
   it('returns document.msElementsFromPoint if elementsFromPoint is undefined', function () {
-    var orig = document.elementsFromPoint;
-    var msOrig = document.msElementsFromPoint;
+    const orig = document.elementsFromPoint;
+    const msOrig = document.msElementsFromPoint;
 
     document.elementsFromPoint = undefined;
     document.msElementsFromPoint = function () {
       return 123;
     };
 
-    var elmFromPt = axe.utils.pollyfillElementsFromPoint();
+    const elmFromPt = axe.utils.pollyfillElementsFromPoint();
     assert.equal(elmFromPt(), 123);
 
     document.elementsFromPoint = orig;
@@ -39,13 +39,13 @@ describe('document.elementsFromPoint pollyfills', function () {
   });
 
   it('returns the pollyfill no native function is available', function () {
-    var orig = document.elementsFromPoint;
-    var msOrig = document.msElementsFromPoint;
+    const orig = document.elementsFromPoint;
+    const msOrig = document.msElementsFromPoint;
 
     document.elementsFromPoint = undefined;
     document.msElementsFromPoint = undefined;
 
-    var elmFromPt = axe.utils.pollyfillElementsFromPoint();
+    const elmFromPt = axe.utils.pollyfillElementsFromPoint();
     assert.isFunction(elmFromPt);
 
     document.elementsFromPoint = orig;
@@ -53,7 +53,7 @@ describe('document.elementsFromPoint pollyfills', function () {
   });
 
   describe('pollyfill function', function () {
-    var orig, msOrig;
+    let orig, msOrig;
     before(function () {
       orig = document.elementsFromPoint;
       msOrig = document.msElementsFromPoint;
@@ -80,14 +80,14 @@ describe('document.elementsFromPoint pollyfills', function () {
         '<div id="target" style="position: absolute; top: 60px; left: 45px; height: 20px; ' +
         'width: 15px; background-color: rgba(0, 128, 0, 0.5);">' +
         '</div></div></div>';
-      var target = fixture.querySelector('#target');
-      var pos = fixture.querySelector('#pos');
-      var container = fixture.querySelector('#container');
+      const target = fixture.querySelector('#target');
+      const pos = fixture.querySelector('#pos');
+      const container = fixture.querySelector('#container');
 
       target.scrollIntoView();
-      var rect = target.getBoundingClientRect();
+      const rect = target.getBoundingClientRect();
 
-      var visualParents = document.elementsFromPoint(
+      const visualParents = document.elementsFromPoint(
         Math.ceil(rect.left + 1),
         Math.ceil(rect.top + 1)
       );
@@ -105,14 +105,14 @@ describe('document.elementsFromPoint pollyfills', function () {
         '<span id="target" style="position: absolute; top: 60px; left: 45px;' +
         'background-color: rgba(0, 128, 0, 0.5);">Text goes here' +
         '</span></span></div>';
-      var target = fixture.querySelector('#target');
-      var pos = fixture.querySelector('#pos');
-      var container = fixture.querySelector('#container');
+      const target = fixture.querySelector('#target');
+      const pos = fixture.querySelector('#pos');
+      const container = fixture.querySelector('#container');
 
       target.scrollIntoView();
-      var rect = target.getBoundingClientRect();
+      const rect = target.getBoundingClientRect();
 
-      var visualParents = document.elementsFromPoint(
+      const visualParents = document.elementsFromPoint(
         Math.ceil(rect.left + 1),
         Math.ceil(rect.top + 1)
       );
@@ -124,13 +124,13 @@ describe('document.elementsFromPoint pollyfills', function () {
         '<div id="parent" style="background-color: rgba(0, 128, 0, 0.5); height: 40px; width: 30px;">' +
         '<div id="target" style="background-color: rgba(0, 128, 0, 0.5); height: 20px; width: 15px;">' +
         '</div></div>';
-      var target = fixture.querySelector('#target');
-      var parent = fixture.querySelector('#parent');
+      const target = fixture.querySelector('#target');
+      const parent = fixture.querySelector('#parent');
 
       target.scrollIntoView();
-      var rect = target.getBoundingClientRect();
+      const rect = target.getBoundingClientRect();
 
-      var visualParents = document.elementsFromPoint(
+      const visualParents = document.elementsFromPoint(
         Math.ceil(rect.left),
         Math.ceil(rect.top)
       );
@@ -141,12 +141,12 @@ describe('document.elementsFromPoint pollyfills', function () {
       fixture.innerHTML =
         '<div id="target" style="z-index:-1; position:absolute;">Target!</div>' +
         '<div id="sibling">Some text</div>';
-      var target = fixture.querySelector('#target');
+      const target = fixture.querySelector('#target');
 
       target.scrollIntoView();
-      var rect = target.getBoundingClientRect();
+      const rect = target.getBoundingClientRect();
 
-      var visualParents = document.elementsFromPoint(
+      const visualParents = document.elementsFromPoint(
         Math.ceil(rect.left),
         Math.ceil(rect.top)
       );

@@ -9,8 +9,8 @@ describe('non-empty-title', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkEvaluate = getCheckEvaluate('non-empty-title');
-  var checkContext = createMockCheckContext();
+  const checkEvaluate = getCheckEvaluate('non-empty-title');
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -18,27 +18,27 @@ describe('non-empty-title', () => {
   });
 
   it('should return true if a title is present', () => {
-    var params = checkSetup('<img id="target" title="woohoo" />');
+    const params = checkSetup('<img id="target" title="woohoo" />');
 
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(true);
   });
 
   it('should return false if a title is not present', () => {
-    var params = checkSetup('<img id="target" />');
+    const params = checkSetup('<img id="target" />');
 
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
     expect(checkContext._data.messageKey).toBe('noAttr');
   });
 
   it('should return false if a title is present, but empty', () => {
-    var params = checkSetup('<img id="target" title=" " />');
+    const params = checkSetup('<img id="target" title=" " />');
 
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
     expect(checkContext._data.messageKey).toBe('emptyAttr');
   });
 
   it('should collapse whitespace', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<img id="target" title=" \t \n \r \t  \t\r\n " />'
     );
 

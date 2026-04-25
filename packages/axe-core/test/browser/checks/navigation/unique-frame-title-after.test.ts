@@ -2,14 +2,14 @@ import { createMockCheckContext, checks } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 /*eslint indent: 0*/
 describe('unique-frame-title-after', () => {
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     checkContext.reset();
   });
 
   it('should remove any check whose data only appears once', () => {
-    var result = checks['unique-frame-title'].after([
+    const result = checks['unique-frame-title'].after([
       {
         data: 'bananas'
       },

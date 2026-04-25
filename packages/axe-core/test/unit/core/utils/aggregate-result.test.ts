@@ -10,7 +10,7 @@ import {
 import aggregateResult from '../../../../lib/core/utils/aggregate-result';
 
 describe('aggregateResult', function () {
-  var results,
+  let results,
     _results = [
       {
         id: 'gimmeLabel',
@@ -162,7 +162,7 @@ describe('aggregateResult', function () {
   });
 
   it('creates an object with arrays as properties for each result', function () {
-    var resultObject = aggregateResult(results);
+    const resultObject = aggregateResult(results);
 
     assert.isArray(resultObject.passes);
     assert.isArray(resultObject.violations);
@@ -172,8 +172,8 @@ describe('aggregateResult', function () {
 
   it('copies failures and passes to their respective arrays on the result object', function () {
     // insert 1 pass and 1 fail
-    var input = [results[0], results[1]];
-    var resultObject = aggregateResult(input);
+    const input = [results[0], results[1]];
+    const resultObject = aggregateResult(input);
 
     expect(resultObject.passes).toHaveLength(1);
     expect(resultObject.violations).toHaveLength(1);
@@ -191,8 +191,8 @@ describe('aggregateResult', function () {
 
   it('creates a duplicate of the result for each outcome it has', function () {
     // insert 1 fail, containing a pass, a fail and a cantTell result
-    var input = [results[2]];
-    var resultObject = aggregateResult(input);
+    const input = [results[2]];
+    const resultObject = aggregateResult(input);
 
     expect(resultObject.passes).toHaveLength(1);
     expect(resultObject.violations).toHaveLength(1);
@@ -207,8 +207,8 @@ describe('aggregateResult', function () {
 
   it('moves inapplicable results only to the inapplicable array', function () {
     // insert 1 fail, containing a pass, a fail and a cantTell result
-    var input = [results[3]];
-    var resultObject = aggregateResult(input);
+    const input = [results[3]];
+    const resultObject = aggregateResult(input);
 
     expect(resultObject.passes).toHaveLength(0);
     expect(resultObject.violations).toHaveLength(0);

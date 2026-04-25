@@ -28,7 +28,9 @@ declare global {
 // is what scopes this hook to the browser/integration projects without
 // having to read Vitest's project name.
 beforeEach(ctx => {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined') {
+    return;
+  }
   const el = document.createElement('div');
   el.id = 'fixture';
   el.dataset.testFixture = ctx.task.id;
@@ -37,7 +39,9 @@ beforeEach(ctx => {
 });
 
 afterEach(() => {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined') {
+    return;
+  }
   globalThis.__axeFixture?.remove();
   globalThis.__axeFixture = undefined;
 });

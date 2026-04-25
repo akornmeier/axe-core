@@ -6,8 +6,8 @@ import {
 } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('unsupportedattr', () => {
-  var checkContext = createMockCheckContext();
-  var check = checks['aria-unsupported-attr'];
+  const checkContext = createMockCheckContext();
+  const check = checks['aria-unsupported-attr'];
 
   afterEach(() => {
     checkContext.reset();
@@ -25,7 +25,7 @@ describe('unsupportedattr', () => {
       }
     });
 
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-mccheddarton="true">Contents</div>'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBe(true);
@@ -44,7 +44,7 @@ describe('unsupportedattr', () => {
         }
       }
     });
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-mccheddarton="true" aria-bagleypants="false" aria-label="Nope">Contents</div>'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBe(true);
@@ -55,14 +55,14 @@ describe('unsupportedattr', () => {
   });
 
   it('should return false if applied to a supported attribute', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-label="This is fine">Contents</div>'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBe(false);
   });
 
   it('should return false if all ARIA attributes are supported', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-label="This is fine" aria-haspopup="true">Contents</div>'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBe(false);
@@ -80,7 +80,7 @@ describe('unsupportedattr', () => {
         }
       }
     });
-    var params = checkSetup(
+    const params = checkSetup(
       '<button id="target" aria-mccheddarton="true">Contents</button>'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBe(false);
@@ -105,7 +105,7 @@ describe('unsupportedattr', () => {
         }
       }
     });
-    var params = checkSetup(
+    const params = checkSetup(
       '<input type="checkbox" id="target" aria-mccheddarton="true">'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBe(false);
@@ -123,7 +123,7 @@ describe('unsupportedattr', () => {
         }
       }
     });
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-mccheddarton="true">Contents</div>'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBe(true);
@@ -148,7 +148,7 @@ describe('unsupportedattr', () => {
         }
       }
     });
-    var params = checkSetup(
+    const params = checkSetup(
       '<input type="radio" id="target" aria-mccheddarton="true">'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBe(true);

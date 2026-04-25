@@ -14,13 +14,13 @@ import { describe, it, expect, afterEach } from 'vitest';
 // instead of the full ancestry string, or rebuild ancestry from the
 // vNode for environment-agnostic comparison.
 describe.skip('heading-order', () => {
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
   afterEach(() => {
     checkContext.reset();
   });
 
   it('should store the heading order path and level for [role=heading] elements and return true', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div role="heading" aria-level="1" id="target">One</div><div role="heading" aria-level="3">Three</div>'
     );
     expect(
@@ -41,7 +41,7 @@ describe.skip('heading-order', () => {
   });
 
   it('should handle incorrect aria-level values', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div role="heading" aria-level="-1" id="target">One</div><div role="heading">Two</div>'
     );
     expect(
@@ -62,7 +62,7 @@ describe.skip('heading-order', () => {
   });
 
   it('should allow high aria-level values', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div role="heading" aria-level="12" id="target">One</div>'
     );
     expect(
@@ -79,7 +79,7 @@ describe.skip('heading-order', () => {
   });
 
   it('should store the correct header level for hn tags and return true', () => {
-    var vNode = queryFixture('<h1 id="target">One</h1><h3>Three</h3>');
+    const vNode = queryFixture('<h1 id="target">One</h1><h3>Three</h3>');
     expect(
       getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {})
     ).toBe(true);
@@ -98,7 +98,7 @@ describe.skip('heading-order', () => {
   });
 
   it('should allow aria-level to override semantic level for hn tags and return true', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<h1 aria-level="2" id="target">Two</h1><h3 aria-level="4">Four</h3>'
     );
     expect(
@@ -119,7 +119,7 @@ describe.skip('heading-order', () => {
   });
 
   it('should ignore aria-level on iframe when not used with role=heading', () => {
-    var vNode = queryFixture('<iframe aria-level="2" id="target"></iframe>');
+    const vNode = queryFixture('<iframe aria-level="2" id="target"></iframe>');
     getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {
       initiator: true
     });
@@ -134,7 +134,7 @@ describe.skip('heading-order', () => {
   });
 
   it('should correctly give level on hn tag with role=heading', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<h1 role="heading" id="target">One</h1><h3 role="heading">Three</h3>'
     );
     expect(
@@ -155,7 +155,7 @@ describe.skip('heading-order', () => {
   });
 
   it('should return the heading level when an hn tag has an invalid aria-level', () => {
-    var vNode = queryFixture('<h1 aria-level="-1" id="target">One</h1>');
+    const vNode = queryFixture('<h1 aria-level="-1" id="target">One</h1>');
     expect(
       getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {})
     ).toBe(true);
@@ -170,7 +170,7 @@ describe.skip('heading-order', () => {
   });
 
   it('should store the location of iframes', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<h1 id="target">One</h1><iframe></iframe><h3>Three</h3>'
     );
     getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {
@@ -196,7 +196,7 @@ describe.skip('heading-order', () => {
 
   describe('after', () => {
     it('should return false when header level increases by 2', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -222,7 +222,7 @@ describe.skip('heading-order', () => {
     });
 
     it('should return true when header level decreases by 1', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -248,7 +248,7 @@ describe.skip('heading-order', () => {
     });
 
     it('should return true when header level decreases by 2', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -274,7 +274,7 @@ describe.skip('heading-order', () => {
     });
 
     it('should return true when there is only one header', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -292,7 +292,7 @@ describe.skip('heading-order', () => {
     });
 
     it('should return true when header level increases by 1', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -322,7 +322,7 @@ describe.skip('heading-order', () => {
     });
 
     it('should return true if heading levels are correct across iframes', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -366,13 +366,13 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      var afterResults = checks['heading-order'].after(results);
+      const afterResults = checks['heading-order'].after(results);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(true);
     });
 
     it('should return false if heading levels are incorrect across iframes', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -416,13 +416,13 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      var afterResults = checks['heading-order'].after(results);
+      const afterResults = checks['heading-order'].after(results);
       expect(afterResults[1].result).toBe(false);
       expect(afterResults[2].result).toBe(true);
     });
 
     it('should handle nested iframes', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -484,14 +484,14 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      var afterResults = checks['heading-order'].after(results);
+      const afterResults = checks['heading-order'].after(results);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(true);
       expect(afterResults[3].result).toBe(true);
     });
 
     it('sets the result to undefined when the heading is not in the map', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -514,13 +514,13 @@ describe.skip('heading-order', () => {
         }
       ];
 
-      var afterResults = checks['heading-order'].after(results);
+      const afterResults = checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(true);
       expect(afterResults[1].result).toBeUndefined();
     });
 
     it('ignores frames for which there are no results', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -565,14 +565,14 @@ describe.skip('heading-order', () => {
         }
       ];
 
-      var afterResults = checks['heading-order'].after(results);
+      const afterResults = checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(true);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(false);
     });
 
     it('should not error if iframe is first result', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -616,13 +616,13 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      var afterResults = checks['heading-order'].after(results);
+      const afterResults = checks['heading-order'].after(results);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(true);
     });
 
     it('runs when the top frame has no heading', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -649,13 +649,13 @@ describe.skip('heading-order', () => {
         }
       ];
 
-      var afterResults = checks['heading-order'].after(results);
+      const afterResults = checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(true);
       expect(afterResults[1].result).toBe(false);
     });
 
     it('understand shadow DOM in ancestries', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -710,7 +710,7 @@ describe.skip('heading-order', () => {
         }
       ];
 
-      var afterResults = checks['heading-order'].after(results);
+      const afterResults = checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(true);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(true);
@@ -718,7 +718,7 @@ describe.skip('heading-order', () => {
     });
 
     it('run when an in-between frame has no heading', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -769,7 +769,7 @@ describe.skip('heading-order', () => {
         }
       ];
 
-      var afterResults = checks['heading-order'].after(results);
+      const afterResults = checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(true);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(true);
@@ -777,7 +777,7 @@ describe.skip('heading-order', () => {
     });
 
     it('can fail the second heading, if the first is excluded', () => {
-      var results = [
+      const results = [
         {
           data: {
             headingOrder: [
@@ -797,7 +797,7 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      var afterResults = checks['heading-order'].after(results);
+      const afterResults = checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(false);
     });
   });

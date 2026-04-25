@@ -6,8 +6,8 @@ const frameTestedEvaluateESM = getCheckEvaluateESM(frameTestedEvaluate, {
   isViolation: false
 });
 describe('frame-tested', () => {
-  var checkEvaluate = frameTestedEvaluateESM;
-  var frameTestedAfter = checks['frame-tested'].after;
+  const checkEvaluate = frameTestedEvaluateESM;
+  const frameTestedAfter = checks['frame-tested'].after;
 
   describe('evaluate', () => {
     it('returns undefined', () => {
@@ -21,7 +21,7 @@ describe('frame-tested', () => {
 
   describe('after', () => {
     it('changes result to true if frame has been tested', () => {
-      var results = [
+      const results = [
         {
           result: undefined,
           node: {
@@ -54,7 +54,7 @@ describe('frame-tested', () => {
         }
       ];
 
-      var afterResults = frameTestedAfter(results);
+      const afterResults = frameTestedAfter(results);
       expect(afterResults).toHaveLength(2);
 
       expect(afterResults[0].result).toBe(true);
@@ -65,7 +65,7 @@ describe('frame-tested', () => {
     });
 
     it('does not change result when iframe has not been tested', () => {
-      var results = [
+      const results = [
         {
           result: undefined,
           node: {
@@ -98,7 +98,7 @@ describe('frame-tested', () => {
         }
       ];
 
-      var afterResults = frameTestedAfter(results);
+      const afterResults = frameTestedAfter(results);
       expect(afterResults).toHaveLength(3);
 
       expect(afterResults[0].result).toBe(true);
@@ -112,7 +112,7 @@ describe('frame-tested', () => {
     });
 
     it('works with shadow DOM', () => {
-      var results = [
+      const results = [
         {
           result: undefined,
           node: {
@@ -139,7 +139,7 @@ describe('frame-tested', () => {
         }
       ];
 
-      var afterResults = frameTestedAfter(results);
+      const afterResults = frameTestedAfter(results);
       expect(afterResults).toHaveLength(2);
 
       expect(afterResults[0].result).toBe(true);
@@ -154,7 +154,7 @@ describe('frame-tested', () => {
     });
 
     it('works with nested shadow DOM and iframes', () => {
-      var results = [
+      const results = [
         {
           result: undefined,
           node: {
@@ -215,7 +215,7 @@ describe('frame-tested', () => {
         }
       ];
 
-      var afterResults = frameTestedAfter(results);
+      const afterResults = frameTestedAfter(results);
       expect(afterResults).toHaveLength(4);
 
       expect(afterResults[0].result).toBe(true);

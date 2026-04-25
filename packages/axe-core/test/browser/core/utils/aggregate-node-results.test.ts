@@ -10,15 +10,15 @@ import {
   vi
 } from 'vitest';
 describe('axe.utils.aggregateNodeResults', function () {
-  var FAIL = 'failed';
-  var PASS = 'passed';
-  var CANTTELL = 'cantTell';
-  var INAPPLICABLE = 'inapplicable';
+  const FAIL = 'failed';
+  const PASS = 'passed';
+  const CANTTELL = 'cantTell';
+  const INAPPLICABLE = 'inapplicable';
 
   // create an array of check results, padding input with defaults and
   // wrapping arrays where required
   function createTestResults() {
-    var args = [].slice.call(arguments);
+    const args = [].slice.call(arguments);
     return args.map(function (node) {
       ['any', 'all', 'none'].forEach(function (type) {
         if (typeof node[type] === 'undefined') {
@@ -51,12 +51,12 @@ describe('axe.utils.aggregateNodeResults', function () {
   });
 
   it('Should be `inapplicable` when no results are given', function () {
-    var ruleResult = axe.utils.aggregateNodeResults([]);
+    const ruleResult = axe.utils.aggregateNodeResults([]);
     expect(ruleResult.result).toBe(INAPPLICABLE);
   });
 
   it('should assign FAIL to ruleResult over PASS', function () {
-    var ruleResult = axe.utils.aggregateNodeResults(
+    const ruleResult = axe.utils.aggregateNodeResults(
       createTestResults({ all: false }, { all: true }, { all: true })
     );
     expect(ruleResult.result).toBe(FAIL);
@@ -65,7 +65,7 @@ describe('axe.utils.aggregateNodeResults', function () {
   });
 
   it('should assign FAIL to ruleResult over CANTTELL', function () {
-    var ruleResult = axe.utils.aggregateNodeResults(
+    const ruleResult = axe.utils.aggregateNodeResults(
       createTestResults({ all: false }, { all: 0 }, { all: true })
     );
     expect(ruleResult.result).toBe(FAIL);
@@ -75,7 +75,7 @@ describe('axe.utils.aggregateNodeResults', function () {
   });
 
   it('should assign PASS to ruleResult if there are only passing checks', function () {
-    var ruleResult = axe.utils.aggregateNodeResults(
+    const ruleResult = axe.utils.aggregateNodeResults(
       createTestResults({ all: true }, { all: true }, { all: true })
     );
     expect(ruleResult.result).toBe(PASS);
@@ -84,7 +84,7 @@ describe('axe.utils.aggregateNodeResults', function () {
   });
 
   it('should assign FAIL if there are no passing anys checks', function () {
-    var ruleResult = axe.utils.aggregateNodeResults(
+    const ruleResult = axe.utils.aggregateNodeResults(
       createTestResults({ any: false }, { any: false }, { any: false })
     );
     expect(ruleResult.result).toBe(FAIL);
@@ -93,7 +93,7 @@ describe('axe.utils.aggregateNodeResults', function () {
   });
 
   it('should assign CANTTELL over PASS', function () {
-    var ruleResult = axe.utils.aggregateNodeResults(
+    const ruleResult = axe.utils.aggregateNodeResults(
       createTestResults({ all: true }, { all: 0 }, { all: 0 })
     );
     expect(ruleResult.result).toBe(CANTTELL);
@@ -102,7 +102,7 @@ describe('axe.utils.aggregateNodeResults', function () {
   });
 
   it('should provide impact on incomplete', function () {
-    var ruleResult = axe.utils.aggregateNodeResults(
+    const ruleResult = axe.utils.aggregateNodeResults(
       createTestResults({
         none: { result: undefined, impact: 'serious' }
       })
@@ -112,7 +112,7 @@ describe('axe.utils.aggregateNodeResults', function () {
 
   it('should raise the highest "raisedMetadata" on failing checks', function () {
     /*eslint indent:0 */
-    var ruleResult = axe.utils.aggregateNodeResults(
+    const ruleResult = axe.utils.aggregateNodeResults(
       createTestResults(
         {
           none: { result: true, impact: 'moderate' },

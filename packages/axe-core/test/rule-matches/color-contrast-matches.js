@@ -591,7 +591,7 @@ describe('color-contrast-matches', function () {
     });
 
     it('is false for multiple icons', () => {
-      fixture.innerHTML = `<div id="target" style="font-family: \'Material Icons\'">
+      fixture.innerHTML = `<div id="target" style="font-family: 'Material Icons'">
           check star favorite
         </div>`;
       const target = fixture.querySelector('#target');

@@ -6,7 +6,7 @@ import centerPointOfRect from '../../../../lib/commons/color/center-point-of-rec
 
 describe.todo('centerPointOfRect', function () {
   it('returns `undefined` when element is placed outside of viewport (left position > window dimension)', function () {
-    var actual = centerPointOfRect({
+    const actual = centerPointOfRect({
       left: 9999,
       top: 0,
       width: 200,
@@ -16,7 +16,7 @@ describe.todo('centerPointOfRect', function () {
   });
 
   it('returns `{x,y}` when element is with in viewport', function () {
-    var actual = centerPointOfRect({
+    const actual = centerPointOfRect({
       left: 0,
       top: 0,
       width: 200,
@@ -27,7 +27,7 @@ describe.todo('centerPointOfRect', function () {
   });
 
   it('returns `{x,y}` when element is with in viewport (check returned coordinate values)', function () {
-    var actual = centerPointOfRect({
+    const actual = centerPointOfRect({
       left: 100,
       top: 100,
       width: 250,

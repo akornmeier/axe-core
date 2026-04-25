@@ -6,7 +6,7 @@ import getViewportSize from '../../../../lib/commons/dom/get-viewport-size';
 
 describe.todo('getViewportSize', function () {
   it('should return an object with width and height', function () {
-    var result = getViewportSize(window);
+    const result = getViewportSize(window);
 
     assert.property(result, 'width');
     assert.property(result, 'height');
@@ -16,7 +16,7 @@ describe.todo('getViewportSize', function () {
   });
 
   it('should have some fallbacks for old browsers', function () {
-    var result = getViewportSize({
+    let result = getViewportSize({
       document: {},
       innerWidth: 12,
       innerHeight: 47

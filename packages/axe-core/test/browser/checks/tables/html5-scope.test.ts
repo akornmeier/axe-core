@@ -11,22 +11,22 @@ describe('html5-scope', () => {
 
   it('should return true on THs', () => {
     fixture.innerHTML = '<table><tr><th scope="col"></th></tr></table>';
-    var node = fixture.querySelector('th');
+    const node = fixture.querySelector('th');
 
     expect(getCheckEvaluate('html5-scope')(node)).toBe(true);
   });
 
   it('should return false on TDs', () => {
     fixture.innerHTML = '<table><tr><td scope="col"></td></tr></table>';
-    var node = fixture.querySelector('td');
+    const node = fixture.querySelector('td');
 
     expect(getCheckEvaluate('html5-scope')(node)).toBe(false);
   });
 
   it('should return true on non-HTML5 documents', () => {
-    var origPublicId = document.publicId;
+    const origPublicId = document.publicId;
     fixture.innerHTML = '<table><tr><th scope="col"></th></tr></table>';
-    var node = fixture.querySelector('th');
+    const node = fixture.querySelector('th');
 
     expect(getCheckEvaluate('html5-scope')(node)).toBe(true);
     document.publicId = origPublicId;

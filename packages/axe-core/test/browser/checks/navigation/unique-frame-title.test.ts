@@ -5,13 +5,13 @@ import {
 } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('unique-frame-title', () => {
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
   afterEach(() => {
     checkContext.reset();
   });
 
   it('should log title to data and return true', () => {
-    var vNode = queryFixture('<iframe id="target" title="bananas"></iframe>');
+    const vNode = queryFixture('<iframe id="target" title="bananas"></iframe>');
     expect(
       getCheckEvaluate('unique-frame-title').call(checkContext, null, {}, vNode)
     ).toBe(true);
@@ -19,7 +19,7 @@ describe('unique-frame-title', () => {
   });
 
   it('should convert text to lower case', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<iframe id="target" title="\t  app\t \n \rle  "></iframe>'
     );
     getCheckEvaluate('unique-frame-title').call(checkContext, null, {}, vNode);
@@ -27,7 +27,7 @@ describe('unique-frame-title', () => {
   });
 
   it('should take out space differences', () => {
-    var vNode = queryFixture('<iframe id="target" title="APPLE"></iframe>');
+    const vNode = queryFixture('<iframe id="target" title="APPLE"></iframe>');
     getCheckEvaluate('unique-frame-title').call(checkContext, null, {}, vNode);
     expect(checkContext._data).toBe('apple');
   });

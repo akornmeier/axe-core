@@ -9,8 +9,8 @@ describe('td-headers-attr', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkContext = createMockCheckContext();
-  var check = getCheckEvaluate('td-headers-attr');
+  const checkContext = createMockCheckContext();
+  const check = getCheckEvaluate('td-headers-attr');
 
   afterEach(() => {
     checkContext.reset();
@@ -24,7 +24,7 @@ describe('td-headers-attr', () => {
         '</table>'
     );
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(check.call(checkContext, node)).toBe(true);
   });
 
@@ -36,7 +36,7 @@ describe('td-headers-attr', () => {
         '</table>'
     );
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(check.call(checkContext, node)).toBe(true);
   });
 
@@ -48,7 +48,7 @@ describe('td-headers-attr', () => {
         '</table>'
     );
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(check.call(checkContext, node)).toBe(true);
   });
 
@@ -60,7 +60,7 @@ describe('td-headers-attr', () => {
         '</table>'
     );
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(check.call(checkContext, node)).toBe(true);
   });
 
@@ -72,12 +72,12 @@ describe('td-headers-attr', () => {
         '</table>'
     );
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(check.call(checkContext, node)).toBeUndefined();
   });
 
   it('returns false if the header is a table cell', () => {
-    var node;
+    let node;
 
     fixtureSetup(
       '<table>' +
@@ -119,13 +119,13 @@ describe('td-headers-attr', () => {
       </table>
     `);
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(check.call(checkContext, node)).toBe(false);
     expect(checkContext._data).toEqual({ messageKey: 'cell-header-not-th' });
   });
 
   it('returns true if table cell referenced as header with role rowheader or columnheader', () => {
-    var node;
+    let node;
 
     fixtureSetup(`
       <table>
@@ -157,7 +157,7 @@ describe('td-headers-attr', () => {
       </table>'
     `);
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     check.call(checkContext, node);
     expect(checkContext._relatedNodes).toEqual([fixture.querySelector('#bye')]);
   });
@@ -170,7 +170,7 @@ describe('td-headers-attr', () => {
         '</table>'
     );
 
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(check.call(checkContext, node)).toBe(false);
     expect(checkContext._data).toEqual({ messageKey: 'header-refs-self' });
   });
@@ -181,7 +181,7 @@ describe('td-headers-attr', () => {
         '  <tr> <th>Hello</th> <td headers="h1" hidden>goodbye</td> </tr>' +
         '</table>'
     );
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(check.call(checkContext, node)).toBe(true);
   });
 
@@ -191,7 +191,7 @@ describe('td-headers-attr', () => {
         '  <tr> <th>Hello</th> <td headers="h1" aria-hidden="true">goodbye</td> </tr>' +
         '</table>'
     );
-    var node = fixture.querySelector('table');
+    const node = fixture.querySelector('table');
     expect(check.call(checkContext, node)).toBe(true);
   });
 });

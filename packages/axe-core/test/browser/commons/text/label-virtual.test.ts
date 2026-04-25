@@ -17,7 +17,7 @@ describe('text.labelVirtual', function () {
       '<input id="target" aria-labelledby="monkeys bananas">';
 
     flatTreeSetup(document.body);
-    var target = fixture.querySelector('#target');
+    const target = fixture.querySelector('#target');
     expect(axe.commons.text.label(target)).toBe('monkeys bananas');
   });
 
@@ -27,8 +27,8 @@ describe('text.labelVirtual', function () {
         '<div id="monkeys">monkeys</div><div id="bananas">bananas</div>' +
         '<input id="target" aria-labelledby="monkeys bananas">';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys bananas');
     });
 
@@ -37,8 +37,8 @@ describe('text.labelVirtual', function () {
         '<div id="monkeys">monkeys</div><div id="bananas" style="display: none">bananas</div>' +
         '<input id="target" aria-labelledby="monkeys bananas">';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys');
     });
 
@@ -47,8 +47,8 @@ describe('text.labelVirtual', function () {
         '<div id="monkeys">monkeys</div><div id="bananas">bananas</div>' +
         '<input id="target" aria-labelledby="monkeys bananas" aria-label="nope">';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys bananas');
     });
 
@@ -58,8 +58,8 @@ describe('text.labelVirtual', function () {
         '<label for="target">nope</label>' +
         '<input id="target" aria-labelledby="monkeys bananas">';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys bananas');
     });
 
@@ -69,8 +69,8 @@ describe('text.labelVirtual', function () {
         '<label>nope' +
         '<input id="target" aria-labelledby="monkeys bananas"></label>';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys bananas');
     });
 
@@ -79,8 +79,8 @@ describe('text.labelVirtual', function () {
         '<div id="monkeys">	\n  </div><div id="bananas"></div>' +
         '<input id="target" aria-labelledby="monkeys bananas">';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBeNull();
     });
   });
@@ -89,16 +89,16 @@ describe('text.labelVirtual', function () {
     it('should detect it', function () {
       fixture.innerHTML = '<input id="target" aria-label="monkeys">';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys');
     });
 
     it('should ignore whitespace only labels', function () {
       fixture.innerHTML = '<input id="target" aria-label="   \n	">';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBeNull();
     });
 
@@ -107,8 +107,8 @@ describe('text.labelVirtual', function () {
         '<label for="target">nope</label>' +
         '<input id="target" aria-label="monkeys">';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys');
     });
 
@@ -116,8 +116,8 @@ describe('text.labelVirtual', function () {
       fixture.innerHTML =
         '<label>nope' + '<input id="target" aria-label="monkeys"></label>';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys');
     });
   });
@@ -127,8 +127,8 @@ describe('text.labelVirtual', function () {
       fixture.innerHTML =
         '<label for="target">monkeys</label>' + '<input id="target">';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys');
     });
 
@@ -136,8 +136,8 @@ describe('text.labelVirtual', function () {
       fixture.innerHTML =
         '<label for="target">	\n\r  </label>' + '<input id="target">';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBeNull();
     });
 
@@ -147,8 +147,8 @@ describe('text.labelVirtual', function () {
         '<label>nope' +
         '<input id="target"></label>';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys');
     });
   });
@@ -157,16 +157,16 @@ describe('text.labelVirtual', function () {
     it('should detect it', function () {
       fixture.innerHTML = '<label>monkeys' + '<input id="target"><label>';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBe('monkeys');
     });
 
     it('should ignore whitespace only or empty labels', function () {
       fixture.innerHTML = '<label> ' + '<input id="target"><label>';
 
-      var tree = flatTreeSetup(document.body);
-      var target = axe.utils.querySelectorAll(tree, '#target')[0];
+      const tree = flatTreeSetup(document.body);
+      const target = axe.utils.querySelectorAll(tree, '#target')[0];
       expect(axe.commons.text.labelVirtual(target)).toBeNull();
     });
   });

@@ -13,7 +13,7 @@ describe('internal-link-present', () => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   const shadowSupported = shadowSupport.v1;
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
   afterEach(() => {
     fixture.innerHTML = '';
     axe._tree = undefined;
@@ -21,7 +21,7 @@ describe('internal-link-present', () => {
   });
 
   it('should return true when an internal link is found', () => {
-    var vNode = queryFixture('<div id="target"><a href="#haha">hi</a></div>');
+    const vNode = queryFixture('<div id="target"><a href="#haha">hi</a></div>');
     expect(
       getCheckEvaluate('internal-link-present').call(
         checkContext,
@@ -33,7 +33,7 @@ describe('internal-link-present', () => {
   });
 
   it('should return false when a hashbang URL was used', () => {
-    var vNode = queryFixture('<div id="target"><a href="#!foo">hi</a></div>');
+    const vNode = queryFixture('<div id="target"><a href="#!foo">hi</a></div>');
     expect(
       getCheckEvaluate('internal-link-present').call(
         checkContext,
@@ -45,7 +45,9 @@ describe('internal-link-present', () => {
   });
 
   it('should return false when a hash route URL was used', () => {
-    var vNode = queryFixture('<div id="target"><a href="#/home">hi</a></div>');
+    const vNode = queryFixture(
+      '<div id="target"><a href="#/home">hi</a></div>'
+    );
     expect(
       getCheckEvaluate('internal-link-present').call(
         checkContext,
@@ -57,7 +59,9 @@ describe('internal-link-present', () => {
   });
 
   it('should return false when a hashbang + slash route URL was used', () => {
-    var vNode = queryFixture('<div id="target"><a href="#!/home">hi</a></div>');
+    const vNode = queryFixture(
+      '<div id="target"><a href="#!/home">hi</a></div>'
+    );
     expect(
       getCheckEvaluate('internal-link-present').call(
         checkContext,
@@ -69,7 +73,7 @@ describe('internal-link-present', () => {
   });
 
   it('should otherwise return false', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<div id="target"><a href="http://www.deque.com/#haha">hi</a></div>'
     );
     expect(
@@ -85,11 +89,11 @@ describe('internal-link-present', () => {
   (shadowSupported ? it : it.skip)(
     'should return true when internal link is found in shadow dom',
     function () {
-      var params = shadowCheckSetup(
+      const params = shadowCheckSetup(
         '<div id="target"></div>',
         '<a href="#haha">hi</a>'
       );
-      var vNode = params[2];
+      const vNode = params[2];
       expect(
         getCheckEvaluate('internal-link-present').call(
           checkContext,

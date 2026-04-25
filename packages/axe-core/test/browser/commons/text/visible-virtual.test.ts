@@ -7,8 +7,8 @@ describe('text.visible', function () {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
 
-  var shadowSupported = shadowSupport.v1;
-  var visibleVirtual = axe.commons.text.visibleVirtual;
+  const shadowSupported = shadowSupport.v1;
+  const visibleVirtual = axe.commons.text.visibleVirtual;
 
   afterEach(function () {
     document.getElementById('fixture').innerHTML = '';
@@ -17,25 +17,25 @@ describe('text.visible', function () {
   describe('non-screen-reader', function () {
     it('should not return elements with visibility: hidden', function () {
       fixture.innerHTML = 'Hello<span style="visibility: hidden;">Hi</span>';
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0])).toBe('Hello');
     });
 
     it('should handle implicitly recursive calls', function () {
       fixture.innerHTML = 'Hello<span><span>Hi</span></span>';
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0])).toBe('HelloHi');
     });
 
     it('should handle explicitly recursive calls', function () {
       fixture.innerHTML = 'Hello<span><span>Hi</span></span>';
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0], null, false)).toBe('HelloHi');
     });
 
     it('should handle non-recursive calls', function () {
       fixture.innerHTML = 'Hello<span><span>Hi</span></span>';
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0], null, true)).toBe('Hello');
     });
 
@@ -45,7 +45,7 @@ describe('text.visible', function () {
         '<span style="visibility: visible;">Hi</span>' +
         '</span>';
 
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0])).toBe('Hello Hi');
     });
 
@@ -53,14 +53,14 @@ describe('text.visible', function () {
       fixture.innerHTML =
         'Hello<span style="display: none;"><span>Hi</span></span>';
 
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0])).toBe('Hello');
     });
 
     it('should trim the result', function () {
       fixture.innerHTML =
         '   &nbsp;\u00A0    Hello  &nbsp;\r\n   Hi     \n \n &nbsp; \n   ';
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0])).toBe('Hello Hi');
     });
 
@@ -68,7 +68,7 @@ describe('text.visible', function () {
       fixture.innerHTML =
         '<script> // hello </script><style> /*hello */</style>' + 'Hello';
 
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0])).toBe('Hello');
     });
 
@@ -78,7 +78,7 @@ describe('text.visible', function () {
         '<div style="position: absolute; top: 10000px;">Hello</div>' +
         '</div>';
 
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0])).toBe('Hello');
     });
 
@@ -86,19 +86,19 @@ describe('text.visible', function () {
       'should correctly handle slotted elements',
       function () {
         function createContentSlotted() {
-          var group = document.createElement('div');
+          const group = document.createElement('div');
           group.innerHTML = '<div id="target">Stuff<slot></slot></div>';
           return group;
         }
         function makeShadowTree(node) {
-          var root = node.attachShadow({ mode: 'open' });
-          var div = document.createElement('div');
+          const root = node.attachShadow({ mode: 'open' });
+          const div = document.createElement('div');
           root.appendChild(div);
           div.appendChild(createContentSlotted());
         }
         fixture.innerHTML = '<div><a>hello</a></div>';
         makeShadowTree(fixture.firstChild);
-        var tree = axe.utils.getFlattenedTree(fixture.firstChild);
+        const tree = axe.utils.getFlattenedTree(fixture.firstChild);
         expect(visibleVirtual(tree[0])).toBe('Stuffhello');
       }
     );
@@ -108,7 +108,7 @@ describe('text.visible', function () {
     it('should not return elements with visibility: hidden', function () {
       fixture.innerHTML = 'Hello<span style="visibility: hidden;">Hi</span>';
 
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0], true)).toBe('Hello');
     });
 
@@ -118,7 +118,7 @@ describe('text.visible', function () {
         '<span style="visibility: visible;">Hi</span>' +
         '</span>';
 
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0], true)).toBe('Hello Hi');
     });
 
@@ -126,14 +126,14 @@ describe('text.visible', function () {
       fixture.innerHTML =
         'Hello<span style="display: none;"><span>Hi</span></span>';
 
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0], true)).toBe('Hello');
     });
 
     it('should trim the result', function () {
       fixture.innerHTML =
         '   &nbsp;\u00A0    Hello  &nbsp;\r\n   Hi     \n \n &nbsp; \n   ';
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0], true)).toBe('Hello Hi');
     });
 
@@ -141,7 +141,7 @@ describe('text.visible', function () {
       fixture.innerHTML =
         '<script> // hello </script><style> /*hello */</style>' + 'Hello';
 
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0], true)).toBe('Hello');
     });
 
@@ -151,14 +151,14 @@ describe('text.visible', function () {
         '<div>Hello</div>' +
         '</div>';
 
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0], true)).toBe('Hello');
     });
 
     it('should not consider offscreen text as hidden (text-indent)', function () {
       fixture.innerHTML = '<div style="text-indent: -9999px;">' + 'Hello</div>';
 
-      var tree = axe.utils.getFlattenedTree(fixture);
+      const tree = axe.utils.getFlattenedTree(fixture);
       expect(visibleVirtual(tree[0], true)).toBe('Hello');
     });
   });

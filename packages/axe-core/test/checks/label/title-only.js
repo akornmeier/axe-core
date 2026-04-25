@@ -1,7 +1,7 @@
 describe('title-only', function () {
   'use strict';
 
-  var fixture = document.getElementById('fixture');
+  const fixture = document.getElementById('fixture');
 
   afterEach(function () {
     fixture.innerHTML = '';
@@ -9,7 +9,7 @@ describe('title-only', function () {
   });
 
   it('should return true if an element only has a title', function () {
-    var node = document.createElement('input');
+    const node = document.createElement('input');
     node.type = 'text';
     node.title = 'Duplicate';
 
@@ -35,10 +35,10 @@ describe('title-only', function () {
   });
 
   it('should return true if an element only has aria-describedby', function () {
-    var node = document.createElement('input');
+    const node = document.createElement('input');
     node.type = 'text';
     node.setAttribute('aria-describedby', 'dby');
-    var dby = document.createElement('div');
+    const dby = document.createElement('div');
     dby.id = 'dby';
     dby.innerHTML = 'woop';
 

@@ -274,7 +274,9 @@ export function fixtureSetup(content?: string | Node | Node[]): any {
     fixture.appendChild(content);
   } else if (Array.isArray(content)) {
     fixture.innerHTML = '';
-    for (const node of content) fixture.appendChild(node);
+    for (const node of content) {
+      fixture.appendChild(node);
+    }
   }
   // No-arg form: keep whatever the test already injected into `fixture`
   // (callers sometimes mutate `fixture.innerHTML` and attach a shadow root

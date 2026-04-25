@@ -11,8 +11,8 @@ import {
 } from 'vitest';
 // FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('utils.getEnvironmentData', function () {
-  var __audit;
-  var getEnvironmentData = axe.utils.getEnvironmentData;
+  let __audit;
+  const getEnvironmentData = axe.utils.getEnvironmentData;
   beforeAll(function () {
     __audit = axe._audit;
     axe._audit = { brand: 'Deque' };
@@ -23,18 +23,18 @@ describe('utils.getEnvironmentData', function () {
   });
 
   it('returns the first argument, if it is truthy', function () {
-    var input = {
+    const input = {
       testEngine: {
         name: 'axe-core',
         version: axe.version
       }
     };
-    var output = getEnvironmentData(input);
+    const output = getEnvironmentData(input);
     expect(input).toBe(output);
   });
 
   it('should return a `testEngine` property', function () {
-    var data = getEnvironmentData();
+    const data = getEnvironmentData();
     expect(
       typeof data.testEngine === 'object' && data.testEngine !== null
     ).toBe(true);
@@ -43,7 +43,7 @@ describe('utils.getEnvironmentData', function () {
   });
 
   it('should return a `testRunner` property', function () {
-    var data = getEnvironmentData();
+    const data = getEnvironmentData();
     expect(
       typeof data.testRunner === 'object' && data.testRunner !== null
     ).toBe(true);
@@ -51,7 +51,7 @@ describe('utils.getEnvironmentData', function () {
   });
 
   it('should return a `testEnvironment` property', function () {
-    var data = getEnvironmentData();
+    const data = getEnvironmentData();
     expect(
       typeof data.testEnvironment === 'object' && data.testEnvironment !== null
     ).toBe(true);
@@ -63,12 +63,12 @@ describe('utils.getEnvironmentData', function () {
   });
 
   it('should return a `timestamp` property`', function () {
-    var data = getEnvironmentData();
+    const data = getEnvironmentData();
     expect(data.timestamp).toBeDefined();
   });
 
   it('should return a `url` property', function () {
-    var data = getEnvironmentData();
+    const data = getEnvironmentData();
     expect(data.url).toBeDefined();
   });
 
@@ -76,7 +76,7 @@ describe('utils.getEnvironmentData', function () {
   // other supported environments as what this is testing should be done in
   // those environment tests
   it('gets data from the `win` parameter when passed', function () {
-    var data = getEnvironmentData(null, {
+    const data = getEnvironmentData(null, {
       screen: {
         orientation: {
           type: 'fictional',

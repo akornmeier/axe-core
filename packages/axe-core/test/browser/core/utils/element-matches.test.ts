@@ -10,10 +10,10 @@ import {
   vi
 } from 'vitest';
 describe('utils.matchesSelector', function () {
-  var matchesSelector = axe.utils.matchesSelector;
+  const matchesSelector = axe.utils.matchesSelector;
 
   function mockMethod(method, returnValue) {
-    var result = {};
+    const result = {};
     result[method] = function () {
       return returnValue;
     };
@@ -46,7 +46,7 @@ describe('utils.matchesSelector', function () {
   });
 
   it('should actually work', function () {
-    var target,
+    let target,
       fixture = document.getElementById('fixture');
 
     fixture.innerHTML = '<div id="test">Hi</div>';
@@ -57,7 +57,7 @@ describe('utils.matchesSelector', function () {
   });
 
   it('should return false if the element does not have a matching method', function () {
-    var target,
+    let target,
       fixture = document.getElementById('fixture');
 
     fixture.innerHTML = '<div id="test">Hi</div>';

@@ -8,7 +8,7 @@ describe('axe.utils.isShadowRoot', function () {
   });
 
   function createStyle(box) {
-    var style = document.createElement('style');
+    const style = document.createElement('style');
     style.textContent =
       'div.breaking { color: Red;font-size: 20px; border: 1px dashed Purple; }' +
       (box ? 'slot { display: block; }' : '') +
@@ -16,7 +16,7 @@ describe('axe.utils.isShadowRoot', function () {
     return style;
   }
 
-  var isShadowRoot = axe.utils.isShadowRoot;
+  const isShadowRoot = axe.utils.isShadowRoot;
 
   it('returns false if the node has no shadowRoot', function () {
     expect(isShadowRoot({ nodeName: 'DIV', shadowRoot: undefined })).toBe(
@@ -50,7 +50,7 @@ describe('axe.utils.isShadowRoot', function () {
       });
       beforeEach(function () {
         function createStoryGroup(className, slotName) {
-          var group = document.createElement('div');
+          const group = document.createElement('div');
           group.className = className;
           // Empty string in slot name attribute or absence thereof work the same, so no need for special handling.
           group.innerHTML =
@@ -61,12 +61,12 @@ describe('axe.utils.isShadowRoot', function () {
         }
 
         function makeShadowTree(storyList) {
-          var root = storyList.attachShadow({ mode: 'open' });
+          const root = storyList.attachShadow({ mode: 'open' });
           root.appendChild(createStyle());
           root.appendChild(createStoryGroup('breaking', 'breaking'));
           root.appendChild(createStoryGroup('other', ''));
         }
-        var str =
+        let str =
           '<div class="stories"><li>1</li>' +
           '<li>2</li><li class="breaking" slot="breaking">3</li>' +
           '<li>4</li><li>5</li><li class="breaking" slot="breaking">6</li></div>';

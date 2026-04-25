@@ -1,14 +1,14 @@
 import { createMockCheckContext, checks } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('region-after', () => {
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     checkContext.reset();
   });
 
   it('should always pass iframes', () => {
-    var results = checks.region.after([
+    const results = checks.region.after([
       {
         data: { isIframe: true },
         node: {
@@ -29,7 +29,7 @@ describe('region-after', () => {
   });
 
   it('should pass children of iframes if the iframe contained in it is in a region', () => {
-    var results = checks.region.after([
+    const results = checks.region.after([
       {
         data: { isIframe: true },
         node: {
@@ -51,7 +51,7 @@ describe('region-after', () => {
   });
 
   it('should pass nested iframes', () => {
-    var results = checks.region.after([
+    const results = checks.region.after([
       {
         data: { isIframe: true },
         node: {
@@ -85,7 +85,7 @@ describe('region-after', () => {
   });
 
   it('should pass children of nested iframes if the nested iframe is in a region', () => {
-    var results = checks.region.after([
+    const results = checks.region.after([
       {
         data: { isIframe: true },
         node: {
@@ -119,7 +119,7 @@ describe('region-after', () => {
   });
 
   it('should pass content if a grandparent frame passes', () => {
-    var results = checks.region.after([
+    const results = checks.region.after([
       {
         data: { isIframe: true },
         node: {

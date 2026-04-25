@@ -16,8 +16,8 @@ describe('dom.visuallyOverlaps', function () {
       '<div style="height: 40px; width: 30px; background-color: red;">' +
       '<div id="target" style="height: 20px; width: 15px; background-color: green;">' +
       '</div></div>';
-    var target = fixture.querySelector('#target');
-    var targetRect = target.getBoundingClientRect();
+    const target = fixture.querySelector('#target');
+    const targetRect = target.getBoundingClientRect();
     expect(
       axe.commons.dom.visuallyOverlaps(targetRect, target.parentNode)
     ).toBe(true);
@@ -30,8 +30,8 @@ describe('dom.visuallyOverlaps', function () {
       '<div id="target" style="position: absolute; top: 50px; left: 0px; height: 20px;' +
       ' width: 45px; background-color: green;">' +
       '</div></div>';
-    var target = fixture.querySelector('#target');
-    var targetRect = target.getBoundingClientRect();
+    const target = fixture.querySelector('#target');
+    const targetRect = target.getBoundingClientRect();
 
     expect(
       axe.commons.dom.visuallyOverlaps(targetRect, target.parentNode)
@@ -45,8 +45,8 @@ describe('dom.visuallyOverlaps', function () {
       '<div id="target" style="position: absolute; top: 0px; left: 0px; height: 20px;' +
       ' width: 45px; background-color: green;">' +
       '</div></div>';
-    var target = fixture.querySelector('#target');
-    var targetRect = target.getBoundingClientRect();
+    const target = fixture.querySelector('#target');
+    const targetRect = target.getBoundingClientRect();
     expect(
       axe.commons.dom.visuallyOverlaps(targetRect, target.parentNode)
     ).toBe(true);
@@ -57,8 +57,8 @@ describe('dom.visuallyOverlaps', function () {
       '<div style="position: relative; height: 40px; width: 30px; overflow: scroll;">' +
       '<div id="target" style="position: absolute; top: 60px; height: 20px; width: 45px;">' +
       '</div></div>';
-    var target = fixture.querySelector('#target');
-    var targetRect = target.getBoundingClientRect();
+    const target = fixture.querySelector('#target');
+    const targetRect = target.getBoundingClientRect();
     expect(
       axe.commons.dom.visuallyOverlaps(targetRect, target.parentNode)
     ).toBe(true);
@@ -69,8 +69,8 @@ describe('dom.visuallyOverlaps', function () {
       '<div style="position: relative; height: 40px; width: 30px; overflow: hidden;">' +
       '<div id="target" style="position: absolute; top: 60px; height: 20px; width: 45px;">' +
       '</div></div>';
-    var target = fixture.querySelector('#target');
-    var targetRect = target.getBoundingClientRect();
+    const target = fixture.querySelector('#target');
+    const targetRect = target.getBoundingClientRect();
     expect(
       axe.commons.dom.visuallyOverlaps(targetRect, target.parentNode)
     ).toBe(false);

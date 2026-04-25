@@ -11,7 +11,7 @@ describe('help-same-as-label', () => {
   });
 
   it('should return true if an element has a label and a title with the same text', () => {
-    var node = document.createElement('input');
+    const node = document.createElement('input');
     node.type = 'text';
     node.title = 'Duplicate';
     node.setAttribute('aria-label', 'Duplicate');
@@ -28,11 +28,11 @@ describe('help-same-as-label', () => {
   });
 
   it('should return true if an element has a label and aria-describedby with the same text', () => {
-    var node = document.createElement('input');
+    const node = document.createElement('input');
     node.type = 'text';
     node.setAttribute('aria-label', 'Duplicate');
     node.setAttribute('aria-describedby', 'dby');
-    var dby = document.createElement('div');
+    const dby = document.createElement('div');
     dby.id = 'dby';
     dby.innerHTML = 'Duplicate';
 
@@ -50,7 +50,7 @@ describe('help-same-as-label', () => {
   });
 
   it('should return false if input only has a title', () => {
-    var node = document.createElement('input');
+    const node = document.createElement('input');
     node.type = 'text';
     node.title = 'Duplicate';
 
@@ -67,10 +67,10 @@ describe('help-same-as-label', () => {
   });
 
   it('should return true if an input only has aria-describedby', () => {
-    var node = document.createElement('input');
+    const node = document.createElement('input');
     node.type = 'text';
     node.setAttribute('aria-describedby', 'dby');
-    var dby = document.createElement('div');
+    const dby = document.createElement('div');
     dby.id = 'dby';
     dby.innerHTML = 'Duplicate';
 

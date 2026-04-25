@@ -13,7 +13,7 @@ describe('dom.getElementByReference', function () {
 
   it('should return null if the attribute is not found', function () {
     fixture.innerHTML = '<a id="link" href="#target">Hi</a>';
-    var node = document.getElementById('link'),
+    const node = document.getElementById('link'),
       result = axe.commons.dom.getElementByReference(node, 'usemap');
 
     expect(result).toBeNull();
@@ -21,7 +21,7 @@ describe('dom.getElementByReference', function () {
 
   it('should return null if the attribute does not start with "#"', function () {
     fixture.innerHTML = '<a id="link" usemap="target">Hi</a>';
-    var node = document.getElementById('link'),
+    const node = document.getElementById('link'),
       result = axe.commons.dom.getElementByReference(node, 'href');
 
     expect(result).toBeNull();
@@ -29,7 +29,7 @@ describe('dom.getElementByReference', function () {
 
   it('should return null if no targets are found', function () {
     fixture.innerHTML = '<a id="link" href="#target">Hi</a>';
-    var node = document.getElementById('link'),
+    const node = document.getElementById('link'),
       result = axe.commons.dom.getElementByReference(node, 'href');
 
     expect(result).toBeNull();
@@ -39,7 +39,7 @@ describe('dom.getElementByReference', function () {
     fixture.innerHTML =
       '<a id="link" href="#target">Hi</a>' + '<a id="target"></a>';
 
-    var node = document.getElementById('link'),
+    const node = document.getElementById('link'),
       expected = document.getElementById('target'),
       result = axe.commons.dom.getElementByReference(node, 'href');
 
@@ -50,7 +50,7 @@ describe('dom.getElementByReference', function () {
     fixture.innerHTML =
       '<img id="link" usemap="#target">Hi</a>' + '<map id="target"></map>';
 
-    var node = document.getElementById('link'),
+    const node = document.getElementById('link'),
       expected = document.getElementById('target'),
       result = axe.commons.dom.getElementByReference(node, 'usemap');
 
@@ -63,7 +63,7 @@ describe('dom.getElementByReference', function () {
       '<a id="target"></a>' +
       '<a name="target"></a>';
 
-    var node = document.getElementById('link'),
+    const node = document.getElementById('link'),
       expected = document.getElementById('target'),
       result = axe.commons.dom.getElementByReference(node, 'href');
 
@@ -75,7 +75,7 @@ describe('dom.getElementByReference', function () {
       '<a id="link" href="#target">Hi</a>' +
       '<a name="target" id="target0"></a>';
 
-    var node = document.getElementById('link'),
+    const node = document.getElementById('link'),
       expected = document.getElementById('target0'),
       result = axe.commons.dom.getElementByReference(node, 'href');
 
@@ -88,7 +88,7 @@ describe('dom.getElementByReference', function () {
       '<a name="target" id="target0"></a>' +
       '<a name="target"></a>';
 
-    var node = document.getElementById('link'),
+    const node = document.getElementById('link'),
       expected = document.getElementById('target0'),
       result = axe.commons.dom.getElementByReference(node, 'href');
 
@@ -101,7 +101,7 @@ describe('dom.getElementByReference', function () {
       '<a name="target" id="target0"></a>' +
       '<a name="target"></a>';
 
-    var node = document.getElementById('link'),
+    const node = document.getElementById('link'),
       expected = document.getElementById('target0'),
       result = axe.commons.dom.getElementByReference(node, 'href');
 
@@ -109,7 +109,7 @@ describe('dom.getElementByReference', function () {
   });
 
   it('should work with absolute links', function () {
-    var currentPage = window.location.origin + window.location.pathname;
+    const currentPage = window.location.origin + window.location.pathname;
 
     fixture.innerHTML =
       '<a id="link" href="' +
@@ -118,7 +118,7 @@ describe('dom.getElementByReference', function () {
       '<a id="target"></a>' +
       '<a name="target"></a>';
 
-    var node = document.getElementById('link'),
+    const node = document.getElementById('link'),
       expected = document.getElementById('target'),
       result = axe.commons.dom.getElementByReference(node, 'href');
 

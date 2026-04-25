@@ -9,8 +9,8 @@ describe('presentational-role', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkEvaluate = getCheckEvaluate('presentational-role');
-  var checkContext = createMockCheckContext();
+  const checkEvaluate = getCheckEvaluate('presentational-role');
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -18,33 +18,33 @@ describe('presentational-role', () => {
   });
 
   it('should detect role="none" on the element', () => {
-    var vNode = queryFixture('<div id="target" role="none"></div>');
+    const vNode = queryFixture('<div id="target" role="none"></div>');
 
     expect(checkEvaluate.call(checkContext, null, null, vNode)).toBe(true);
     expect(checkContext._data.role).toEqual('none');
   });
 
   it('should detect role="presentation" on the element', () => {
-    var vNode = queryFixture('<div id="target" role="presentation"></div>');
+    const vNode = queryFixture('<div id="target" role="presentation"></div>');
 
     expect(checkEvaluate.call(checkContext, null, null, vNode)).toBe(true);
     expect(checkContext._data.role).toEqual('presentation');
   });
 
   it('should return false when role !== none', () => {
-    var vNode = queryFixture('<div id="target" role="cats"></div>');
+    const vNode = queryFixture('<div id="target" role="cats"></div>');
 
     expect(checkEvaluate.call(checkContext, null, null, vNode)).toBe(false);
   });
 
   it('should return false when there is no role attribute', () => {
-    var vNode = queryFixture('<div id="target"></div>');
+    const vNode = queryFixture('<div id="target"></div>');
 
     expect(checkEvaluate.call(checkContext, null, null, vNode)).toBe(false);
   });
 
   it('should return false when the element is focusable', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" role="none">Still a button</button>'
     );
 
@@ -53,7 +53,7 @@ describe('presentational-role', () => {
   });
 
   it('should return false when the element has global aria attributes', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<img id="target" role="none" aria-live="assertive" />'
     );
 
@@ -62,7 +62,7 @@ describe('presentational-role', () => {
   });
 
   it('should return false when the element has global aria attributes and is focusable', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<button id="target" role="none" aria-live="assertive">Still a button</button>'
     );
 
@@ -71,7 +71,7 @@ describe('presentational-role', () => {
   });
 
   it('should return false for iframe element with role=none and title', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<iframe id="target" role="none" title="  "></iframe>'
     );
 
@@ -83,7 +83,7 @@ describe('presentational-role', () => {
   });
 
   it('should return false for iframe element with role=presentation and title', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<iframe id="target" role="presentation" title=""></iframe>'
     );
 

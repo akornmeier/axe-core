@@ -36,7 +36,7 @@ describe('axeAssert', function () {
   });
 
   it('sets second argument as the error message', function () {
-    var message = 'Something went wrong';
+    const message = 'Something went wrong';
     try {
       axeAssert(false, message);
     } catch (e) {

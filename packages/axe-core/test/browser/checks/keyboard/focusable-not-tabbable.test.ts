@@ -9,13 +9,13 @@ import {
 } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 describe('focusable-not-tabbable', () => {
-  var check;
+  let check;
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   const shadowSupported = shadowSupport.v1;
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
   beforeAll(() => {
     check = checks['focusable-not-tabbable'];
   });
@@ -28,22 +28,22 @@ describe('focusable-not-tabbable', () => {
   });
 
   it('returns true when BUTTON removed from tab order through tabindex', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-hidden="true">' +
         '<button tabindex="-1">Some button</button>' +
         '</div>'
     );
-    var actual = check.evaluate.apply(checkContext, params as any);
+    const actual = check.evaluate.apply(checkContext, params as any);
     expect(actual).toBe(true);
   });
 
   it('returns false when LINK is in tab order', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-hidden="true">' +
         '<a href="abc.html">ABC Site</a>' +
         '</div>'
     );
-    var actual = check.evaluate.apply(checkContext, params as any);
+    const actual = check.evaluate.apply(checkContext, params as any);
     expect(actual).toBe(false);
     expect(checkContext._relatedNodes).toHaveLength(1);
     expect(checkContext._relatedNodes).toEqual(
@@ -52,10 +52,10 @@ describe('focusable-not-tabbable', () => {
   });
 
   it('returns true when focusable SUMMARY element, that cannot be disabled', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<details id="target" aria-hidden="true"><summary>Some button</summary><p>Some details</p></details>'
     );
-    var actual = check.evaluate.apply(checkContext, params as any);
+    const actual = check.evaluate.apply(checkContext, params as any);
     expect(actual).toBe(false);
     expect(checkContext._relatedNodes).toHaveLength(1);
     expect(checkContext._relatedNodes).toEqual(
@@ -64,20 +64,20 @@ describe('focusable-not-tabbable', () => {
   });
 
   it('returns true when TEXTAREA is in tab order, but 0 related nodes as TEXTAREA can be disabled', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-hidden="true">' +
         '<label>Enter your comments:' +
         '<textarea></textarea>' +
         '</label>' +
         '</div>'
     );
-    var actual = check.evaluate.apply(checkContext, params as any);
+    const actual = check.evaluate.apply(checkContext, params as any);
     expect(checkContext._relatedNodes).toHaveLength(0);
     expect(actual).toBe(true);
   });
 
   it('returns false when focusable AREA element', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<main id="target" aria-hidden="true">' +
         '<map name="infographic">' +
         '<area shape="rect" coords="184,6,253,27" href="https://mozilla.org"' +
@@ -85,16 +85,16 @@ describe('focusable-not-tabbable', () => {
         '</map>' +
         '</main>'
     );
-    var actual = check.evaluate.apply(checkContext, params as any);
+    const actual = check.evaluate.apply(checkContext, params as any);
     expect(actual).toBe(false);
   });
 
   it('returns true when aria-hidden=false does not negate aria-hidden true', () => {
     // Note: aria-hidden can't be reset once you've set it to true on an ancestor
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-hidden="true"><div aria-hidden="false"><button tabindex="-1">Some button</button></div></div>'
     );
-    var actual = check.evaluate.apply(checkContext, params as any);
+    const actual = check.evaluate.apply(checkContext, params as any);
     expect(actual).toBe(true);
   });
 
@@ -105,61 +105,61 @@ describe('focusable-not-tabbable', () => {
       // `testUtils.checkSetup` does not work for shadowDOM
       // as `axe._tree` and `axe._selectorData` needs to be updated after shadowDOM construction
       fixtureSetup('<div aria-hidden="true" id="target"></div>`');
-      var node = fixture.querySelector('#target');
-      var shadow = node.attachShadow({ mode: 'open' });
+      const node = fixture.querySelector('#target');
+      const shadow = node.attachShadow({ mode: 'open' });
       shadow.innerHTML = '<p tabindex="0">btn</p>';
       flatTreeSetup(fixture);
       axe._selectorData = axe.utils.getSelectorData(axe._tree);
-      var virtualNode = axe.utils.getNodeFromTree(node);
-      var actual = check.evaluate.call(checkContext, node, {}, virtualNode);
+      const virtualNode = axe.utils.getNodeFromTree(node);
+      const actual = check.evaluate.call(checkContext, node, {}, virtualNode);
       expect(actual).toBe(false);
     }
   );
 
   it('returns false when focusable content through tabindex', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<p id="target" tabindex="0" aria-hidden="true">Some text</p>'
     );
-    var actual = check.evaluate.apply(checkContext, params as any);
+    const actual = check.evaluate.apply(checkContext, params as any);
     expect(actual).toBe(false);
   });
 
   it('returns false when focusable target that cannot be disabled', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div aria-hidden="true"><a id="target" href="">foo</a><button>bar</button></div>'
     );
-    var actual = check.evaluate.apply(checkContext, params as any);
+    const actual = check.evaluate.apply(checkContext, params as any);
     expect(actual).toBe(false);
   });
 
   it('returns true when focusable target that can be disabled', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div aria-hidden="true"><a href="">foo</a><button id="target">bar</button></div>'
     );
-    var actual = check.evaluate.apply(checkContext, params as any);
+    const actual = check.evaluate.apply(checkContext, params as any);
     expect(actual).toBe(true);
   });
 
   it('returns true if there is a focusable element and modal is open', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-hidden="true">' +
         '<a href="">foo</a>' +
         '</div>' +
         '<div role="dialog">Modal</div>'
     );
-    var actual = check.evaluate.apply(checkContext, params as any);
+    const actual = check.evaluate.apply(checkContext, params as any);
     expect(actual).toBe(true);
   });
 
   it('returns undefined when the control has onfocus', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<a href="/" aria-hidden="true" id="target" onfocus="redirectFocus()">Link</a>'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBeUndefined();
   });
 
   it('returns undefined when all focusable controls have onfocus events', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div aria-hidden="true" id="target">' +
         '  <a href="/" onfocus="redirectFocus()">First link</a>' +
         '  <a href="/" onfocus="redirectFocus()">Second link</a>' +
@@ -169,7 +169,7 @@ describe('focusable-not-tabbable', () => {
   });
 
   it('returns false when some, but not all focusable controls have onfocus events', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div aria-hidden="true" id="target">' +
         '  <a href="/" onfocus="redirectFocus()">First link</a>' +
         '  <a href="/"">Second link</a>' +
@@ -179,7 +179,7 @@ describe('focusable-not-tabbable', () => {
   });
 
   it('returns undefined when control has 0 width and height and pointer events: none (focus trap bumper)', () => {
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" aria-hidden="true" tabindex="0" style="pointer-events: none"></div>'
     );
     expect(check.evaluate.apply(checkContext, params as any)).toBeUndefined();

@@ -11,7 +11,7 @@ import {
 } from 'vitest';
 // FIXME(phase-3-sprint-4b): codemod blocker — uses axe._audit (internal state)
 describe('reporters - v2', function () {
-  var runResults,
+  let runResults,
     _results = [
       {
         id: 'gimmeLabel',
@@ -206,7 +206,7 @@ describe('reporters - v2', function () {
     });
   });
   it('uses the environmentData option instead of environment data if specified', function () {
-    var environmentData = {
+    const environmentData = {
       myReporter: 'hello world'
     };
     axe.getReporter('v2')(

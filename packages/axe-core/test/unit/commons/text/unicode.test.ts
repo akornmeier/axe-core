@@ -200,14 +200,14 @@ describe('hasUnicode', () => {
 });
 
 describe('removeUnicode', () => {
-  it('returns string by removing non BMP unicode ', () => {
+  it('returns string by removing non BMP unicode', () => {
     const actual = removeUnicode('₨₨20000₨₨', {
       nonBmp: true
     });
     expect(actual).toBe('20000');
   });
 
-  it('returns string by removing emoji unicode ', () => {
+  it('returns string by removing emoji unicode', () => {
     const actual = removeUnicode('☀️Sun 🌎Earth', {
       emoji: true
     });

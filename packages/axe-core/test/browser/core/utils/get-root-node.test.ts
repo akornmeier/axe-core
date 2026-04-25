@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { axe, shadowSupport } from '@helpers/check-helpers';
 
 function makeShadowTreeGRN(node) {
-  var root = node.attachShadow({ mode: 'open' });
-  var div = document.createElement('div');
+  const root = node.attachShadow({ mode: 'open' });
+  const div = document.createElement('div');
   div.className = 'parent';
   root.appendChild(div);
 }
@@ -14,7 +14,7 @@ describe('axe.utils.getRootNode', function () {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
 
-  var shadowSupported = shadowSupport.v1;
+  const shadowSupported = shadowSupport.v1;
 
   afterEach(function () {
     fixture.innerHTML = '';
@@ -22,17 +22,17 @@ describe('axe.utils.getRootNode', function () {
 
   it('should return the document when the node is just a normal node', function () {
     fixture.innerHTML = '<div id="target"></div>';
-    var node = document.getElementById('target');
+    const node = document.getElementById('target');
     expect(axe.utils.getRootNode(node) === document).toBe(true);
   });
   it('should return the document when the node is disconnected', function () {
-    var node = document.createElement('div');
+    const node = document.createElement('div');
     expect(axe.utils.getRootNode(node) === document).toBe(true);
   });
   (shadowSupported ? it : xit)(
     'should return the shadow root when it is inside the shadow DOM',
     function () {
-      var shadEl;
+      let shadEl;
       // shadow DOM v1 - note: v0 is compatible with this code, so no need
       // to specifically test this
       fixture.innerHTML = '<div></div>';

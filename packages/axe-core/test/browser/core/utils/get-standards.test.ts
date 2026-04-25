@@ -11,7 +11,7 @@ import {
 } from 'vitest';
 describe('axe.utils.getStandards', function () {
   it('returns the standards object', function () {
-    var standards = axe.utils.getStandards();
+    const standards = axe.utils.getStandards();
     expect(
       [...['ariaAttrs', 'ariaRoles', 'htmlElms', 'cssColors']].some(__k =>
         Object.prototype.hasOwnProperty.call(standards, __k)

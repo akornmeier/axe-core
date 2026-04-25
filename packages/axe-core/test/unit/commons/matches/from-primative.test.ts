@@ -7,7 +7,7 @@ const matches: any = {};
 // FIXME(phase-01-followup): test deferred to .todo — unresolved <cat>.foo lookup (likely Phase-1 export gap)
 
 describe.todo('matches.fromPrimative', function () {
-  var fromPrimative = matches.fromPrimative;
+  const fromPrimative = matches.fromPrimative;
 
   it('returns true when strictly equal', function () {
     expect(fromPrimative('foo', 'foo')).toBe(true);

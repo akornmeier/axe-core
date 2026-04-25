@@ -9,7 +9,7 @@ describe('abstractrole', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
 
   afterEach(() => {
     fixture.innerHTML = '';
@@ -17,7 +17,7 @@ describe('abstractrole', () => {
   });
 
   it('should return false if applied to a concrete role', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="alert">Contents</div>'
     );
     expect(
@@ -32,7 +32,7 @@ describe('abstractrole', () => {
   });
 
   it('should return false if applied to a nonsensical role', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="foo">Contents</div>'
     );
     expect(
@@ -47,7 +47,7 @@ describe('abstractrole', () => {
   });
 
   it('should return true if applied to an abstract role', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="widget">Contents</div>'
     );
     expect(
@@ -62,7 +62,7 @@ describe('abstractrole', () => {
   });
 
   it('should return false if applied to multiple concrete roles', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="alert button">Contents</div>'
     );
     expect(
@@ -77,7 +77,7 @@ describe('abstractrole', () => {
   });
 
   it('should return true if applied to at least one abstract role', () => {
-    var virtualNode = queryFixture(
+    const virtualNode = queryFixture(
       '<div id="target" role="alert widget structure">Contents</div>'
     );
     expect(

@@ -1,21 +1,21 @@
 describe('caption', function () {
   'use strict';
 
-  var fixture = document.getElementById('fixture');
-  var shadowSupport = axe.testUtils.shadowSupport;
-  var checkSetup = axe.testUtils.checkSetup;
+  const fixture = document.getElementById('fixture');
+  const shadowSupport = axe.testUtils.shadowSupport;
+  const checkSetup = axe.testUtils.checkSetup;
 
   afterEach(function () {
     fixture.innerHTML = '';
   });
 
   it('should return undefined if there is no track element', function () {
-    var checkArgs = checkSetup('<audio></audio>', 'audio');
+    const checkArgs = checkSetup('<audio></audio>', 'audio');
     assert.isUndefined(checks.caption.evaluate.apply(null, checkArgs));
   });
 
   it('should return undefined if there is no kind=captions attribute', function () {
-    var checkArgs = checkSetup(
+    const checkArgs = checkSetup(
       '<audio><track kind=descriptions></audio>',
       'audio'
     );
@@ -23,19 +23,22 @@ describe('caption', function () {
   });
 
   it('should pass if there is a kind=captions attribute', function () {
-    var checkArgs = checkSetup('<audio><track kind=captions></audio>', 'audio');
+    const checkArgs = checkSetup(
+      '<audio><track kind=captions></audio>',
+      'audio'
+    );
     assert.isFalse(checks.caption.evaluate.apply(null, checkArgs));
   });
 
   (shadowSupport.v1 ? it : xit)(
     'should get track from composed tree',
     function () {
-      var node = document.createElement('div');
+      const node = document.createElement('div');
       node.innerHTML = '<track kind=captions>';
-      var shadow = node.attachShadow({ mode: 'open' });
+      const shadow = node.attachShadow({ mode: 'open' });
       shadow.innerHTML = '<audio><slot></slot></audio>';
 
-      var checkArgs = checkSetup(node, {}, 'audio');
+      const checkArgs = checkSetup(node, {}, 'audio');
       assert.isFalse(checks.caption.evaluate.apply(null, checkArgs));
     }
   );
