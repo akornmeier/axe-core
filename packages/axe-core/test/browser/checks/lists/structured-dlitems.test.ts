@@ -1,9 +1,14 @@
 import {
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowSupport
 } from '@helpers/check-helpers';
+import structuredDlitemsEvaluate from '@checks/lists/structured-dlitems-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const structuredDlitemsEvaluateESM = getCheckEvaluateESM(
+  structuredDlitemsEvaluate
+);
 describe('structured-dlitems', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -15,24 +20,18 @@ describe('structured-dlitems', () => {
 
   it('should return false if the list has no contents', () => {
     var checkArgs = checkSetup('<dl id="target"></dl>');
-    expect(getCheckEvaluate('structured-dlitems').apply(null, checkArgs)).toBe(
-      false
-    );
+    expect(structuredDlitemsEvaluateESM.apply(null, checkArgs)).toBe(false);
   });
 
   it('should return true if the list has only a dd', () => {
     var checkArgs = checkSetup('<dl id="target"><dd>A list</dd></dl>');
-    expect(getCheckEvaluate('structured-dlitems').apply(null, checkArgs)).toBe(
-      true
-    );
+    expect(structuredDlitemsEvaluateESM.apply(null, checkArgs)).toBe(true);
   });
 
   it('should return true if the list has only a dt', () => {
     var checkArgs = checkSetup('<dl id="target"><dt>A list</dt></dl>');
 
-    expect(getCheckEvaluate('structured-dlitems').apply(null, checkArgs)).toBe(
-      true
-    );
+    expect(structuredDlitemsEvaluateESM.apply(null, checkArgs)).toBe(true);
   });
 
   it('should return true if the list has dt and dd in the incorrect order', () => {
@@ -40,9 +39,7 @@ describe('structured-dlitems', () => {
       '<dl id="target"><dd>A list</dd><dt>An item</dt></dl>'
     );
 
-    expect(getCheckEvaluate('structured-dlitems').apply(null, checkArgs)).toBe(
-      true
-    );
+    expect(structuredDlitemsEvaluateESM.apply(null, checkArgs)).toBe(true);
   });
 
   it('should return true if the list has dt and dd in the correct order as non-child descendants', () => {
@@ -50,9 +47,7 @@ describe('structured-dlitems', () => {
       '<dl id="target"><dd><dl><dt>An item</dt><dd>A list</dd></dl></dd></dl>'
     );
 
-    expect(getCheckEvaluate('structured-dlitems').apply(null, checkArgs)).toBe(
-      true
-    );
+    expect(structuredDlitemsEvaluateESM.apply(null, checkArgs)).toBe(true);
   });
 
   it('should return false if the list has dt and dd in the correct order', () => {
@@ -60,9 +55,7 @@ describe('structured-dlitems', () => {
       '<dl id="target"><dt>An item</dt><dd>A list</dd></dl>'
     );
 
-    expect(getCheckEvaluate('structured-dlitems').apply(null, checkArgs)).toBe(
-      false
-    );
+    expect(structuredDlitemsEvaluateESM.apply(null, checkArgs)).toBe(false);
   });
 
   it('should return false if the list has a correctly-ordered dt and dd with other content', () => {
@@ -70,9 +63,7 @@ describe('structured-dlitems', () => {
       '<dl id="target"><dt>Stuff</dt><dt>Item one</dt><dd>Description</dd><p>Not a list</p></dl>'
     );
 
-    expect(getCheckEvaluate('structured-dlitems').apply(null, checkArgs)).toBe(
-      false
-    );
+    expect(structuredDlitemsEvaluateESM.apply(null, checkArgs)).toBe(false);
   });
 
   (shadowSupport.v1 ? it : it.skip)(
@@ -84,9 +75,7 @@ describe('structured-dlitems', () => {
       shadow.innerHTML = '<dl><slot></slot></dl>';
 
       var checkArgs = checkSetup(node, 'dl');
-      expect(
-        getCheckEvaluate('structured-dlitems').apply(null, checkArgs)
-      ).toBe(false);
+      expect(structuredDlitemsEvaluateESM.apply(null, checkArgs)).toBe(false);
     }
   );
 
@@ -99,9 +88,7 @@ describe('structured-dlitems', () => {
       shadow.innerHTML = '<dl><slot></slot></dl>';
 
       var checkArgs = checkSetup(node, 'dl');
-      expect(
-        getCheckEvaluate('structured-dlitems').apply(null, checkArgs)
-      ).toBe(true);
+      expect(structuredDlitemsEvaluateESM.apply(null, checkArgs)).toBe(true);
     }
   );
 });

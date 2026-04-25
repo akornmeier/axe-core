@@ -1,9 +1,12 @@
 import {
   createMockCheckContext,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   flatTreeSetup
 } from '@helpers/check-helpers';
+import ariaHiddenBodyEvaluate from '@checks/aria/aria-hidden-body-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const ariaHiddenBodyEvaluateESM = getCheckEvaluateESM(ariaHiddenBodyEvaluate);
 describe('aria-hidden', () => {
   var checkContext = createMockCheckContext();
   var body = document.body;
@@ -15,7 +18,7 @@ describe('aria-hidden', () => {
   it('should not be present on document.body', () => {
     var tree = flatTreeSetup(body);
     expect(
-      getCheckEvaluate('aria-hidden-body').call(checkContext, null, {}, tree[0])
+      ariaHiddenBodyEvaluateESM.call(checkContext, null, {}, tree[0])
     ).toBe(true);
   });
 
@@ -23,7 +26,7 @@ describe('aria-hidden', () => {
     body.setAttribute('aria-hidden', true);
     var tree = flatTreeSetup(body);
     expect(
-      getCheckEvaluate('aria-hidden-body').call(checkContext, null, {}, tree[0])
+      ariaHiddenBodyEvaluateESM.call(checkContext, null, {}, tree[0])
     ).toBe(false);
   });
 
@@ -31,7 +34,7 @@ describe('aria-hidden', () => {
     body.setAttribute('aria-hidden', 'false');
     var tree = flatTreeSetup(body);
     expect(
-      getCheckEvaluate('aria-hidden-body').call(checkContext, null, {}, tree[0])
+      ariaHiddenBodyEvaluateESM.call(checkContext, null, {}, tree[0])
     ).toBe(true);
   });
 });

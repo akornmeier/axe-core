@@ -1,5 +1,10 @@
-import { getCheckEvaluate } from '@helpers/check-helpers';
+import { getCheckEvaluateESM } from '@helpers/check-helpers';
+import scopeValueEvaluate from '@checks/tables/scope-value-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const scopeValueEvaluateESM = getCheckEvaluateESM(scopeValueEvaluate, {
+  values: ['row', 'col', 'rowgroup', 'colgroup']
+});
 describe('scope-value', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -13,14 +18,14 @@ describe('scope-value', () => {
     fixture.innerHTML = '<table><tr><td scope="col"></td></tr></table>';
     var node = fixture.querySelector('td');
 
-    expect(getCheckEvaluate('scope-value')(node)).toBe(true);
+    expect(scopeValueEvaluateESM(node)).toBe(true);
   });
 
   it('should return true if scope is "row"', () => {
     fixture.innerHTML = '<table><tr><td scope="row"></td></tr></table>';
     var node = fixture.querySelector('td');
 
-    expect(getCheckEvaluate('scope-value')(node)).toBe(true);
+    expect(scopeValueEvaluateESM(node)).toBe(true);
   });
 
   it('should return false otherwise', () => {
@@ -28,7 +33,7 @@ describe('scope-value', () => {
       '<table><tr><td scope="hahahahanothx"></td></tr></table>';
     var node = fixture.querySelector('td');
 
-    expect(getCheckEvaluate('scope-value')(node)).toBe(false);
+    expect(scopeValueEvaluateESM(node)).toBe(false);
   });
 
   it('should support options.values', () => {
@@ -37,7 +42,7 @@ describe('scope-value', () => {
     var node = fixture.querySelector('td');
 
     expect(
-      getCheckEvaluate('scope-value')(node, {
+      scopeValueEvaluateESM(node, {
         values: ['hahahahanothx']
       })
     ).toBe(true);

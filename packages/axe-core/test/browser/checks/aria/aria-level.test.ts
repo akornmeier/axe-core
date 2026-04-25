@@ -1,12 +1,15 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import ariaLevelEvaluate from '@checks/aria/aria-level-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const ariaLevelEvaluateESM = getCheckEvaluateESM(ariaLevelEvaluate);
 describe('aria-prohibited-attr', () => {
   var checkContext = createMockCheckContext();
-  var checkEvaluate = getCheckEvaluate('aria-level');
+  var checkEvaluate = ariaLevelEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

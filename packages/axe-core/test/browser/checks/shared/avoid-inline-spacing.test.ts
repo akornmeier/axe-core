@@ -1,15 +1,21 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import avoidInlineSpacingEvaluate from '@checks/shared/avoid-inline-spacing-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const avoidInlineSpacingEvaluateESM = getCheckEvaluateESM(
+  avoidInlineSpacingEvaluate,
+  { cssProperties: ['line-height', 'letter-spacing', 'word-spacing'] }
+);
 describe('avoid-inline-spacing tests', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  var checkEvaluate = getCheckEvaluate('avoid-inline-spacing');
+  var checkEvaluate = avoidInlineSpacingEvaluateESM;
   var checkContext = createMockCheckContext();
 
   afterEach(() => {

@@ -1,5 +1,8 @@
-import { checkSetup, getCheckEvaluate } from '@helpers/check-helpers';
+import { checkSetup, getCheckEvaluateESM } from '@helpers/check-helpers';
+import hasAltEvaluate from '@checks/shared/has-alt-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const hasAltEvaluateESM = getCheckEvaluateESM(hasAltEvaluate);
 describe('has-alt', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -11,21 +14,21 @@ describe('has-alt', () => {
 
   it('should return true if an alt is present', () => {
     var checkArgs = checkSetup('<img id="target" alt="woohoo" />');
-    expect(getCheckEvaluate('has-alt').apply(null, checkArgs)).toBe(true);
+    expect(hasAltEvaluateESM.apply(null, checkArgs)).toBe(true);
   });
 
   it('should return true if an empty alt is present', () => {
     var checkArgs = checkSetup('<img id="target" alt="" />');
-    expect(getCheckEvaluate('has-alt').apply(null, checkArgs)).toBe(true);
+    expect(hasAltEvaluateESM.apply(null, checkArgs)).toBe(true);
   });
 
   it('should return true if a null alt is present', () => {
     var checkArgs = checkSetup('<img id="target" alt />');
-    expect(getCheckEvaluate('has-alt').apply(null, checkArgs)).toBe(true);
+    expect(hasAltEvaluateESM.apply(null, checkArgs)).toBe(true);
   });
 
   it('should return false if an alt is not present', () => {
     var checkArgs = checkSetup('<img id="target" />');
-    expect(getCheckEvaluate('has-alt').apply(null, checkArgs)).toBe(false);
+    expect(hasAltEvaluateESM.apply(null, checkArgs)).toBe(false);
   });
 });

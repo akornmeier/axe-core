@@ -1,9 +1,14 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import nonEmptyIfPresentEvaluate from '@checks/shared/non-empty-if-present-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const nonEmptyIfPresentEvaluateESM = getCheckEvaluateESM(
+  nonEmptyIfPresentEvaluate
+);
 describe('non-empty-if-present', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -26,12 +31,7 @@ describe('non-empty-if-present', () => {
     );
 
     expect(
-      getCheckEvaluate('non-empty-if-present', { verifyMessage: false }).call(
-        checkContext,
-        null,
-        {},
-        vNode
-      )
+      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
     ).toBe(false);
     expect(checkContext._data.messageKey).toBe('has-label');
   });
@@ -42,12 +42,7 @@ describe('non-empty-if-present', () => {
       var vNode = queryFixture('<input id="target" type="submit" />');
 
       expect(
-        getCheckEvaluate('non-empty-if-present').call(
-          checkContext,
-          null,
-          {},
-          vNode
-        )
+        nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
       ).toBe(true);
       expect(checkContext._data).toBeNull();
     }
@@ -57,44 +52,24 @@ describe('non-empty-if-present', () => {
     var vNode = queryFixture('<input id="target" type="submit" value="" />');
 
     expect(
-      getCheckEvaluate('non-empty-if-present').call(
-        checkContext,
-        null,
-        {},
-        vNode
-      )
+      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
     ).toBe(false);
   });
 
   it('should return false if the element is not a submit or reset input', () => {
     var vNode = queryFixture('<input id="target" type="text" />');
     expect(
-      getCheckEvaluate('non-empty-if-present').call(
-        checkContext,
-        null,
-        {},
-        vNode
-      )
+      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
     ).toBe(false);
 
     var vNode = queryFixture('<input id="target" type="button" />');
     expect(
-      getCheckEvaluate('non-empty-if-present').call(
-        checkContext,
-        null,
-        {},
-        vNode
-      )
+      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
     ).toBe(false);
 
     var vNode = queryFixture('<button id="target" type="submit"></button');
     expect(
-      getCheckEvaluate('non-empty-if-present').call(
-        checkContext,
-        null,
-        {},
-        vNode
-      )
+      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
     ).toBe(false);
   });
 });

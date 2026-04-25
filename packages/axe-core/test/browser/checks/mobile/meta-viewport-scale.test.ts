@@ -1,10 +1,15 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   checks
 } from '@helpers/check-helpers';
+import metaViewportScaleEvaluate from '@checks/mobile/meta-viewport-scale-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const metaViewportEvaluateESM = getCheckEvaluateESM(metaViewportScaleEvaluate, {
+  scaleMinimum: 2
+});
 describe('meta-viewport', () => {
   var checkContext = createMockCheckContext();
 
@@ -19,7 +24,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(false);
       expect(checkContext._data).toEqual('user-scalable=no');
     });
@@ -30,7 +35,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(false);
     });
 
@@ -40,7 +45,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(false);
     });
 
@@ -50,7 +55,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(false);
     });
 
@@ -59,7 +64,7 @@ describe('meta-viewport', () => {
         '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=yes, more-stuff=ok">'
       );
 
-      expect(getCheckEvaluate('meta-viewport')(null, null, vNode)).toBe(true);
+      expect(metaViewportEvaluateESM(null, null, vNode)).toBe(true);
     });
 
     it('should return false on maximum-scale=yes (translates to 1)', () => {
@@ -67,7 +72,7 @@ describe('meta-viewport', () => {
         '<meta id="target" name="viewport" content="maximum-scale=yes">'
       );
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(false);
     });
 
@@ -76,7 +81,7 @@ describe('meta-viewport', () => {
         '<meta id="target" name="viewport" content="maximum-scale=-1">'
       );
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(true);
     });
 
@@ -86,7 +91,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(
+        metaViewportEvaluateESM.call(
           checkContext,
           null,
           {
@@ -101,7 +106,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(true);
     });
 
@@ -111,7 +116,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(
+        metaViewportEvaluateESM.call(
           checkContext,
           null,
           {
@@ -129,7 +134,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(true);
     });
 
@@ -138,7 +143,7 @@ describe('meta-viewport', () => {
         '<meta id="target" name="viewport" content="user-scalable=1, minimal-ui">'
       );
 
-      expect(getCheckEvaluate('meta-viewport')(null, null, vNode)).toBe(true);
+      expect(metaViewportEvaluateESM(null, null, vNode)).toBe(true);
     });
 
     it('should not crash if viewport property does not have a value', () => {
@@ -159,7 +164,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(false);
       expect(checkContext._data).toEqual('user-scalable=no');
     });
@@ -170,7 +175,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(false);
       expect(checkContext._data).toEqual('user-scalable=no');
     });
@@ -181,7 +186,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(false);
     });
 
@@ -191,7 +196,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(false);
     });
 
@@ -201,7 +206,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(true);
     });
 
@@ -211,7 +216,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(true);
 
       var vNode = queryFixture(
@@ -219,7 +224,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(
+        metaViewportEvaluateESM.call(
           checkContext,
           null,
           {
@@ -236,7 +241,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(
+        metaViewportEvaluateESM.call(
           checkContext,
           null,
           {
@@ -253,7 +258,7 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+        metaViewportEvaluateESM.call(checkContext, null, null, vNode)
       ).toBe(true);
     });
   });

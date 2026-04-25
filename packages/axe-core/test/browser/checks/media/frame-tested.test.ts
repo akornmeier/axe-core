@@ -1,7 +1,12 @@
-import { getCheckEvaluate, checks } from '@helpers/check-helpers';
+import { getCheckEvaluateESM, checks } from '@helpers/check-helpers';
+import frameTestedEvaluate from '@checks/media/frame-tested-evaluate';
 import { describe, it, expect } from 'vitest';
+
+const frameTestedEvaluateESM = getCheckEvaluateESM(frameTestedEvaluate, {
+  isViolation: false
+});
 describe('frame-tested', () => {
-  var checkEvaluate = getCheckEvaluate('frame-tested');
+  var checkEvaluate = frameTestedEvaluateESM;
   var frameTestedAfter = checks['frame-tested'].after;
 
   describe('evaluate', () => {

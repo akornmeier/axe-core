@@ -1,12 +1,18 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import metaRefreshEvaluate from '@checks/navigation/meta-refresh-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const metaRefreshEvaluateESM = getCheckEvaluateESM(metaRefreshEvaluate, {
+  minDelay: 0,
+  maxDelay: 72000
+});
 describe('meta-refresh', () => {
   var checkContext = createMockCheckContext();
-  var metaRefreshCheck = getCheckEvaluate('meta-refresh');
+  var metaRefreshCheck = metaRefreshEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();
