@@ -1,0 +1,127 @@
+describe('axe.utils.preload', function () {
+  var fixture = document.getElementById('fixture');
+
+  beforeEach(function () {
+    axe.setup(fixture);
+  });
+
+  it('returns `undefined` when `preload` option is set to false.', function (done) {
+    var options = {
+      preload: false
+    };
+    var actual = axe.utils.preload(options);
+    actual
+      .then(function (results) {
+        expect(results).toBeUndefined();
+        done();
+      })
+      .catch(function (error) {
+        done(error);
+      });
+  });
+
+  it('returns assets with `cssom`, verify result is same output from `preloadCssom` fn', function (done) {
+    var options = {
+      preload: {
+        assets: ['cssom']
+      }
+    };
+    var actual = axe.utils.preload(options);
+    actual
+      .then(function (results) {
+        expect(results).toBeDefined();
+        assert.property(results, 'cssom');
+
+        axe.utils.preloadCssom(options).then(function (resultFromPreloadCssom) {
+          expect(results.cssom).toEqual(resultFromPreloadCssom);
+          done();
+        });
+      })
+      .catch(done);
+  });
+
+  describe('axe.utils.shouldPreload', function () {
+    it('should return true if preload configuration is valid', function () {
+      var actual = axe.utils.shouldPreload({
+        preload: {
+          assets: ['cssom']
+        }
+      });
+      expect(actual).toBe(true);
+    });
+
+    it('should return true if preload is undefined', function () {
+      var actual = axe.utils.shouldPreload({
+        preload: undefined
+      });
+      expect(actual).toBe(true);
+    });
+
+    it('should return true if preload is null', function () {
+      var actual = axe.utils.shouldPreload({
+        preload: null
+      });
+      expect(actual).toBe(true);
+    });
+
+    it('should return true if preload is not set', function () {
+      var actual = axe.utils.shouldPreload({});
+      expect(actual).toBe(true);
+    });
+
+    it('should return false if preload configuration is invalid', function () {
+      var options = {
+        preload: {
+          errorProperty: ['cssom']
+        }
+      };
+      var actual = axe.utils.shouldPreload(options);
+      expect(actual).toBe(false);
+    });
+  });
+
+  describe('axe.utils.getPreloadConfig', function () {
+    it('should return default assets if preload configuration is not set', function () {
+      var actual = axe.utils.getPreloadConfig({}).assets;
+      var expected = ['cssom', 'media'];
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return default assets if preload options is set to true', function () {
+      var actual = axe.utils.getPreloadConfig({}).assets;
+      var expected = ['cssom', 'media'];
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return default timeout value if not configured', function () {
+      var actual = axe.utils.getPreloadConfig({}).timeout;
+      var expected = 10000;
+      expect(actual).toBe(expected);
+    });
+
+    it('should throw error if requested asset type is not supported', function () {
+      var options = {
+        preload: {
+          assets: ['some-unsupported-asset']
+        }
+      };
+      var actual = function () {
+        axe.utils.getPreloadConfig(options);
+      };
+      var expected = Error;
+      expect(actual).toThrow(expected);
+    });
+
+    it('should remove any duplicate assets passed via preload configuration', function () {
+      var options = {
+        preload: {
+          assets: ['cssom', 'cssom']
+        }
+      };
+      var actual = axe.utils.getPreloadConfig(options);
+      assert.property(actual, 'assets');
+      assert.containsAllKeys(actual, ['assets', 'timeout']);
+      expect(actual.assets).toHaveLength(1);
+    });
+  });
+});
