@@ -19,13 +19,20 @@
 import { defineProject } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 
+// Vitest 4's `defineProject({ test: ... })` does NOT inherit `setupFiles`
+// from the root `vitest.config.ts` `test` block — each project must wire
+// its own. We point all three at the same setup file; it early-returns in
+// Node (no `document`), so the `unit` project is unaffected.
+const SETUP_FILES = ['./test/setup/vitest.setup.ts'];
+
 export default [
   // Unit tests (Node.js, no DOM by default)
   defineProject({
     test: {
       name: 'unit',
       include: ['test/unit/**/*.test.ts'],
-      environment: 'node'
+      environment: 'node',
+      setupFiles: SETUP_FILES
     }
   }),
 
@@ -34,6 +41,7 @@ export default [
     test: {
       name: 'browser',
       include: ['test/browser/**/*.test.ts'],
+      setupFiles: SETUP_FILES,
       browser: {
         enabled: true,
         provider: playwright(),
@@ -52,6 +60,7 @@ export default [
     test: {
       name: 'integration',
       include: ['test/integration/**/*.test.ts'],
+      setupFiles: SETUP_FILES,
       browser: {
         enabled: true,
         provider: playwright(),

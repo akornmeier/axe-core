@@ -16,14 +16,12 @@
 //      bootstrap from source for every test would re-implement Grunt.
 //
 // Refs specs/PRD-03-test-infrastructure-modernization.md §2.3.2.
-// TODO(Sprint 3 task #10): replace with direct imports from lib/.
 //
 // We load the UMD bundle for its side effect of registering `globalThis.axe`
 // with `_audit` populated. The ESM default export (`axeExport`) intentionally
 // omits the `_audit` field, so importing default would not give us access to
 // the registered checks.
 import '../../../dist/axe.js';
-import { afterEach } from 'vitest';
 
 const axe = (globalThis as unknown as { axe: any }).axe;
 if (!axe || !axe._audit) {
@@ -31,16 +29,6 @@ if (!axe || !axe._audit) {
     'check-helpers: globalThis.axe._audit is undefined — the UMD bundle did not initialize.'
   );
 }
-
-// Workaround for the project-scoped setupFiles inheritance gap in Vitest 4
-// (see ensureFixture below): clear the fixture between tests so DOM state
-// doesn't leak.
-afterEach(() => {
-  const existing = document.getElementById('fixture');
-  if (existing) existing.remove();
-  (globalThis as { __axeFixture?: HTMLElement }).__axeFixture = undefined;
-  axe.teardown?.();
-});
 
 export interface MockCheckContext {
   _data: unknown;
@@ -111,29 +99,19 @@ export function getCheckEvaluate(checkId: string) {
  * Mirrors `axe.testUtils.checkSetup`. Pilot only — Sprint 3 will refactor.
  */
 /**
- * Resolve the per-test fixture container. The setup file
- * `test/setup/vitest.setup.ts` is supposed to install
- * `globalThis.__axeFixture` via a `beforeEach` hook, but Vitest 4's
- * project-scoped `defineProject({ test: ... })` does NOT inherit the root
- * config's `setupFiles` array (verified empirically — task #4 pilot run).
- * Until the workspace config is fixed in a follow-up commit (task #4 brief
- * forbids modifying setup/config files in this commit), we fall back to
- * creating-or-reusing a `<div id="fixture">` directly. The container is
- * cleared at the start of every `checkSetup` call, so test isolation is
- * preserved even when the global hook didn't fire.
+ * Resolve the per-test fixture container installed by
+ * `test/setup/vitest.setup.ts`'s `beforeEach` hook. Throws a clear error
+ * if the setup file did not run (which would indicate a misconfigured
+ * Vitest project — `setupFiles` must be wired in `vitest.workspace.ts`).
  */
 function ensureFixture(): HTMLElement {
-  let fixture: HTMLElement | undefined = (
-    globalThis as { __axeFixture?: HTMLElement }
-  ).__axeFixture;
+  const fixture = (globalThis as { __axeFixture?: HTMLElement }).__axeFixture;
   if (!fixture || !fixture.isConnected) {
-    fixture = document.getElementById('fixture') ?? undefined;
-  }
-  if (!fixture || !fixture.isConnected) {
-    fixture = document.createElement('div');
-    fixture.id = 'fixture';
-    document.body.appendChild(fixture);
-    (globalThis as { __axeFixture?: HTMLElement }).__axeFixture = fixture;
+    throw new Error(
+      'check-helpers: globalThis.__axeFixture is not set. The Vitest setup ' +
+        'file (test/setup/vitest.setup.ts) did not run — check that the ' +
+        'project in vitest.workspace.ts has setupFiles wired correctly.'
+    );
   }
   return fixture;
 }
