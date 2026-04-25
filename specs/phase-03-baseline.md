@@ -1,6 +1,7 @@
 # Phase 3 — Legacy Karma/Mocha Test Baseline
 
-_Captured: 2026-04-25, branch `chore/modernize-phase-03` at commit `ff3a4190`_
+_Re-baselined: 2026-04-25, branch `chore/modernize-phase-03` at commit `ac498904` (after Phase 2 regression remediation)._
+_Original broken baseline: 2026-04-25, commit `79d43278` — see addendum at bottom._
 
 ## Environment
 
@@ -11,85 +12,80 @@ _Captured: 2026-04-25, branch `chore/modernize-phase-03` at commit `ff3a4190`_
 
 ## TL;DR
 
-**The legacy Karma + Mocha pipeline does not produce passing test counts against the Phase 2 build at this commit.** Every Karma shard and every Mocha-only suite that depends on the bundled `axe.js` crashes during initialization. This baseline therefore captures *what the pipeline does today*, not a count of green tests. The numbers below are what subsequent migration steps will compare against — both the file-count inventory of legacy specs and the pre-existing failure modes that Sprint 3 must investigate before declaring parity.
+After landing the three Phase 2 regression fixes (`tsc` typecheck, UMD `_audit` exposure, and Karma path patch), the legacy Karma + Mocha pipeline produces real, comparable test counts. The Karma shards aggregate to **6,649 passing / 354 failing / 101 pending** specs in roughly **44 wall-clock seconds**. These are the numbers Sprint 3 will use as the parity floor for the Vitest port.
 
-Two distinct upstream regressions surface here:
+The remaining 354 Karma failures and the Mocha-only suite breakages are pre-existing issues introduced during the broader Phase 0–2 modernization (DOM API drift, `aria-busy`/locale check-id renames, JSDOM-based tests assuming a browser global, Mocha-only suites still requiring `../axe` at the package root). They are **not** in scope for this baseline; Sprint 3 / Sprint 4 will either fix or quarantine each before declaring parity.
 
-1. **`tsc` no longer compiles** the generated `lib/core/generated/default-config.ts` and `lib/core/index.ts` (missing `node` types after Phase 2 dependency cleanup). `pnpm run test` aborts at the `test:tsc` step before any test runs. We bypassed it by invoking each `test:unit:*` shard directly.
-2. **The Phase 2 UMD bundle does not expose `axe._audit` on the global `axe`.** The bundle declares `var axe = {};` at the top and mutates it via `load(default_config_default)` (which sets `axe._audit = new Audit(...)` on the *local* `axe`), but the UMD wrapper finishes with `global.axe = factory()` — overwriting the global with the returned `axeExport` object that lacks `_audit`. Every legacy test (Karma `testutils.js:18` and Mocha `test-locales.js`, `test-virtual-rules.js`, `test/node/jsdom.js`) trips on this immediately.
+## Per-shard Karma results (post-fix)
 
-Sprint 2/3 cannot claim parity until both are addressed (or the affected specs are migrated to consume the ESM build directly, which is the planned post-migration entry point anyway).
+All numbers below are taken from a fresh sequential run of each `pnpm run test:unit:<shard>` from `packages/axe-core/` after `pnpm --filter=axe-core run build`.
 
-## Per-shard results
+| Shard                   | Passed | Failed | Pending | Status                                  | Wall-clock |
+| ----------------------- | -----: | -----: | ------: | --------------------------------------- | ---------: |
+| test:unit:core          |   1520 |     16 |      26 | Real failures — see notes below         |       24 s |
+| test:unit:commons       |   2104 |     15 |      35 | Real failures — see notes below         |        3 s |
+| test:unit:rule-matches  |    403 |      4 |       0 | Real failures — see notes below         |        3 s |
+| test:unit:checks        |   1253 |     94 |       0 | Real failures — see notes below         |        4 s |
+| test:unit:api           |     12 |      0 |       0 | All green                               |        2 s |
+| test:unit:integration   |   2016 |    225 |      40 | Real failures — see notes below         |        6 s |
+| test:unit:virtual-rules |    341 |      0 |       0 | All green                               |        2 s |
+| **Total Karma unit**    | **6649** | **354** | **101** | Pipeline executes; failure backlog open | **~44 s**  |
 
-All numbers below are taken from the per-shard logs at `/tmp/baseline-*.log`.
+### Notes on the remaining Karma failures
 
-| Shard                  | Passed | Failed | Pending | Status                                                     | Wall-clock |
-| ---------------------- | -----: | -----: | ------: | ---------------------------------------------------------- | ---------: |
-| test:unit:core         |      0 |      0 |       0 | Karma ERROR — `Cannot read properties of undefined (reading 'checks')` at `test/testutils.js:18` (0 of 0 executed) | 2.92s |
-| test:unit:commons      |      0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.52s      |
-| test:unit:rule-matches |      0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.47s      |
-| test:unit:checks       |      0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.44s      |
-| test:unit:api          |      0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.47s      |
-| test:unit:integration  |      0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.46s      |
-| test:unit:virtual-rules |     0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.42s      |
-| **Total Karma unit**   |      0 |      0 |       0 | All 7 shards fail to bootstrap before any spec executes    | **17.7s**  |
-| test:locales           |      1 |     18 |       0 | Mocha — locale JSON validation throws on every locale; `assert.doesNotThrow` flips them all to failures. Root cause: `axe.configure({ locale })` rejects every locale because the bundle's `axe._audit.checks` map does not contain the IDs the locale files reference (e.g. `autocomplete-appropriate`, `aria-busy`). | 0.54s |
-| test:virtual-rules     |      1 |    340 |       0 | Mocha — `runVirtualRule` crashes inside `getEnvironmentData` → `getOrientation` because `window.screen` is unavailable in the Node mocha host. Pre-existing dependency on a browser-shim. | 0.29s |
-| test:rule-help-version |      1 |      0 |       0 | Mocha — single network-driven test passes (verifies axe-core docs URLs for the current major version). | 5.54s |
-| test:jsdom             |      0 |      9 |       0 | Mocha — every spec throws `ReferenceError: document is not defined` at `dist/axe.js:31562` (`setupGlobals`). The Phase 2 ESM/CJS build assumes a browser global rather than reading from the JSDOM window passed in. | 0.48s |
+The 354 surviving failures cluster into a small number of pre-existing root causes that are **out of scope for this remediation** (per Phase 3 scope guard: no edits to `lib/checks/`, `lib/rules/`, `lib/commons/`, `lib/standards/`):
 
-### `pnpm --filter=axe-core run test` end-to-end
+- **`isValidLang`** (`test/core/utils/valid-langs.js`) — "expected true to be false" on a 4-character lang code. Looks like an upstream `iso-639` data-set update that flipped a value; not a Phase 2 build regression.
+- **`finishRun frames`** (`test/core/public/finish-run.js`) — assertions like "expected `[ 'h2' ]` to deeply equal `[ 'h1' ]`" suggest virtual-tree ordering changed somewhere in the fixture/DOM-snapshot pipeline. Pre-existing.
+- **`getStyleSheetFactory`** — `expected { ... } to have keys 'sheet', 'isCrossOrigin', 'shadowId', 'root', 'priority'` (object is missing `shadowId`). Schema drift in the helper return shape.
+- **`nodeSerializer.dqElmToSpec`** — multiple cases where the new bundle returns `xpath: ['//div[…]']` (array) where the spec expects `xpath: '/'` (string). Looks like a serialization-format regression.
+- **`collectResultsFromFrames`** — `Timeout of 4000ms exceeded` on the ping-timeout test pair. Possibly flaky; possibly a real timer regression. Sprint 3 will retry under Vitest before drawing conclusions.
+- The bulk of `test:unit:checks` and `test:unit:integration` failures appear to be locale/check-id drift (the same root cause that fails the Mocha `test:locales` suite — the bundle no longer registers checks like `aria-busy`, `autocomplete-appropriate`).
 
-`pnpm --filter=axe-core run test` aborts at `test:tsc` before launching any shard:
+These are tracked for Sprint 3 / 4 follow-up, not for this remediation.
 
-```
-lib/core/generated/default-config.ts(3,52381): error TS7006: Parameter 'it' implicitly has an 'any' type.
-lib/core/generated/default-config.ts(6,47): error TS7006: Parameter 'it' implicitly has an 'any' type.
-lib/core/index.ts(32,10): error TS2591: Cannot find name 'module'. Do you need to install type definitions for node? …
-lib/core/utils/uuid.ts(61,14): error TS2591: Cannot find name 'Buffer'. …
-```
+## Mocha-only suites (post-fix)
 
-End-to-end wall-clock for the failing `pnpm run test` invocation: **1.71s**.
+| File                                | Passed | Failed | Pending | Status                                                      | Wall-clock |
+| ----------------------------------- | -----: | -----: | ------: | ----------------------------------------------------------- | ---------: |
+| test/test-locales.js                |      0 |      0 |       0 | `MODULE_NOT_FOUND` — `require('../axe')` (package-root path) — see footer | < 1 s |
+| test/test-virtual-rules.js          |      0 |      0 |       0 | `MODULE_NOT_FOUND` — same root cause                        | < 1 s      |
+| test/test-rule-help-version.js      |      1 |      0 |       0 | All green                                                   | ~5.6 s     |
+| test/node/jsdom.js                  |      0 |      9 |       0 | `ReferenceError: document is not defined` at `dist/axe.js:31562` (`setupGlobals`). The Phase 2 ESM/CJS build assumes a browser global rather than reading from the JSDOM window passed in. Pre-existing. | < 1 s |
 
-## Per-directory test counts (file inventory)
+## Per-directory test-file inventory
 
-Karma never executed a spec, so the `Tests` column reports the count of legacy `.js` test files (or `.json` for the integration-rules shard) that *would* have been picked up by `karma.conf.js` given each `testDirs=` arg. The `karma.conf.js` glob mappings are:
+Spec-file counts (used as a no-regression sanity check against the Vitest port):
 
-- `core`, `commons`, `rule-matches`, `checks` → `test/<dir>/**/*.js`
-- `integration`            → `test/integration/**/*.json`
-- `virtual-rules`          → `test/integration/virtual-rules/**/*.js`
-- `api`                    → `test/integration/api/**/*.js`
+| Directory (Karma `testDirs`)    | Legacy spec files |
+| ------------------------------- | ----------------: |
+| test/core                       |               119 |
+| test/commons                    |               145 |
+| test/rule-matches               |                44 |
+| test/checks                     |               112 |
+| test/integration (rules JSON)   |                96 |
+| test/integration/virtual-rules  |                47 |
+| test/integration/api            |                 1 |
+| **Total Karma-bound specs**     |           **564** |
 
-| Directory (Karma `testDirs`) | Legacy spec files |
-| ---------------------------- | ----------------: |
-| test/core                    |               119 |
-| test/commons                 |               145 |
-| test/rule-matches            |                44 |
-| test/checks                  |               112 |
-| test/integration (rules JSON) |               96 |
-| test/integration/virtual-rules |              47 |
-| test/integration/api         |                 1 |
-| **Total Karma-bound specs**  |           **564** |
-
-Mocha-only suites (out of band of `karma.conf.js`):
+Mocha-only suites:
 
 | File                                | `it()` blocks |
 | ----------------------------------- | ------------: |
 | test/test-locales.js                | 1 dynamic block per locale × 19 locale files = 19 |
-| test/test-virtual-rules.js          | 341 (1 passed + 340 failed before crashes prevent further) |
+| test/test-virtual-rules.js          | 341 |
 | test/test-rule-help-version.js      | 1 |
 | test/node/jsdom.js                  | 9 |
 
-These file/spec totals are the *floor* against which Sprint 3 / Sprint 4 must prove no count regression once the Vitest port lands. Failing-but-counted specs (e.g. `test:virtual-rules`'s 341) need to be either fixed or explicitly quarantined before the migration proceeds.
+These file/spec totals are the *floor* against which Sprint 3 / Sprint 4 must prove no count regression once the Vitest port lands. Failing-but-counted specs need to be either fixed or explicitly quarantined before the migration proceeds.
 
 ## Total wall-clock (locally measured)
 
-- Combined Karma unit suite (all 7 shards, all aborting): **~17.7s**
-- Mocha scripts combined (locales + virtual-rules + rule-help-version + jsdom): **~6.85s**
-- **Grand total of attempted invocations**: **~24.6s**
+- Combined Karma unit suite (all 7 shards, sequential): **~44 s**
+- Mocha scripts combined (locales + virtual-rules + rule-help-version + jsdom): **~7 s** (most of which is `test:rule-help-version`'s network round-trip)
+- **Grand total of attempted invocations**: **~51 s**
 
-These numbers reflect the abort-before-running behavior; they are not a meaningful runtime baseline. Once the upstream `_audit`/`document` regressions are resolved (Sprint 2 build-fix work), wall-clock should be recaptured against a green run before Vitest comparisons begin.
+This is the post-fix wall-clock baseline against which Vitest comparisons will be drawn in Sprint 3.
 
 ## Coverage
 
@@ -104,26 +100,36 @@ No coverage instrumentation existed in the legacy pipeline (no `nyc`/`c8`/`istan
 
 ## Build prerequisite
 
-Karma serves `axe.js` from `packages/axe-core/` (per `karma.conf.js` `basePath: '../'` and `files: [..., 'axe.js', ...]`). The Phase 2 Vite build emits artifacts to `packages/axe-core/dist/`. To make Karma find them, this baseline run copied:
-
-```
-cp dist/axe.js     ./axe.js
-cp dist/axe.min.js ./axe.min.js
-```
-
-inside `packages/axe-core/` before running. Sprint 2 should either update `karma.conf.js` paths or formalize a pre-test copy step until the test infrastructure is migrated and the legacy paths are retired.
-
-## Raw logs
-
-Saved at `/tmp/baseline-*.log` on the run host (not committed):
-
-- `/tmp/baseline-unit.log` — output of the failing `pnpm --filter=axe-core run test` invocation
-- `/tmp/baseline-unit-core.log`, `/tmp/baseline-unit-commons.log`, `/tmp/baseline-unit-rule-matches.log`, `/tmp/baseline-unit-checks.log`, `/tmp/baseline-unit-api.log`, `/tmp/baseline-unit-integration.log`, `/tmp/baseline-unit-vrules.log`
-- `/tmp/baseline-locales.log`, `/tmp/baseline-virtual-rules.log`, `/tmp/baseline-rule-help.log`, `/tmp/baseline-jsdom.log`
+Karma now serves `axe.js` / `axe.min.js` from `packages/axe-core/dist/` (per the transitional `karma.conf.js` patch landed in commit `ac498904`). Run `pnpm --filter=axe-core run build` once before invoking any Karma shard. Karma is being deleted in Phase 3 Sprint 4, so the path patch is intentionally minimal.
 
 ## Action items handed off to Sprint 2 / 3
 
-1. Fix `tsc` errors in `lib/core/generated/default-config.ts` (param `it` typed as `any`) and the `lib/core/index.ts` / `lib/core/utils/uuid.ts` `module`/`Buffer` references (re-add `@types/node` + `"types": ["node"]` for the Node-targeted entry, or split tsconfigs).
-2. Fix the Phase 2 UMD wrapper so that `_audit` (and the Node-environment shims used by `setupGlobals`) survive on the exported global. Without this, neither the legacy Karma pipeline nor the upcoming Vitest-browser pipeline can consume `axe.js` end-to-end.
-3. Resolve the locale-vs-bundle check-id drift (locale files name checks like `autocomplete-appropriate` and `aria-busy` that the new bundle no longer registers — either restore them or update the locale files).
-4. Ensure `karma.conf.js` `axe.js` lookup is taken care of (relocate, copy, or update paths) so a parity dual-run is possible during Sprint 2.
+1. **Karma `test:unit:checks` (94 fails) and `test:unit:integration` (225 fails)** — investigate locale/check-id drift; many failures correlate with checks the bundle no longer registers (`aria-busy`, `autocomplete-appropriate`, etc).
+2. **`test/node/jsdom.js`** — bundle's `setupGlobals` assumes a browser-global `document`; rework to read from the JSDOM window passed in.
+3. **Mocha `test-locales.js` / `test-virtual-rules.js`** — both `require('../axe')` from the package root; either restore a root-level shim, port them to read from `dist/`, or migrate them to Vitest as part of the Sprint 3 unit-suite port.
+4. **`finishRun frames` / `nodeSerializer` failures** — assertions reflect a virtual-tree-shape change somewhere in the Phase 0–2 refactors; needs a rule-engine-level investigation, intentionally deferred until Phase 3 lands a Vitest baseline.
+
+---
+
+## Addendum — Initial broken-baseline (commit `79d43278`)
+
+Prior to the Phase 2 regression fixes (commits `844785fc` … `ac498904`), the same pipeline produced the following numbers, captured for traceability:
+
+| Shard                  | Passed | Failed | Pending | Status                                                     | Wall-clock |
+| ---------------------- | -----: | -----: | ------: | ---------------------------------------------------------- | ---------: |
+| test:unit:core         |      0 |      0 |       0 | Karma ERROR — `Cannot read properties of undefined (reading 'checks')` at `test/testutils.js:18` (0 of 0 executed) | 2.92 s |
+| test:unit:commons      |      0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.52 s |
+| test:unit:rule-matches |      0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.47 s |
+| test:unit:checks       |      0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.44 s |
+| test:unit:api          |      0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.47 s |
+| test:unit:integration  |      0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.46 s |
+| test:unit:virtual-rules |     0 |      0 |       0 | Karma ERROR — same `_audit` failure                        | 2.42 s |
+| **Total Karma unit**   |      0 |      0 |       0 | All 7 shards aborted before any spec executed              | **17.7 s** |
+
+Three upstream regressions were responsible:
+
+1. **`tsc` would not compile** the generated `lib/core/generated/default-config.ts` (TS7006 on doT-compiled function literals) and `lib/core/index.ts` / `lib/core/utils/uuid.ts` (TS2591 for `module` and `Buffer`, because `@types/node` was pinned to `^4.9.5` and never pulled in via `tsconfig` `types`).
+2. **The Phase 2 UMD bundle did not expose `axe._audit`** on the global `axe` — the wrapper did `global.axe = factory()`, replacing the shim that source code had mutated `_audit` onto.
+3. **`karma.conf.js` looked for `axe.js` at the package root** — the legacy Grunt output location — rather than under `dist/`, so every shard 404'd on bundle load.
+
+All three are resolved in the commit chain landing on `ac498904`; the post-fix numbers above are now the canonical Phase 3 baseline.
