@@ -7,7 +7,9 @@ const { getWebdriver } = require('../get-webdriver');
 const { assert } = require('chai');
 
 const serverPort = 9898;
-const axePath = require.resolve('../../axe.js');
+// Phase 2 build moved axe.js from the package root into dist/.
+// See test/test-locales.js for context.
+const axePath = require.resolve('../../dist/axe.js');
 const axeSource = fs.readFileSync(axePath, 'utf8');
 const actPath = path.resolve(__dirname, '../../node_modules/wcag-act-rules/');
 const testCaseJsonPath = path.resolve(

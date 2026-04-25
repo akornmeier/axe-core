@@ -2,7 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 const glob = require('glob');
-const axe = require(path.join(__dirname, '../axe'));
+// Phase 2 build moved axe.js from the package root into dist/. This script
+// stays on the Karma-era code path until Sprint 5 task #16 deletes it; until
+// then we point at the new location explicitly.
+const axe = require(path.join(__dirname, '../dist/axe.js'));
 
 const localeFiles = glob.sync(path.join(__dirname, '../locales/*.json'));
 
