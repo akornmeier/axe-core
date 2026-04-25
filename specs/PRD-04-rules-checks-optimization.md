@@ -486,6 +486,14 @@ Total CI time for a typical rule PR: ~25s vs. current ~3–4 minutes.
 
 ---
 
+## 5.1 Phase 3 Carryover — Known Regressions
+
+Surfaced during Phase 3 Sprint 1 pilot migration (2026-04-25); deferred to Phase 4 because they live in `lib/commons/color/` which Phase 3's scope guard forbids modifying.
+
+| Item | Location | Symptom | Notes |
+|---|---|---|---|
+| Color-algebra NaN | `lib/commons/color/flatten-colors.ts`, `lib/commons/color/stacking-context.ts` | `flatten-colors` returns `#0NaN0NaN0NaN` for the color-contrast pass case under Vitest Browser Mode + Playwright (Chromium). Computed-style read is correct (real `rgb()` values reach the function); NaN appears during stacking-context blending. | Karma+Mocha pipeline did not surface this — possibly because the pilot test asserts on the raw output where the legacy test asserted only on a derived contrast ratio. Phase 4 must pick up the algebra fix as part of `lib/checks/color/` modernization. Pilot test (`test/browser/checks/color/color-contrast.test.ts`) is currently asserting against the broken state with a `// FIXME(phase-04)` comment so Phase 3 CI stays green. |
+
 ## 6. Open Questions
 
 1. **Tree-shakeable bundles — semver implications**: Exposing `axe-core/bundles/wcag2aa` as a public entry point means it becomes part of the public API. Adding/removing rules from a bundle would need to follow semver. Is this acceptable? **Leaning yes** — rule additions to a WCAG level bundle are additive (minor), rule removals are breaking (major). This aligns with how consumers already think about WCAG versions.
