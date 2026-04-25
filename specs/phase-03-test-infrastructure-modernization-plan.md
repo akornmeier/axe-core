@@ -105,6 +105,27 @@ Exit criteria: ten Vitest tests green in CI on Linux Chromium + Firefox; coverag
 
 Delete `karma.conf.js`. Remove all 12 dead devDependencies from `packages/axe-core/package.json` (see PRD §4). Wire Turborepo `test`, `test:browser`, `test:integration`, `typecheck` tasks with `outputs` for cache hits and `dependsOn: ["^build"]`. Replace `.github/workflows/test.yml` with the four-job parallel configuration from PRD §2.6. Enable v8 coverage thresholds (lines 85, branches 80, functions 85, statements 85) — fail CI on regression. Enable Playwright traces on failure with artifact upload (open question 6.1 — leaning yes). Benchmark old vs. new wall-clock; record in PR description; demand ≥50% reduction. Update `CONTRIBUTING.md` and rename test scripts so `pnpm test`, `pnpm test:browser`, `pnpm test:integration` are the canonical commands.
 
+## Sprint 4 — Realized Outcomes & Adjusted Scope (2026-04-25)
+
+**What landed in Sprint 4:**
+
+1. **PRD-01 §4.1 carryovers closed.** `lib/core/utils/memoize.ts` no longer mutates `axe` at module top level. `valid-langs.ts` trie traversal fixed. `uuid.ts` got the same ESM-load guard. Commit `031008eb`.
+2. **73 of 246 `.test.ts.todo` files migrated** in `test/browser/{commons,core,rule-matches}/` via `scripts/migrate-todo-tests.mjs`. Commit `5d6c67eb`. Vitest pass count jumped from 1444→2163 tests.
+3. **10 of 84 check tests** flipped from UMD-hybrid to ESM-direct (commit `59545ca7`). Mechanical script at `/tmp/flip-checks.mjs`; clean-id list at `/tmp/task4-clean-files.txt`.
+
+**What did NOT land in Sprint 4:**
+
+- The other 74 check tests cannot mechanically flip to ESM-direct yet. Path A (Vite plugin to alias the bundle's bare imports) and Path B (drop the UMD bundle from `_helpers/check-helpers.ts`) were both attempted. Path B revealed that the dual-instance issue is structural — separate copies of `lib/core/base/cache.ts`, `lib/standards/*`, and `AbstractVirtualNode` between the UMD bundle and the ESM project. `axe.configure()` writes to UMD's standards registry only; `nodeLookup()` `instanceof` checks fail across module instances. Cache mirroring alone is insufficient.
+- The 173 remaining `.test.ts.todo` files in `commons/`/`core/`/`rule-matches/`. Top blocker buckets: 97 use chai `assert.*` (Sprint 4b codemod target), 42 mutate `axe._tree` directly, 33 hit Path-B work-in-flight bugs, 26 use `axe._audit`, 14 use unknown `axe.testUtils.*` helpers.
+
+**Decision: Sprint 5 deletes the UMD bundle from the test harness.** Task #16 below already deletes Karma + the UMD bundle's role. Once that lands, the dual-instance issue dissolves: there is only one module graph, the harness imports `setup`/`teardown` directly from `lib/core/public/*`, and the remaining 74 check tests flip mechanically with the existing script. Path B then becomes a one-line change to `_helpers/check-helpers.ts` rather than the architectural surgery this sprint discovered.
+
+**Sprint 4b (incremental, parallel to Sprint 5 prep):**
+
+- Build the `assert.*` → `expect(...).to*(...)` codemod and run on the 97 affected `.test.ts.todo` files.
+- Build the `axe._tree = axe.utils.getFlattenedTree(node)` → `flatTreeSetup(node)` codemod and run on the 42 affected files.
+- Both unblock more `.test.ts.todo` migrations without depending on Sprint 5.
+
 ## Team Orchestration
 
 - You operate as the team lead and orchestrate the team to execute the plan.
@@ -282,6 +303,7 @@ Delete `karma.conf.js`. Remove all 12 dead devDependencies from `packages/axe-co
 - Convert all `test/checks/**/*.js` to `test/browser/checks/**/*.test.ts` running under the Vitest `browser` project.
 - Replace `axe.testUtils.getCheckEvaluate('foo')` with direct imports from `lib/checks/`.
 - Replace shared `<div id="fixture">` with per-test `createFixture()` helper for parallel-test safety (PRD §5.5).
+- **Sprint 4 status (2026-04-25):** Sprint 3 task #10 migrated all 84 check tests to the **UMD-hybrid path** (`getCheckEvaluate('id')` against the loaded UMD bundle). Sprint 4 flipped **10** of those to ESM-direct via `getCheckEvaluateESM(<evaluator>)`. The remaining **74** are blocked by the dual-instance issue between the UMD bundle and ESM imports of `lib/`. Task #16 (delete-legacy) unblocks them automatically; the flip becomes a `node /tmp/flip-checks.mjs` re-run after the bundle is gone.
 
 ### 11. Migrate `test/integration/`
 
@@ -350,6 +372,7 @@ Delete `karma.conf.js`. Remove all 12 dead devDependencies from `packages/axe-co
 - Remove from `packages/axe-core/package.json` devDependencies: `karma`, `karma-chai`, `karma-chrome-launcher`, `karma-firefox-launcher`, `karma-ie-launcher`, `karma-mocha`, `karma-sinon`, `karma-spec-reporter`, `mocha`, `chai`, `sinon`, `http-server`, `jquery`, `start-server-and-test`, `selenium-webdriver`, `chromedriver`, `serve-handler`.
 - Rewrite the `scripts` block: `test` → `vitest run --project unit`, `test:browser` → `vitest run --project browser`, `test:integration` → `vitest run --project integration`, drop the seven `test:unit:*` shards and the `integration:*` selenium scripts.
 - Run `pnpm install` and commit lockfile.
+- **Path B unblock (Sprint 4 carryover):** removing Karma also retires the UMD-bundle import in `test/browser/_helpers/check-helpers.ts` (`import '../../../dist/axe.js'`). After this task lands, replace that import with direct ESM imports of `setup`, `teardown`, `getFlattenedTree`, `getNodeFromTree`, `querySelectorAll` from `@core/...`. Then re-run `node /tmp/flip-checks.mjs` (with `/tmp/task4-files.txt` as the input) to flip the remaining 74 check tests from `getCheckEvaluate('id')` to `getCheckEvaluateESM(<evaluator>)`. The dual-instance issue resolves automatically: there is no longer a second module graph to diverge from. Drop the `getCheckEvaluate(id)` and `axe`/`checks` exports from check-helpers when the migration is complete.
 
 ### 17. Enable coverage thresholds
 
