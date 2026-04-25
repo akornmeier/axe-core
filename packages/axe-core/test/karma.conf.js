@@ -99,16 +99,21 @@ module.exports = function (config) {
         included: false,
         served: true
       },
-      'axe.js',
-      { pattern: 'axe.min.js', included: false, served: true },
+      // Phase 2 transitional patch: Vite emits axe.js and axe.min.js into
+      // dist/ rather than the package root (where Grunt used to drop them).
+      // Karma is being deleted in Phase 3 Sprint 4 (replaced by Vitest
+      // Browser Mode + Playwright); this patch keeps the legacy baseline
+      // runnable through Sprints 1–3.
+      'dist/axe.js',
+      { pattern: 'dist/axe.min.js', included: false, served: true },
       'test/testutils.js'
     ].concat(testPaths),
     proxies: {
       '/test': '/base/test',
       '/mock': '/base/test/mock',
       '/integration': '/base/test/integration',
-      '/axe.js': '/base/axe.js',
-      '/axe.min.js': '/base/axe.min.js'
+      '/axe.js': '/base/dist/axe.js',
+      '/axe.min.js': '/base/dist/axe.min.js'
     },
     browsers: ['ChromeHeadless'],
     reporters: ['spec'],
