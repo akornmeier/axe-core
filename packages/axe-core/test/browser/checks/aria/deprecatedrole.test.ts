@@ -6,8 +6,8 @@ import {
 } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('deprecatedrole', () => {
-  var checkContext = createMockCheckContext();
-  var checkEvaluate = getCheckEvaluate('deprecatedrole');
+  const checkContext = createMockCheckContext();
+  const checkEvaluate = getCheckEvaluate('deprecatedrole');
   afterEach(() => {
     checkContext.reset();
     axe.reset();
@@ -24,7 +24,7 @@ describe('deprecatedrole', () => {
         }
       }
     });
-    var params = checkSetup('<div id="target" role="melon">Contents</div>');
+    const params = checkSetup('<div id="target" role="melon">Contents</div>');
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(true);
     expect(checkContext._data).toEqual('melon');
   });
@@ -40,7 +40,7 @@ describe('deprecatedrole', () => {
         }
       }
     });
-    var params = checkSetup(
+    const params = checkSetup(
       '<div id="target" role="doc-fizzbuzz">Contents</div>'
     );
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(true);
@@ -48,17 +48,19 @@ describe('deprecatedrole', () => {
   });
 
   it('returns false if applied to a non-deprecated role', () => {
-    var params = checkSetup('<div id="target" role="button">Contents</div>');
-    expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
+    const divParams = checkSetup(
+      '<div id="target" role="button">Contents</div>'
+    );
+    expect(checkEvaluate.apply(checkContext, divParams as any)).toBe(false);
     expect(checkContext._data).toBeNull();
 
-    var params = checkSetup('<button id="target">Contents</button>');
-    expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
+    const buttonParams = checkSetup('<button id="target">Contents</button>');
+    expect(checkEvaluate.apply(checkContext, buttonParams as any)).toBe(false);
     expect(checkContext._data).toBeNull();
   });
 
   it('returns false if applied to an invalid role', () => {
-    var params = checkSetup('<input id="target" role="foo">');
+    const params = checkSetup('<input id="target" role="foo">');
     expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
     expect(checkContext._data).toBeNull();
   });
@@ -75,7 +77,7 @@ describe('deprecatedrole', () => {
           }
         }
       });
-      var params = checkSetup(
+      const params = checkSetup(
         '<div id="target" role="foo widget melon button">Contents</div>'
       );
       expect(checkEvaluate.apply(checkContext, params as any)).toBe(true);
@@ -93,7 +95,7 @@ describe('deprecatedrole', () => {
           }
         }
       });
-      var params = checkSetup(
+      const params = checkSetup(
         '<div id="target" role="button melon widget">Contents</div>'
       );
       expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);

@@ -15,18 +15,18 @@ describe('non-empty-if-present', () => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   // These defaults are only available in IE and Edge
-  var input = document.createElement('input');
+  const input = document.createElement('input');
   input.type = 'submit';
-  var isEdgeOrIe = typeof input.getAttribute('value') === 'string';
+  const isEdgeOrIe = typeof input.getAttribute('value') === 'string';
 
-  var checkContext = createMockCheckContext();
+  const checkContext = createMockCheckContext();
   afterEach(() => {
     fixture.innerHTML = '';
     checkContext.reset();
   });
 
   it('should return false if a value is present', () => {
-    var vNode = queryFixture(
+    const vNode = queryFixture(
       '<input id="target" type="submit" value="woohoo" />'
     );
 
@@ -39,7 +39,7 @@ describe('non-empty-if-present', () => {
   (isEdgeOrIe ? it.skip : it)(
     'should return true if a value is not present',
     function () {
-      var vNode = queryFixture('<input id="target" type="submit" />');
+      const vNode = queryFixture('<input id="target" type="submit" />');
 
       expect(
         nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
@@ -49,7 +49,7 @@ describe('non-empty-if-present', () => {
   );
 
   it('should return false if an value is present, but empty', () => {
-    var vNode = queryFixture('<input id="target" type="submit" value="" />');
+    const vNode = queryFixture('<input id="target" type="submit" value="" />');
 
     expect(
       nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
@@ -57,19 +57,21 @@ describe('non-empty-if-present', () => {
   });
 
   it('should return false if the element is not a submit or reset input', () => {
-    var vNode = queryFixture('<input id="target" type="text" />');
+    const textInput = queryFixture('<input id="target" type="text" />');
     expect(
-      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
+      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, textInput)
     ).toBe(false);
 
-    var vNode = queryFixture('<input id="target" type="button" />');
+    const buttonInput = queryFixture('<input id="target" type="button" />');
     expect(
-      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
+      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, buttonInput)
     ).toBe(false);
 
-    var vNode = queryFixture('<button id="target" type="submit"></button');
+    const buttonElement = queryFixture(
+      '<button id="target" type="submit"></button'
+    );
     expect(
-      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, vNode)
+      nonEmptyIfPresentEvaluateESM.call(checkContext, null, {}, buttonElement)
     ).toBe(false);
   });
 });
