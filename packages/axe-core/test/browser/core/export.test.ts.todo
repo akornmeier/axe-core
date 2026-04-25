@@ -1,0 +1,8 @@
+describe('export', function () {
+  it('should publish a global `axe` variable', function () {
+    expect(window.axe).toBeDefined();
+  });
+  it('should define version', function () {
+    expect(axe.version).not.toBeNull();
+  });
+});
