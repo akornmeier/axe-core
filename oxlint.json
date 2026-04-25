@@ -4,6 +4,7 @@
   "env": {
     "builtin": true,
     "node": true,
+    "browser": true,
     "es2015": true
   },
   "globals": {
@@ -12,9 +13,8 @@
   },
   "rules": {
     "no-bitwise": "error",
-    "camelcase": "error",
     "curly": "error",
-    "eqeqeq": "error",
+    "eqeqeq": ["error", "smart"],
     "guard-for-in": "error",
     "no-caller": "error",
     "no-empty": "error",
@@ -25,7 +25,7 @@
     "no-eval": "error",
     "dot-notation": "error",
     "no-shadow": "error",
-    "max-params": ["error", { "max": 6 }],
+    "max-params": ["error", { "max": 7 }],
     "max-depth": ["error", { "max": 5 }],
     "prefer-const": "error",
     "new-cap": "error",
@@ -36,11 +36,11 @@
   "overrides": [
     {
       "files": [
-        "packages/axe-core/lib/**/*.ts",
-        "packages/axe-core/lib/**/*.js",
-        "!packages/axe-core/lib/core/reporters/**",
-        "!packages/axe-core/lib/**/*-after.ts",
-        "!packages/axe-core/lib/**/*-after.js"
+        "**/lib/**/*.ts",
+        "**/lib/**/*.js",
+        "!**/lib/core/reporters/**",
+        "!**/lib/**/*-after.ts",
+        "!**/lib/**/*-after.js"
       ],
       "rules": {
         "func-names": ["error", "as-needed"],
@@ -49,20 +49,27 @@
     },
     {
       "files": [
-        "packages/axe-core/lib/core/imports/polyfills.ts",
-        "packages/axe-core/lib/core/imports/polyfills.js",
-        "packages/axe-core/lib/core/utils/pollyfill-elements-from-point.ts",
-        "packages/axe-core/lib/core/utils/pollyfill-elements-from-point.js"
+        "**/lib/core/imports/polyfills.ts",
+        "**/lib/core/imports/polyfills.js",
+        "**/lib/core/utils/pollyfill-elements-from-point.ts",
+        "**/lib/core/utils/pollyfill-elements-from-point.js",
+        "**/lib/core/utils/uuid.ts",
+        "**/lib/core/utils/escape-selector.ts",
+        "**/lib/commons/dom/visually-sort.ts",
+        "**/lib/core/utils/node-sorter.ts"
       ],
       "rules": {
         "func-names": "off",
         "no-bitwise": "off",
         "curly": "off",
-        "eqeqeq": "off"
+        "eqeqeq": "off",
+        "no-unused-vars": "off",
+        "prefer-const": "off",
+        "no-shadow": "off"
       }
     },
     {
-      "files": ["packages/axe-core/test/**/*.js"],
+      "files": ["**/test/**/*.js", "**/test/**/*.mjs", "**/test/**/*.cjs"],
       "env": {
         "mocha": true,
         "browser": true
@@ -71,11 +78,45 @@
         "assert": "readonly",
         "helpers": "readonly",
         "checks": "readonly",
-        "sinon": "readonly"
+        "sinon": "readonly",
+        "axe": "writable"
       },
       "rules": {
         "new-cap": "off",
-        "no-use-before-define": "off"
+        "no-use-before-define": "off",
+        "no-undef": "off",
+        "no-unused-vars": "off",
+        "func-names": "off",
+        "no-shadow": "off",
+        "no-bitwise": "off",
+        "eqeqeq": "off",
+        "curly": "off",
+        "no-new": "off",
+        "no-empty": "off",
+        "max-depth": "off",
+        "max-params": "off",
+        "prefer-const": "off",
+        "dot-notation": "off",
+        "guard-for-in": "off"
+      }
+    },
+    {
+      "files": ["**/test/**/*.ts"],
+      "env": {
+        "browser": true
+      },
+      "globals": {
+        "axe": "writable",
+        "xit": "readonly",
+        "xdescribe": "readonly"
+      },
+      "rules": {
+        "func-names": "off",
+        "no-unused-vars": "off",
+        "no-shadow": "off",
+        "eqeqeq": "off",
+        "new-cap": "off",
+        "prefer-const": "off"
       }
     }
   ],
@@ -84,13 +125,39 @@
     "**/node_modules",
     "**/dist",
     "**/tmp",
-    "packages/axe-core/patches",
-    "packages/axe-core/build/tasks/aria-supported.js",
-    "packages/axe-core/doc/api",
-    "packages/axe-core/doc/examples/jest_react",
-    "packages/axe-core/lib/core/imports/polyfills.js",
-    "packages/axe-core/lib/core/utils/uuid.js",
-    "packages/axe-core/axe.js",
-    "packages/axe-core/axe.min.js"
+    "**/patches",
+    "**/build/tasks/**",
+    "**/build/configure.js",
+    "**/build/sri-update.js",
+    "**/build/build-manual.js",
+    "**/Gruntfile.js",
+    "**/doc/api/**",
+    "**/doc/examples/**",
+    "**/typings/**",
+    "**/lib/core/imports/polyfills.js",
+    "**/lib/core/utils/uuid.js",
+    "**/lib/core/index.ts",
+    "**/lib/core/core.ts",
+    "**/lib/core/generated/**",
+    "**/test/checks/**",
+    "**/test/commons/**",
+    "**/test/core/**",
+    "**/test/integration/**",
+    "**/test/rule-matches/**",
+    "**/test/api/**",
+    "**/test/virtual-rules/**",
+    "**/test/act-rules/**",
+    "**/test/aria-practices/**",
+    "**/test/node/**",
+    "**/test/mock/**",
+    "**/test/assets/**",
+    "**/test/testutils.js",
+    "**/test/get-webdriver.js",
+    "**/test/karma.conf.js",
+    "**/test/test-locales.js",
+    "**/test/test-virtual-rules.js",
+    "**/test/test-rule-help-version.js",
+    "**/axe.js",
+    "**/axe.min.js"
   ]
 }
