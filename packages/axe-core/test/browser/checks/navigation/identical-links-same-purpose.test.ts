@@ -3,7 +3,7 @@ import {
   queryFixture,
   checks,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('identical-links-same-purpose tests', () => {
   let fixture: HTMLElement;

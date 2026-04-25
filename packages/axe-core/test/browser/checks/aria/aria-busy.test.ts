@@ -1,12 +1,12 @@
 // `aria-busy-evaluate.ts` is a pure-DOM check with no commons or core/utils
 // imports, so we use the ESM-direct path (D1 in `_helpers/check-helpers.ts`).
 import { afterEach, describe, expect, it } from 'vitest';
-import ariaBusyEvaluate from '../../../../lib/checks/aria/aria-busy-evaluate';
+import ariaBusyEvaluate from '@checks/aria/aria-busy-evaluate';
 import {
   checkSetup,
   createMockCheckContext,
   getCheckEvaluateESM
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 
 describe('aria-busy', () => {
   const checkContext = createMockCheckContext();

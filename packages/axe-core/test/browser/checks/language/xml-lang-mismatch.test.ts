@@ -3,7 +3,7 @@ import {
   queryFixture,
   getCheckEvaluate,
   flatTreeSetup
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('xml-lang-mismatch', () => {
   var checkContext = createMockCheckContext();

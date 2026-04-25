@@ -4,7 +4,7 @@ import {
   queryFixture,
   getCheckEvaluate,
   checks
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('no-focusable-content tests', () => {
   var noFocusableContent = getCheckEvaluate('no-focusable-content');

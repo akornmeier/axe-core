@@ -2,7 +2,7 @@ import {
   createMockCheckContext,
   checkSetup,
   getCheckEvaluate
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('has-global-aria-attribute', () => {
   var checkContext = createMockCheckContext();

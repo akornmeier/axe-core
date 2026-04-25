@@ -5,7 +5,7 @@ import {
   shadowSupport,
   checks,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('landmark-is-top-level', () => {
   const shadowSupported = shadowSupport.v1;

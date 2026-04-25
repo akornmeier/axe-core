@@ -5,7 +5,7 @@ import {
   getCheckEvaluate,
   shadowSupport,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('listitem', () => {
   var checkContext = createMockCheckContext();

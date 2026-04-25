@@ -3,7 +3,7 @@ import {
   queryFixture,
   getCheckEvaluate,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('aria-valid-attr', () => {
   var checkContext = createMockCheckContext();

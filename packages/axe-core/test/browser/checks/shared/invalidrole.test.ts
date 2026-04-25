@@ -2,7 +2,7 @@ import {
   createMockCheckContext,
   queryFixture,
   checks
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('invalidrole', () => {
   let fixture: HTMLElement;

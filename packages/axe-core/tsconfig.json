@@ -4,7 +4,15 @@
     "outDir": "./dist",
     "rootDir": "./lib",
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@checks/*": ["./lib/checks/*"],
+      "@commons/*": ["./lib/commons/*"],
+      "@core/*": ["./lib/core/*"],
+      "@standards/*": ["./lib/standards/*"],
+      "@lib/*": ["./lib/*"],
+      "@helpers/*": ["./test/browser/_helpers/*"]
+    }
   },
   "references": [{ "path": "../schemas" }],
   "include": ["lib"],

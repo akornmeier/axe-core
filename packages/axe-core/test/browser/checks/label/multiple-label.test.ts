@@ -3,7 +3,7 @@ import {
   fixtureSetup,
   getCheckEvaluate,
   shadowSupport
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('multiple-label', () => {
   let fixture: HTMLElement;

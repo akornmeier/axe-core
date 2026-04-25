@@ -1,4 +1,4 @@
-import { getCheckEvaluate, checks } from '../../_helpers/check-helpers';
+import { getCheckEvaluate, checks } from '@helpers/check-helpers';
 import { describe, it, expect } from 'vitest';
 describe('frame-tested', () => {
   var checkEvaluate = getCheckEvaluate('frame-tested');

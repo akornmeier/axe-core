@@ -1,4 +1,4 @@
-import { getCheckEvaluate } from '../../_helpers/check-helpers';
+import { getCheckEvaluate } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('scope-value', () => {
   let fixture: HTMLElement;

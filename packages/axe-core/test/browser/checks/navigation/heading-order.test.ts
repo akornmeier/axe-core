@@ -3,7 +3,7 @@ import {
   queryFixture,
   getCheckEvaluate,
   checks
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 // FIXME(phase-03-modern): The heading-order suite asserts on full
 // `ancestry` selectors (e.g. `html > body > div:nth-child(1) > div:nth-child(1)`),

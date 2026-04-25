@@ -9,6 +9,11 @@ import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import projects from './vitest.workspace';
 
+// NOTE: path aliases (`@checks`, `@helpers`, …) live in `vitest.workspace.ts`.
+// Vitest 4 projects do not inherit `resolve.alias` from the root config,
+// so each project wires its own. The aliases are also mirrored in
+// `tsconfig.json`'s `paths` for editor / typecheck support. Sprint 3 task #9.
+
 export default defineConfig({
   test: {
     // Workspace projects (unit | browser | integration) — see

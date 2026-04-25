@@ -2,7 +2,7 @@ import {
   createMockCheckContext,
   checkSetup,
   getCheckEvaluate
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('braille-roledescription-equivalent tests', () => {
   const checkContext = createMockCheckContext();

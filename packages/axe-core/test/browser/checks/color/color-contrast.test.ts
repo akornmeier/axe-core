@@ -36,7 +36,7 @@ import {
   checkSetup,
   createMockCheckContext,
   getCheckEvaluate
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 
 describe('color-contrast (pilot — PRD §6.2 risk)', () => {
   const checkContext = createMockCheckContext();

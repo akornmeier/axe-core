@@ -1,4 +1,4 @@
-import { queryFixture, checks } from '../../_helpers/check-helpers';
+import { queryFixture, checks } from '@helpers/check-helpers';
 import { describe, it, expect, beforeAll } from 'vitest';
 describe('label-content-name-mismatch tests', () => {
   var check = checks['label-content-name-mismatch'];

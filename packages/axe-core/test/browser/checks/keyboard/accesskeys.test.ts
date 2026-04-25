@@ -3,7 +3,7 @@ import {
   checkSetup,
   getCheckEvaluate,
   checks
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('accesskeys', () => {
   const checkContext = createMockCheckContext();

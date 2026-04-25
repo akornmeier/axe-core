@@ -1,4 +1,4 @@
-import { queryFixture, getCheckEvaluate } from '../../_helpers/check-helpers';
+import { queryFixture, getCheckEvaluate } from '@helpers/check-helpers';
 import { describe, it, expect } from 'vitest';
 describe('is-on-screen', () => {
   it('should return true for visible elements', () => {

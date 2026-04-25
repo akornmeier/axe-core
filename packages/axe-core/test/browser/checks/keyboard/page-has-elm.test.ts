@@ -6,7 +6,7 @@ import {
   shadowSupport,
   checks,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('page-has-*', () => {
   let fixture: HTMLElement;

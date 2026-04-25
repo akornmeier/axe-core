@@ -4,7 +4,7 @@ import {
   fixtureSetup,
   getCheckEvaluate,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('explicit-label', () => {
   const checkEvaluate = getCheckEvaluate('explicit-label');

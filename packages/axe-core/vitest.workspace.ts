@@ -18,6 +18,10 @@
 
 import { defineProject } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
 
 // Vitest 4's `defineProject({ test: ... })` does NOT inherit `setupFiles`
 // from the root `vitest.config.ts` `test` block — each project must wire
@@ -25,9 +29,23 @@ import { playwright } from '@vitest/browser-playwright';
 // Node (no `document`), so the `unit` project is unaffected.
 const SETUP_FILES = ['./test/setup/vitest.setup.ts'];
 
+// Path aliases — same set lives in vitest.config.ts and tsconfig.json.
+// Per-project `resolve.alias` is required because Vitest 4 projects do
+// NOT inherit the root config's resolve config (same gotcha as setupFiles).
+// Sprint 3 task #9.
+const ALIASES = {
+  '@checks': path.resolve(here, 'lib/checks'),
+  '@commons': path.resolve(here, 'lib/commons'),
+  '@core': path.resolve(here, 'lib/core'),
+  '@standards': path.resolve(here, 'lib/standards'),
+  '@lib': path.resolve(here, 'lib'),
+  '@helpers': path.resolve(here, 'test/browser/_helpers')
+};
+
 export default [
   // Unit tests (Node.js, no DOM by default)
   defineProject({
+    resolve: { alias: ALIASES },
     test: {
       name: 'unit',
       include: ['test/unit/**/*.test.ts'],
@@ -38,6 +56,7 @@ export default [
 
   // Browser tests (real browser via Playwright Chromium)
   defineProject({
+    resolve: { alias: ALIASES },
     test: {
       name: 'browser',
       include: ['test/browser/**/*.test.ts'],
@@ -57,6 +76,7 @@ export default [
   // files served by Karma. The `*.test.ts` glob picks up zero files until
   // task 11 of the Phase 3 plan migrates them. That is the correct state.
   defineProject({
+    resolve: { alias: ALIASES },
     test: {
       name: 'integration',
       include: ['test/integration/**/*.test.ts'],

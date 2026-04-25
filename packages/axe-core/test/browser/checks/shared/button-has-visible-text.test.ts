@@ -3,7 +3,7 @@ import {
   checkSetup,
   getCheckEvaluate,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('button-has-visible-text', () => {
   let fixture: HTMLElement;

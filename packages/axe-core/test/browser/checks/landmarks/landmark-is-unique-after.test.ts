@@ -1,8 +1,4 @@
-import {
-  createMockCheckContext,
-  checks,
-  axe
-} from '../../_helpers/check-helpers';
+import { createMockCheckContext, checks, axe } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('landmark-is-unique-after', () => {
   var checkContext = createMockCheckContext();

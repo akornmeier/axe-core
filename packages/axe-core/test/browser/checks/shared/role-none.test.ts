@@ -1,4 +1,4 @@
-import { queryFixture, getCheckEvaluate } from '../../_helpers/check-helpers';
+import { queryFixture, getCheckEvaluate } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('role-none', () => {
   let fixture: HTMLElement;

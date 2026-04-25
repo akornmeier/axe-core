@@ -2,7 +2,7 @@ import {
   createMockCheckContext,
   checkSetup,
   checks
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('alt-space-value', () => {
   var checkContext = createMockCheckContext();

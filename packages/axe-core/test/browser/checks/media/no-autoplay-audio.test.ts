@@ -3,7 +3,7 @@ import {
   checkSetup,
   checks,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('no-autoplay-audio', () => {
   const check = checks['no-autoplay-audio'];

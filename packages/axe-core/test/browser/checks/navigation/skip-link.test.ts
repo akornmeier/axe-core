@@ -1,4 +1,4 @@
-import { getCheckEvaluate, axe } from '../../_helpers/check-helpers';
+import { getCheckEvaluate, axe } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach } from 'vitest';
 describe('skip-link', () => {
   let fixture: HTMLElement;

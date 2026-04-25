@@ -3,7 +3,7 @@ import {
   checkSetup,
   checks,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 describe('focusable-element tests', () => {
   var check;

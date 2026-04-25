@@ -2,7 +2,7 @@ import {
   createMockCheckContext,
   getCheckEvaluate,
   flatTreeSetup
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('valid-scrollable-semantics', () => {
   let fixture: HTMLElement;

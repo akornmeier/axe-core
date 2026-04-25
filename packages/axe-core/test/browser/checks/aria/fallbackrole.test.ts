@@ -1,4 +1,4 @@
-import { queryFixture, checks } from '../../_helpers/check-helpers';
+import { queryFixture, checks } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('fallbackrole', () => {
   let fixture: HTMLElement;

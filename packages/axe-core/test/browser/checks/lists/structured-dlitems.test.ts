@@ -2,7 +2,7 @@ import {
   checkSetup,
   getCheckEvaluate,
   shadowSupport
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('structured-dlitems', () => {
   let fixture: HTMLElement;

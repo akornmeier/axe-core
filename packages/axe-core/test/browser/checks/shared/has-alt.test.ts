@@ -1,4 +1,4 @@
-import { checkSetup, getCheckEvaluate } from '../../_helpers/check-helpers';
+import { checkSetup, getCheckEvaluate } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('has-alt', () => {
   let fixture: HTMLElement;

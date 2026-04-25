@@ -5,7 +5,7 @@ import {
   flatTreeSetup,
   shadowSupport,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 /* global it.skip */
 describe('hidden content', () => {

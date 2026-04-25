@@ -1,8 +1,4 @@
-import {
-  queryFixture,
-  getCheckEvaluate,
-  axe
-} from '../../_helpers/check-helpers';
+import { queryFixture, getCheckEvaluate, axe } from '@helpers/check-helpers';
 import { describe, it, expect } from 'vitest';
 describe('aria-labelledby', () => {
   const checkEvaluate = getCheckEvaluate('aria-labelledby');

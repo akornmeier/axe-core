@@ -2,7 +2,7 @@ import {
   createMockCheckContext,
   queryFixture,
   getCheckEvaluate
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('unique-frame-title', () => {
   var checkContext = createMockCheckContext();

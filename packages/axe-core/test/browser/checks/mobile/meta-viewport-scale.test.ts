@@ -3,7 +3,7 @@ import {
   queryFixture,
   getCheckEvaluate,
   checks
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('meta-viewport', () => {
   var checkContext = createMockCheckContext();

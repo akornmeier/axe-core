@@ -1,8 +1,4 @@
-import {
-  getCheckEvaluate,
-  flatTreeSetup,
-  axe
-} from '../../_helpers/check-helpers';
+import { getCheckEvaluate, flatTreeSetup, axe } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('title-only', () => {
   let fixture: HTMLElement;

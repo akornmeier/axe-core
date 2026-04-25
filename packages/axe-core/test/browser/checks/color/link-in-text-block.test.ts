@@ -3,7 +3,7 @@ import {
   getCheckEvaluate,
   flatTreeSetup,
   shadowSupport
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import {
   describe,
   it,

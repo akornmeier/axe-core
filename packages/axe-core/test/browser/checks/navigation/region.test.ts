@@ -5,7 +5,7 @@ import {
   getCheckEvaluate,
   shadowSupport,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 // NOTE: due to how the region check works to return the top-most
 // node that is outside the region, all fixture content will need

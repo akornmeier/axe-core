@@ -3,7 +3,7 @@ import {
   fixtureSetup,
   getCheckEvaluate,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('landmark-is-unique', () => {
   var checkContext = new createMockCheckContext();

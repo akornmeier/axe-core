@@ -1,4 +1,4 @@
-import { createMockCheckContext, checks } from '../../_helpers/check-helpers';
+import { createMockCheckContext, checks } from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('region-after', () => {
   var checkContext = createMockCheckContext();

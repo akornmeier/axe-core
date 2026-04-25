@@ -5,7 +5,7 @@ import {
   shadowCheckSetup,
   shadowSupport,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('internal-link-present', () => {
   let fixture: HTMLElement;

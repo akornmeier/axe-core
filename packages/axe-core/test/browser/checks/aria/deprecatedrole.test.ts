@@ -3,7 +3,7 @@ import {
   checkSetup,
   getCheckEvaluate,
   axe
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, afterEach } from 'vitest';
 describe('deprecatedrole', () => {
   var checkContext = createMockCheckContext();

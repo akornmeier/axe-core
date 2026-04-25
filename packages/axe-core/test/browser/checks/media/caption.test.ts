@@ -1,8 +1,4 @@
-import {
-  checkSetup,
-  shadowSupport,
-  checks
-} from '../../_helpers/check-helpers';
+import { checkSetup, shadowSupport, checks } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('caption', () => {
   let fixture: HTMLElement;

@@ -2,7 +2,7 @@ import {
   createMockCheckContext,
   fixtureSetup,
   getCheckEvaluate
-} from '../../_helpers/check-helpers';
+} from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('td-headers-attr', () => {
   let fixture: HTMLElement;

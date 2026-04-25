@@ -1,4 +1,4 @@
-import { checks } from '../../_helpers/check-helpers';
+import { checks } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 describe('identical-links-same-purpose-after tests', () => {
   let fixture: HTMLElement;

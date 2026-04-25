@@ -4,7 +4,7 @@
 // Refs specs/PRD-03-test-infrastructure-modernization.md §2.3.2.
 // TODO(Sprint 3 task #10): import rule.matches directly from lib/.
 import { beforeEach, describe, expect, it } from 'vitest';
-import { axe, queryFixture } from '../_helpers/check-helpers';
+import { axe, queryFixture } from '@helpers/check-helpers';
 
 describe('aria-hidden-focus-matches', () => {
   let rule: { matches: (node: unknown) => boolean };
