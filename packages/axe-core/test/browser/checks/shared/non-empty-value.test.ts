@@ -1,0 +1,47 @@
+import {
+  createMockCheckContext,
+  checkSetup,
+  getCheckEvaluate
+} from '../../_helpers/check-helpers';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+describe('non-empty-value', () => {
+  let fixture: HTMLElement;
+  beforeEach(() => {
+    fixture = document.getElementById('fixture') as HTMLElement;
+  });
+  var checkEvaluate = getCheckEvaluate('non-empty-value');
+  var checkContext = createMockCheckContext();
+
+  afterEach(() => {
+    fixture.innerHTML = '';
+  });
+
+  it('should return true if an value is present', () => {
+    var params = checkSetup('<input id="target" value="woohoo" />');
+
+    expect(checkEvaluate.apply(checkContext, params as any)).toBe(true);
+  });
+
+  it('should return false if an value is not present', () => {
+    var params = checkSetup('<input id="target" />');
+
+    expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
+    expect(checkContext._data.messageKey).toBe('noAttr');
+  });
+
+  it('should return false if an value is present, but empty', () => {
+    var params = checkSetup('<input id="target" value=" " />');
+
+    expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
+    expect(checkContext._data.messageKey).toBe('emptyAttr');
+  });
+
+  it('should collapse whitespace', () => {
+    var params = checkSetup(
+      '<input id="target" value=" \t \n \r \t  \t\r\n " />'
+    );
+
+    expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
+    expect(checkContext._data.messageKey).toBe('emptyAttr');
+  });
+});
