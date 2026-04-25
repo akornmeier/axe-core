@@ -1,22 +1,16 @@
-// Pilot migration of `test/checks/aria/aria-busy.js` (all 3 cases).
-//
-// Simple DOM-only check, no computed-style dependency. Picked as a
-// counterweight to color-contrast — it exercises the same evaluator-
-// invocation path and therefore proves the migration pattern works for
-// small checks without having to debug rendering.
-//
-// Refs specs/PRD-03-test-infrastructure-modernization.md §2.3.2.
-// TODO(Sprint 3 task #10): import the evaluator directly from lib/.
+// `aria-busy-evaluate.ts` is a pure-DOM check with no commons or core/utils
+// imports, so we use the ESM-direct path (D1 in `_helpers/check-helpers.ts`).
 import { afterEach, describe, expect, it } from 'vitest';
+import ariaBusyEvaluate from '../../../../lib/checks/aria/aria-busy-evaluate';
 import {
   checkSetup,
   createMockCheckContext,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '../../_helpers/check-helpers';
 
 describe('aria-busy', () => {
   const checkContext = createMockCheckContext();
-  const checkEvaluate = getCheckEvaluate('aria-busy');
+  const checkEvaluate = getCheckEvaluateESM(ariaBusyEvaluate);
 
   afterEach(() => {
     checkContext.reset();
