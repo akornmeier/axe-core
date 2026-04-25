@@ -1,0 +1,260 @@
+import {
+  createMockCheckContext,
+  queryFixture,
+  getCheckEvaluate,
+  checks
+} from '../../_helpers/check-helpers';
+import { describe, it, expect, afterEach } from 'vitest';
+describe('meta-viewport', () => {
+  var checkContext = createMockCheckContext();
+
+  afterEach(() => {
+    checkContext.reset();
+  });
+
+  describe('; separator', () => {
+    it('should return false on user-scalable=no', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=no">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(false);
+      expect(checkContext._data).toEqual('user-scalable=no');
+    });
+
+    it('should return false on user-scalable=no', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=no, more-stuff=ok">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(false);
+    });
+
+    it('should return false on user-scalable in the range <-1, 1>', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=0, more-stuff=ok">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(false);
+    });
+
+    it('should return false on user-scalable in the range <-1, 1>', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=-0.5, more-stuff=ok">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(false);
+    });
+
+    it('should return true on user-scalable=yes', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=yes, more-stuff=ok">'
+      );
+
+      expect(getCheckEvaluate('meta-viewport')(null, null, vNode)).toBe(true);
+    });
+
+    it('should return false on maximum-scale=yes (translates to 1)', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="maximum-scale=yes">'
+      );
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(false);
+    });
+
+    it('should return true on negative maximum scale (should be ignored)', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="maximum-scale=-1">'
+      );
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(true);
+    });
+
+    it('should return true if maximum-scale >= options.scaleMinimum', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, maximum-scale=5, cats=dogs">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(
+          checkContext,
+          null,
+          {
+            scaleMinimum: 2
+          },
+          vNode
+        )
+      ).toBe(true);
+
+      vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, maximum-scale=3, cats=dogs">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(true);
+    });
+
+    it('should return false on maximum-scale < options.scaleMinimum', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=yes, maximum-scale=1.5">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(
+          checkContext,
+          null,
+          {
+            scaleMinimum: 2
+          },
+          vNode
+        )
+      ).toBe(false);
+      expect(checkContext._data).toEqual('maximum-scale');
+    });
+
+    it('should return true if neither user-scalable or maximum-scale are set', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(true);
+    });
+
+    it('should not crash if viewport property does not have a value', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="user-scalable=1, minimal-ui">'
+      );
+
+      expect(getCheckEvaluate('meta-viewport')(null, null, vNode)).toBe(true);
+    });
+
+    it('should not crash if viewport property does not have a value', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="user-scalable=1, minimal-ui">'
+      );
+
+      expect(
+        checks['meta-viewport'].evaluate.call(checkContext, null, null, vNode)
+      ).toBe(true);
+    });
+  });
+
+  describe(', separator', () => {
+    it('should return false on user-scalable=no', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=no">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(false);
+      expect(checkContext._data).toEqual('user-scalable=no');
+    });
+
+    it('should return false on user-scalable=no', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=no, more-stuff=ok">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(false);
+      expect(checkContext._data).toEqual('user-scalable=no');
+    });
+
+    it('should return false on user-scalable in the range <-1, 1>', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=0, more-stuff=ok">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(false);
+    });
+
+    it('should return false on user-scalable in the range <-1, 1>', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=-0.5, more-stuff=ok">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(false);
+    });
+
+    it('should return true on user-scalable=yes', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=yes, more-stuff=ok">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(true);
+    });
+
+    it('should return true if maximum-scale >= options.scaleMinimum', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, maximum-scale=5, cats=dogs">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(true);
+
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, maximum-scale=2, cats=dogs">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(
+          checkContext,
+          null,
+          {
+            scaleMinimum: 2
+          },
+          vNode
+        )
+      ).toBe(true);
+    });
+
+    it('should return false on maximum-scale < options.scaleMinimum', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs, user-scalable=yes, maximum-scale=1.5">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(
+          checkContext,
+          null,
+          {
+            scaleMinimum: 2
+          },
+          vNode
+        )
+      ).toBe(false);
+    });
+
+    it('should return true if neither user-scalable or maximum-scale are set', () => {
+      var vNode = queryFixture(
+        '<meta id="target" name="viewport" content="foo=bar, cats=dogs">'
+      );
+
+      expect(
+        getCheckEvaluate('meta-viewport').call(checkContext, null, null, vNode)
+      ).toBe(true);
+    });
+  });
+});
