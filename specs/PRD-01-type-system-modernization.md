@@ -403,6 +403,7 @@ Surfaced during Phase 3 Sprint 2 bulk migration of `test/commons/` (2026-04-25).
 | Module | Symptom | Resolution |
 |---|---|---|
 | `lib/core/utils/memoize.ts` line ~23 | Top-level `axe._memoizedFns = []` throws `ReferenceError: axe is not defined` in Node ESM. | Phase 1 follow-up must convert the module-load side effect to a lazy initializer (or expose a typed registry the consumer creates). Closing this unblocks ~58 of the 60 Sprint 2 `it.todo` stubs in `test/unit/commons/`. |
+| `lib/commons/aria/valid-langs.ts` (post-TS conversion, commit `5b57d18c`) | `isValidLang('abcd')` returns `true` (should be `false`). Trie traversal returns early at depth 3 with `next === 1` and never validates the 4th char. Surfaced by Sprint 2 `test/unit/commons/utils/valid-langs.test.ts`. | Logic regression introduced during Phase 1 JS→TS conversion. Phase 1 follow-up must restore correct trie traversal semantics. |
 
 Any other `lib/` module that writes to `axe.*` at module top level falls in the same bucket. Phase 1 follow-up should grep for `\baxe\.\w+\s*=` at module top level under `lib/` and audit each hit.
 
