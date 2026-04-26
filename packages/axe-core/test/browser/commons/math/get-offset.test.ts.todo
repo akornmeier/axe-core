@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
 describe('getOffset', () => {
   const fixtureSetup = axe.testUtils.fixtureSetup;
   const getOffset = axe.commons.math.getOffset;

@@ -1,6 +1,10 @@
-import { createMockCheckContext, checks } from '@helpers/check-helpers';
+import { createMockCheckContext } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, afterEach } from 'vitest';
 /*eslint indent: 0*/
+const audit = createSyntheticAudit(['unique-frame-title']);
+
 describe('unique-frame-title-after', () => {
   const checkContext = createMockCheckContext();
 
@@ -9,7 +13,7 @@ describe('unique-frame-title-after', () => {
   });
 
   it('should remove any check whose data only appears once', () => {
-    const result = checks['unique-frame-title'].after([
+    const result = audit.checks['unique-frame-title'].after([
       {
         data: 'bananas'
       },

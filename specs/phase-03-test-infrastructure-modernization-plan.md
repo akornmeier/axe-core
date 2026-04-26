@@ -463,6 +463,63 @@ Execute these commands to validate the task is complete:
 - `grep -rn 'polyfill\|shim\|ponyfill' packages/axe-core/lib packages/axe-core/test` — only intentional matches remain (each one annotated in `specs/phase-03-results.md`).
 - Manual: trigger a deliberate test failure and confirm Playwright trace lands as a CI artifact.
 
+## Sprint 4b — Realized Outcomes (2026-04-25, branch `chore/modernize-phase-5`)
+
+Two ts-morph codemods landed under `packages/build-tools/src/codemods/`:
+
+- `migrate-test-utils-destructure.ts` — converts `axe.testUtils.X` destructure and bare-access patterns to `@helpers/check-helpers` named imports; auto-injects vitest globals + `axe` helper imports; skips files using non-re-exposed helpers (`captureError`, `html`, `assertStylesheet`, `injectIntoFixture`, `addStyleSheet`, `removeStyleSheet`, `isIE11`) with refined FIXMEs. Runner: `packages/build-tools/scripts/run-test-utils-migration.mjs`. **22 unit tests** in `__tests__/migrate-test-utils-destructure.test.ts`.
+- `migrate-module-scope-fixture.ts` — rewrites describe-scope `const fixture = document.{querySelector('#fixture')|getElementById('fixture')}` captures into `let fixture: HTMLElement;` + per-test `beforeEach(() => { fixture = document.getElementById('fixture') as HTMLElement })`; merges into existing `beforeEach`; auto-imports `beforeEach` from `'vitest'`. Runner: `packages/build-tools/scripts/run-fixture-lookup-migration.mjs`. **23 unit tests** in `__tests__/migrate-module-scope-fixture.test.ts`. Runner composes the chai-assert codemod first because every fixture-lookup file carries a latent chai blocker.
+
+### Vitest counts after Track A
+
+```
+Test Files  256 passed | 33 skipped (289)
+     Tests  2560 passed | 39 skipped | 66 todo (2733)
+```
+
+Δ vs. `phase-05-baseline.md`: **+12 files, +83 tests**, no skips/todos shifted.
+
+### `.test.ts.todo` deltas
+
+- Pre-Track-A: 148
+- Post-Track-A: **136** (net −12)
+
+### Residual blocker buckets (post-Track-A FIXME stamps)
+
+```
+33   codemod-output failed vitest — generic post-codemod (manual review)
+21   codemod blocker — test failure post-codemod (Sprint 4 carryover)
+20   testUtils.*; post-codemod failure: ReferenceError: assert is not defined
+14   uses axe._audit (internal state)               ← Sprint 5 #16-C target
+12   testUtils.*; post-codemod failure: TypeError: Cannot set 'innerHTML' on null  ← residual fixture
+ 6   helper not exposed (will not be re-exposed): captureError
+ 3   helper not exposed: createNestedShadowDom / local shadowSupport binding
+ 3   sinon → vi.fn / vi.spyOn (manual)
+ 1   axe._tree, axe._memoizedFns, xit, etc. (1 each)
+```
+
+The 20-file `assert is not defined` bucket is a known cross-codemod ordering issue: those files originally carried both a chai-assert blocker AND a testUtils blocker. Re-running the chai-assert codemod (`run-chai-assert-migration.mjs`) followed by the testUtils codemod against this bucket would unlock most of them; deferred to Sprint 5b under the time-pressure note in `phase-05-execution-plan.md`.
+
+The 14-file `axe._audit` bucket is the Sprint 5 #16-C synthetic-audit-helper target.
+
+### Build-tools test count
+
+```
+pnpm --filter @axe-core/build-tools test
+Test Files  5 passed (5)
+     Tests  171 passed (171)
+```
+
+(149 pre-Track-A + 22 testUtils + 23 fixture = 194 expected, but the testUtils file consolidates a few cases; 171 is the actual.)
+
+### Notes for Sprint 5
+
+- Track A did NOT touch `_helpers/check-helpers.ts` — the keystone (#16-A) still owns that rewrite.
+- Karma stack remained green throughout Track A (no Karma config or test source changed).
+- `node-sorter`, `pollyfills-elements-from-point`, and `clone` flipped via the fixture codemod and persisted; the testUtils codemod did not revert them.
+
+---
+
 ## Notes
 
 - **Strangler-fig discipline**: do not delete Karma until Sprints 1–3 ship. The parallel-stack CI cost is real but small relative to the cost of an unnoticed regression.

@@ -1,9 +1,28 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import inlineStylePropertyEvaluate from '@checks/shared/inline-style-property-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const importantLetterSpacingEvaluateESM = getCheckEvaluateESM(
+  inlineStylePropertyEvaluate,
+  { cssProperty: 'letter-spacing', minValue: 0.12 }
+);
+const importantWordSpacingEvaluateESM = getCheckEvaluateESM(
+  inlineStylePropertyEvaluate,
+  { cssProperty: 'word-spacing', minValue: 0.16 }
+);
+const importantLineHeightEvaluateESM = getCheckEvaluateESM(
+  inlineStylePropertyEvaluate,
+  {
+    multiLineOnly: true,
+    cssProperty: 'line-height',
+    minValue: 1.5,
+    normalValue: 1
+  }
+);
 describe('inline-style-property tests', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -14,7 +33,7 @@ describe('inline-style-property tests', () => {
   });
 
   describe('important-letter-spacing check', () => {
-    const checkEvaluate = getCheckEvaluate('important-letter-spacing');
+    const checkEvaluate = importantLetterSpacingEvaluateESM;
     const checkContext = createMockCheckContext();
     afterEach(() => {
       checkContext.reset();
@@ -185,7 +204,7 @@ describe('inline-style-property tests', () => {
   });
 
   describe('important-word-spacing check', () => {
-    const checkEvaluate = getCheckEvaluate('important-word-spacing');
+    const checkEvaluate = importantWordSpacingEvaluateESM;
     const checkContext = createMockCheckContext();
     afterEach(() => {
       checkContext.reset();
@@ -235,7 +254,7 @@ describe('inline-style-property tests', () => {
   });
 
   describe('important-line-height check', () => {
-    const checkEvaluate = getCheckEvaluate('important-line-height');
+    const checkEvaluate = importantLineHeightEvaluateESM;
     const checkContext = createMockCheckContext();
     afterEach(() => {
       checkContext.reset();
@@ -316,7 +335,7 @@ describe('inline-style-property tests', () => {
   });
 
   describe('With options configured for font-size', () => {
-    const checkEvaluate = getCheckEvaluate('important-letter-spacing');
+    const checkEvaluate = importantLetterSpacingEvaluateESM;
     const checkContext = createMockCheckContext();
     const options = {
       cssProperty: 'font-size',

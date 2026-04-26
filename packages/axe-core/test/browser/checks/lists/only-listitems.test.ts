@@ -1,16 +1,22 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import invalidChildrenEvaluate from '@checks/lists/invalid-children-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const onlyListitemsEvaluateESM = getCheckEvaluateESM(invalidChildrenEvaluate, {
+  validRoles: ['listitem'],
+  validNodeNames: ['li']
+});
 describe('only-listitems', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   const checkContext = createMockCheckContext();
-  const checkEvaluate = getCheckEvaluate('only-listitems');
+  const checkEvaluate = onlyListitemsEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

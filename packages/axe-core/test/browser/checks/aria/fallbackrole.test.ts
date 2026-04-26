@@ -1,5 +1,9 @@
-import { queryFixture, checks } from '@helpers/check-helpers';
+import { queryFixture } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const audit = createSyntheticAudit(['fallbackrole']);
+
 describe('fallbackrole', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -14,7 +18,11 @@ describe('fallbackrole', () => {
       '<div id="target" role="button foobar">Foo</div>'
     );
     expect(
-      checks.fallbackrole.evaluate(virtualNode.actualNode, null, virtualNode)
+      audit.checks.fallbackrole.evaluate(
+        virtualNode.actualNode,
+        null,
+        virtualNode
+      )
     ).toBe(true);
   });
 
@@ -23,7 +31,11 @@ describe('fallbackrole', () => {
       '<div id="target" role="button">Foo</div>'
     );
     expect(
-      checks.fallbackrole.evaluate(virtualNode.actualNode, null, virtualNode)
+      audit.checks.fallbackrole.evaluate(
+        virtualNode.actualNode,
+        null,
+        virtualNode
+      )
     ).toBe(false);
   });
 
@@ -32,7 +44,11 @@ describe('fallbackrole', () => {
       '<div id="target" role="foobar">Foo</div>'
     );
     expect(
-      checks.fallbackrole.evaluate(virtualNode.actualNode, null, virtualNode)
+      audit.checks.fallbackrole.evaluate(
+        virtualNode.actualNode,
+        null,
+        virtualNode
+      )
     ).toBe(false);
   });
 
@@ -41,7 +57,11 @@ describe('fallbackrole', () => {
       '<div id="target" role="foobar">Foo</div>'
     );
     expect(
-      checks.fallbackrole.evaluate(virtualNode.actualNode, null, virtualNode)
+      audit.checks.fallbackrole.evaluate(
+        virtualNode.actualNode,
+        null,
+        virtualNode
+      )
     ).toBe(false);
   });
 
@@ -50,7 +70,11 @@ describe('fallbackrole', () => {
       '<div id="target" role="none presentation">Foo</div>'
     );
     expect(
-      checks.fallbackrole.evaluate(virtualNode.actualNode, null, virtualNode)
+      audit.checks.fallbackrole.evaluate(
+        virtualNode.actualNode,
+        null,
+        virtualNode
+      )
     ).toBeUndefined();
   });
 
@@ -59,7 +83,11 @@ describe('fallbackrole', () => {
       '<div id="target" role="presentation none">Foo</div>'
     );
     expect(
-      checks.fallbackrole.evaluate(virtualNode.actualNode, null, virtualNode)
+      audit.checks.fallbackrole.evaluate(
+        virtualNode.actualNode,
+        null,
+        virtualNode
+      )
     ).toBeUndefined();
   });
 
@@ -68,7 +96,11 @@ describe('fallbackrole', () => {
       '<input type="text" id="target" role="presentation none"/>'
     );
     expect(
-      checks.fallbackrole.evaluate(virtualNode.actualNode, null, virtualNode)
+      audit.checks.fallbackrole.evaluate(
+        virtualNode.actualNode,
+        null,
+        virtualNode
+      )
     ).toBe(true);
   });
 });

@@ -1,10 +1,15 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   flatTreeSetup,
   shadowSupport
 } from '@helpers/check-helpers';
+import linkInTextBlockStyleEvaluate from '@checks/color/link-in-text-block-style-evaluate';
+
+const linkInTextBlockStyleEvaluateESM = getCheckEvaluateESM(
+  linkInTextBlockStyleEvaluate
+);
 import {
   describe,
   it,
@@ -22,7 +27,7 @@ describe('link-in-text-block-style', () => {
   let styleElm;
 
   const checkContext = createMockCheckContext();
-  const linkInBlockStyleCheck = getCheckEvaluate('link-in-text-block-style');
+  const linkInBlockStyleCheck = linkInTextBlockStyleEvaluateESM;
 
   beforeAll(() => {
     styleElm = document.createElement('style');

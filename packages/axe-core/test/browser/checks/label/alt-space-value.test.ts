@@ -1,12 +1,12 @@
-import {
-  createMockCheckContext,
-  checkSetup,
-  checks
-} from '@helpers/check-helpers';
+import { createMockCheckContext, checkSetup } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['alt-space-value']);
+
 describe('alt-space-value', () => {
   const checkContext = createMockCheckContext();
-  const check = checks['alt-space-value'];
+  const check = audit.checks['alt-space-value'];
 
   afterEach(() => {
     checkContext.reset();

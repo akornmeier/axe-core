@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.shadowSupport (testUtils helper not exposed under Vitest)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
 function createContentGetSelector() {
   var group = document.createElement('div');
   group.innerHTML =

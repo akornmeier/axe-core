@@ -1,16 +1,19 @@
 import {
   createMockCheckContext,
   queryFixture,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['identical-links-same-purpose']);
+
 describe('identical-links-same-purpose tests', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  const check = checks['identical-links-same-purpose'];
+  const check = audit.checks['identical-links-same-purpose'];
   const checkContext = createMockCheckContext();
   const options = {};
 

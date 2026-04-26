@@ -1,10 +1,13 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   flatTreeSetup
 } from '@helpers/check-helpers';
+import xmlLangMismatchEvaluate from '@checks/language/xml-lang-mismatch-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const xmlLangMismatchEvaluateESM = getCheckEvaluateESM(xmlLangMismatchEvaluate);
 describe('xml-lang-mismatch', () => {
   const checkContext = createMockCheckContext();
   beforeEach(() => {
@@ -21,16 +24,16 @@ describe('xml-lang-mismatch', () => {
 
   it('should return false if a only lang is supplied', () => {
     const vNode = queryFixture('<div id="target" lang="en"></div>');
-    expect(
-      getCheckEvaluate('xml-lang-mismatch').call(checkContext, null, {}, vNode)
-    ).toBe(false);
+    expect(xmlLangMismatchEvaluateESM.call(checkContext, null, {}, vNode)).toBe(
+      false
+    );
   });
 
   it('should return false if a only xml:lang is supplied albeit with region', () => {
     const vNode = queryFixture('<div id="target" xml:lang="fr-FR"></div>');
-    expect(
-      getCheckEvaluate('xml-lang-mismatch').call(checkContext, null, {}, vNode)
-    ).toBe(false);
+    expect(xmlLangMismatchEvaluateESM.call(checkContext, null, {}, vNode)).toBe(
+      false
+    );
   });
 
   it('should return false if lang is undefined', () => {
@@ -38,12 +41,7 @@ describe('xml-lang-mismatch', () => {
     node.setAttribute('lang', undefined);
     const tree = flatTreeSetup(node);
     expect(
-      getCheckEvaluate('xml-lang-mismatch').call(
-        checkContext,
-        null,
-        {},
-        tree[0]
-      )
+      xmlLangMismatchEvaluateESM.call(checkContext, null, {}, tree[0])
     ).toBe(false);
   });
 
@@ -51,25 +49,25 @@ describe('xml-lang-mismatch', () => {
     const vNode = queryFixture(
       '<div id="target" xml:lang="en-GB" lang="en-GB"></div>'
     );
-    expect(
-      getCheckEvaluate('xml-lang-mismatch').call(checkContext, null, {}, vNode)
-    ).toBe(true);
+    expect(xmlLangMismatchEvaluateESM.call(checkContext, null, {}, vNode)).toBe(
+      true
+    );
   });
 
   it('should return true if lang and xml:lang have identical primary sub tag', () => {
     const vNode = queryFixture(
       '<div id="target" xml:lang="en-US" lang="en-GB"></div>'
     );
-    expect(
-      getCheckEvaluate('xml-lang-mismatch').call(checkContext, null, {}, vNode)
-    ).toBe(true);
+    expect(xmlLangMismatchEvaluateESM.call(checkContext, null, {}, vNode)).toBe(
+      true
+    );
   });
 
   it('should return false if lang and xml:lang are not identical', () => {
     const vNode = queryFixture(
       '<div id="target" xml:lang="fr-FR" lang="en"></div>'
     );
-    const actual = getCheckEvaluate('xml-lang-mismatch').call(
+    const actual = xmlLangMismatchEvaluateESM.call(
       checkContext,
       null,
       {},

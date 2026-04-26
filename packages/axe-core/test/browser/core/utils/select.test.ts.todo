@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); destructures 'fixtureSetup' from axe.testUtils (testUtils helper not exposed under Vitest)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
 describe('axe.utils.select', () => {
   const $id = id => document.getElementById(id);
   const { Context } = axe._thisWillBeDeletedDoNotUse.base;

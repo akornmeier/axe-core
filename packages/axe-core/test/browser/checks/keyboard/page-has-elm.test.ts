@@ -1,13 +1,22 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowCheckSetup,
   shadowSupport,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
+import hasDescendantEvaluate from '@checks/generic/has-descendant-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const pageHasMainEvaluateESM = getCheckEvaluateESM(hasDescendantEvaluate, {
+  selector: "main:not([role]), [role='main']",
+  passForModal: true
+});
+const audit = createSyntheticAudit(['page-has-heading-one', 'page-has-main']);
+
 describe('page-has-*', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -22,23 +31,32 @@ describe('page-has-*', () => {
   });
 
   describe('evaluate', () => {
-    const evaluate = getCheckEvaluate('page-has-main');
+    const evaluate = pageHasMainEvaluateESM;
 
     it('throws if there is no selector', () => {
       expect(function () {
         const params = checkSetup('<div id="target">No role</div>', undefined);
-        checks['page-has-main'].evaluate.apply(checkContext, params as any);
+        audit.checks['page-has-main'].evaluate.apply(
+          checkContext,
+          params as any
+        );
       }).toThrow();
 
       expect(function () {
         const params = checkSetup('<div id="target">No role</div>', {});
-        checks['page-has-main'].evaluate.apply(checkContext, params as any);
+        audit.checks['page-has-main'].evaluate.apply(
+          checkContext,
+          params as any
+        );
       }).toThrow();
 
       expect(function () {
         const badOptions = { selector: [] };
         const params = checkSetup('<div id="target">No role</div>', badOptions);
-        checks['page-has-main'].evaluate.apply(checkContext, params as any);
+        audit.checks['page-has-main'].evaluate.apply(
+          checkContext,
+          params as any
+        );
       }).toThrow();
     });
 
@@ -95,7 +113,7 @@ describe('page-has-*', () => {
   });
 
   describe('after', () => {
-    const after = checks['page-has-main'].after;
+    const after = audit.checks['page-has-main'].after;
 
     it('sets all results to true if any are true', () => {
       const results = [
@@ -121,7 +139,7 @@ describe('page-has-*', () => {
   });
 
   describe('page-has-main', () => {
-    const check = checks['page-has-main'];
+    const check = audit.checks['page-has-main'];
 
     it('should return false if no div has role property', () => {
       const params = checkSetup(
@@ -174,7 +192,7 @@ describe('page-has-*', () => {
   });
 
   describe('page-has-heading-one', () => {
-    const check = checks['page-has-heading-one'];
+    const check = audit.checks['page-has-heading-one'];
 
     it('should return false if div has role not equal to heading', () => {
       const params = checkSetup(

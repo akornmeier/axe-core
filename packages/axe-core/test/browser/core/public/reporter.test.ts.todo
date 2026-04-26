@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved bare `axe` reference after rewrite
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: Error: Failed to import test file /Users/tonykornmeier/Code/axe-core/packages/axe-core/test/browser/core/public/reporter.test.ts
 describe('axe.reporter', function () {
   var orig = {};
   beforeAll(function () {

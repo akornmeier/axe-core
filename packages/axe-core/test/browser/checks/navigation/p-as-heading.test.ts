@@ -1,12 +1,24 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowCheckSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import pAsHeadingEvaluate from '@checks/navigation/p-as-heading-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const pAsHeadingEvaluateESM = getCheckEvaluateESM(pAsHeadingEvaluate, {
+  margins: [
+    { weight: 150, italic: true },
+    { weight: 150, size: 1.15 },
+    { italic: true, size: 1.15 },
+    { size: 1.4 }
+  ],
+  passLength: 1,
+  failLength: 0.5
+});
 describe('p-as-heading', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -29,16 +41,12 @@ describe('p-as-heading', () => {
       '<p id="target">elm 1</p> <p>elm 2</p>',
       testOptions
     );
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(true);
   });
 
   it('returns true if there is no p element following it', () => {
     const params = checkSetup('<p id="target">lone elm</p>', testOptions);
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(true);
   });
 
   it('returns false if the font-weight is heavier', () => {
@@ -46,9 +54,9 @@ describe('p-as-heading', () => {
       '<p id="target" style="font-weight:bold">elm 1</p>' + '<p>elm 2elm 2</p>',
       testOptions
     );
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(false);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+      false
+    );
   });
 
   it('returns false if the font-size is bigger', () => {
@@ -56,9 +64,9 @@ describe('p-as-heading', () => {
       '<p id="target" style="font-size:150%">elm 1</p> <p>elm 2elm 2</p>',
       testOptions
     );
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(false);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+      false
+    );
   });
 
   it('returns false if the fake heading is italic and the text is not', () => {
@@ -66,9 +74,9 @@ describe('p-as-heading', () => {
       '<p id="target" style="font-style:italic">elm 1</p> <p>elm 2elm 2</p>',
       testOptions
     );
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(false);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+      false
+    );
   });
 
   it('returns true if both texts are bold, italic and larger', () => {
@@ -77,9 +85,7 @@ describe('p-as-heading', () => {
         '<p style="font: italic bold 120% bold">elm 2elm 2</p>',
       testOptions
     );
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(true);
   });
 
   it('considers styles of elements inside the paragraph', () => {
@@ -87,9 +93,9 @@ describe('p-as-heading', () => {
       '<p id="target"><b>elm 1</b></p> <p>elm 2elm 2</p>',
       testOptions
     );
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(false);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+      false
+    );
   });
 
   it('ignores empty child element for style', () => {
@@ -97,9 +103,9 @@ describe('p-as-heading', () => {
       '<p id="target"><span> </span><b>elm 1</b></p> <p>elm 2elm 2</p>',
       testOptions
     );
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(false);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+      false
+    );
   });
 
   it('considers styles of elements that do not contain all the text', () => {
@@ -107,9 +113,7 @@ describe('p-as-heading', () => {
       '<p id="target"><b>elm</b> 1</p> <p>elm 2elm 2</p>',
       testOptions
     );
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(true);
   });
 
   it('returns undefined instead of false if the element is inside a blockquote', () => {
@@ -120,7 +124,7 @@ describe('p-as-heading', () => {
       testOptions
     );
     expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
+      pAsHeadingEvaluateESM.apply(checkContext, params as any)
     ).toBeUndefined();
   });
 
@@ -131,9 +135,7 @@ describe('p-as-heading', () => {
         '</blockquote>',
       testOptions
     );
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(true);
   });
 
   it('returns undefined if a previous sibling has a similar font-weight', () => {
@@ -144,7 +146,7 @@ describe('p-as-heading', () => {
       testOptions
     );
     expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
+      pAsHeadingEvaluateESM.apply(checkContext, params as any)
     ).toBeUndefined();
   });
 
@@ -153,9 +155,7 @@ describe('p-as-heading', () => {
       '<p id="target">elm1elm1</p>' + '<p>elm2</p>',
       testOptions
     );
-    expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(true);
   });
 
   it('returns undefined if the heading is twice as long but not greater than the length of the pararaph', () => {
@@ -164,7 +164,7 @@ describe('p-as-heading', () => {
       testOptions
     );
     expect(
-      getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
+      pAsHeadingEvaluateESM.apply(checkContext, params as any)
     ).toBeUndefined();
   });
 
@@ -179,9 +179,9 @@ describe('p-as-heading', () => {
         '<p id="target">elm1elm1elm1</p>' + '<p>elm2</p>',
         options
       );
-      expect(
-        getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-      ).toBe(true);
+      expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+        true
+      );
     });
 
     it('returns undefined if the heading is twice as long but not greater than the length of the pararaph using options.failLength', () => {
@@ -194,9 +194,9 @@ describe('p-as-heading', () => {
           '<p>elm2elm2elm2</p>',
         options
       );
-      expect(
-        getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-      ).toBe(false);
+      expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+        false
+      );
     });
   });
 
@@ -208,9 +208,9 @@ describe('p-as-heading', () => {
         '<p id="target"><b>elm 1</b></p> <p>elm 2elm 2</p>',
         options
       );
-      expect(
-        getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-      ).toBe(true);
+      expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+        true
+      );
     });
 
     it('takes an array of margins', () => {
@@ -222,9 +222,9 @@ describe('p-as-heading', () => {
         '<p id="target"><b>elm 1</b></p> <p>elm 2elm 2</p>',
         options
       );
-      expect(
-        getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-      ).toBe(true);
+      expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+        true
+      );
     });
 
     it('returns false if all values in the margin are passed', () => {
@@ -237,9 +237,9 @@ describe('p-as-heading', () => {
           '<p>elm 2elm 2</p>',
         options
       );
-      expect(
-        getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-      ).toBe(false);
+      expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+        false
+      );
     });
 
     it('returns true if any of the values is not passed', () => {
@@ -251,9 +251,9 @@ describe('p-as-heading', () => {
         '<p id="target" style="font-weight:bold">elm 1</p>' + '<p>elm 2</p>',
         options
       );
-      expect(
-        getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-      ).toBe(true);
+      expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+        true
+      );
     });
 
     it('returns false if any of the margins is passed', () => {
@@ -266,9 +266,9 @@ describe('p-as-heading', () => {
           '<p>elm 2elm 2</p>',
         options
       );
-      expect(
-        getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-      ).toBe(false);
+      expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+        false
+      );
     });
 
     it('returns true if none of the set margins is passed', () => {
@@ -285,9 +285,9 @@ describe('p-as-heading', () => {
         '<p id="target" style="font-size:1.5em">elm 1</p>' + '<p>elm 2</p>',
         options
       );
-      expect(
-        getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-      ).toBe(true);
+      expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+        true
+      );
     });
   });
 
@@ -300,7 +300,7 @@ describe('p-as-heading', () => {
         testOptions
       );
       expect(
-        getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
+        pAsHeadingEvaluateESM.apply(checkContext, params as any)
       ).toBeUndefined();
     }
   );
@@ -313,9 +313,9 @@ describe('p-as-heading', () => {
         '<p id="target">elm 1</p> <p>elm 2</p>',
         testOptions
       );
-      expect(
-        getCheckEvaluate('p-as-heading').apply(checkContext, params as any)
-      ).toBe(true);
+      expect(pAsHeadingEvaluateESM.apply(checkContext, params as any)).toBe(
+        true
+      );
     }
   );
 });

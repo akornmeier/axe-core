@@ -1,10 +1,14 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate,
-  checks
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
+import headingOrderEvaluate from '@checks/navigation/heading-order-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const headingOrderEvaluateESM = getCheckEvaluateESM(headingOrderEvaluate);
 // FIXME(phase-03-modern): The heading-order suite asserts on full
 // `ancestry` selectors (e.g. `html > body > div:nth-child(1) > div:nth-child(1)`),
 // but axe.utils.getAncestry omits `:nth-child(N)` segments when the
@@ -24,7 +28,7 @@ describe.skip('heading-order', () => {
       '<div role="heading" aria-level="1" id="target">One</div><div role="heading" aria-level="3">Three</div>'
     );
     expect(
-      getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {})
+      headingOrderEvaluateESM.call(checkContext, null, {}, vNode, {})
     ).toBe(true);
     expect(checkContext._data).toEqual({
       headingOrder: [
@@ -45,7 +49,7 @@ describe.skip('heading-order', () => {
       '<div role="heading" aria-level="-1" id="target">One</div><div role="heading">Two</div>'
     );
     expect(
-      getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {})
+      headingOrderEvaluateESM.call(checkContext, null, {}, vNode, {})
     ).toBe(true);
     expect(checkContext._data).toEqual({
       headingOrder: [
@@ -66,7 +70,7 @@ describe.skip('heading-order', () => {
       '<div role="heading" aria-level="12" id="target">One</div>'
     );
     expect(
-      getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {})
+      headingOrderEvaluateESM.call(checkContext, null, {}, vNode, {})
     ).toBe(true);
     expect(checkContext._data).toEqual({
       headingOrder: [
@@ -81,7 +85,7 @@ describe.skip('heading-order', () => {
   it('should store the correct header level for hn tags and return true', () => {
     const vNode = queryFixture('<h1 id="target">One</h1><h3>Three</h3>');
     expect(
-      getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {})
+      headingOrderEvaluateESM.call(checkContext, null, {}, vNode, {})
     ).toBe(true);
     expect(checkContext._data).toEqual({
       headingOrder: [
@@ -102,7 +106,7 @@ describe.skip('heading-order', () => {
       '<h1 aria-level="2" id="target">Two</h1><h3 aria-level="4">Four</h3>'
     );
     expect(
-      getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {})
+      headingOrderEvaluateESM.call(checkContext, null, {}, vNode, {})
     ).toBe(true);
     expect(checkContext._data).toEqual({
       headingOrder: [
@@ -120,7 +124,7 @@ describe.skip('heading-order', () => {
 
   it('should ignore aria-level on iframe when not used with role=heading', () => {
     const vNode = queryFixture('<iframe aria-level="2" id="target"></iframe>');
-    getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {
+    headingOrderEvaluateESM.call(checkContext, null, {}, vNode, {
       initiator: true
     });
     expect(checkContext._data).toEqual({
@@ -138,7 +142,7 @@ describe.skip('heading-order', () => {
       '<h1 role="heading" id="target">One</h1><h3 role="heading">Three</h3>'
     );
     expect(
-      getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {})
+      headingOrderEvaluateESM.call(checkContext, null, {}, vNode, {})
     ).toBe(true);
     expect(checkContext._data).toEqual({
       headingOrder: [
@@ -157,7 +161,7 @@ describe.skip('heading-order', () => {
   it('should return the heading level when an hn tag has an invalid aria-level', () => {
     const vNode = queryFixture('<h1 aria-level="-1" id="target">One</h1>');
     expect(
-      getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {})
+      headingOrderEvaluateESM.call(checkContext, null, {}, vNode, {})
     ).toBe(true);
     expect(checkContext._data).toEqual({
       headingOrder: [
@@ -173,7 +177,7 @@ describe.skip('heading-order', () => {
     const vNode = queryFixture(
       '<h1 id="target">One</h1><iframe></iframe><h3>Three</h3>'
     );
-    getCheckEvaluate('heading-order').call(checkContext, null, {}, vNode, {
+    headingOrderEvaluateESM.call(checkContext, null, {}, vNode, {
       initiator: true
     });
     expect(checkContext._data).toEqual({
@@ -218,7 +222,9 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      expect(checks['heading-order'].after(results)[1].result).toBe(false);
+      expect(audit.checks['heading-order'].after(results)[1].result).toBe(
+        false
+      );
     });
 
     it('should return true when header level decreases by 1', () => {
@@ -244,7 +250,7 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      expect(checks['heading-order'].after(results)[1].result).toBe(true);
+      expect(audit.checks['heading-order'].after(results)[1].result).toBe(true);
     });
 
     it('should return true when header level decreases by 2', () => {
@@ -270,7 +276,7 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      expect(checks['heading-order'].after(results)[1].result).toBe(true);
+      expect(audit.checks['heading-order'].after(results)[1].result).toBe(true);
     });
 
     it('should return true when there is only one header', () => {
@@ -288,7 +294,7 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      expect(checks['heading-order'].after(results)[0].result).toBe(true);
+      expect(audit.checks['heading-order'].after(results)[0].result).toBe(true);
     });
 
     it('should return true when header level increases by 1', () => {
@@ -318,7 +324,7 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      expect(checks['heading-order'].after(results)[1].result).toBe(true);
+      expect(audit.checks['heading-order'].after(results)[1].result).toBe(true);
     });
 
     it('should return true if heading levels are correct across iframes', () => {
@@ -366,7 +372,7 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      const afterResults = checks['heading-order'].after(results);
+      const afterResults = audit.checks['heading-order'].after(results);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(true);
     });
@@ -416,7 +422,7 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      const afterResults = checks['heading-order'].after(results);
+      const afterResults = audit.checks['heading-order'].after(results);
       expect(afterResults[1].result).toBe(false);
       expect(afterResults[2].result).toBe(true);
     });
@@ -484,7 +490,7 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      const afterResults = checks['heading-order'].after(results);
+      const afterResults = audit.checks['heading-order'].after(results);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(true);
       expect(afterResults[3].result).toBe(true);
@@ -514,7 +520,7 @@ describe.skip('heading-order', () => {
         }
       ];
 
-      const afterResults = checks['heading-order'].after(results);
+      const afterResults = audit.checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(true);
       expect(afterResults[1].result).toBeUndefined();
     });
@@ -565,7 +571,7 @@ describe.skip('heading-order', () => {
         }
       ];
 
-      const afterResults = checks['heading-order'].after(results);
+      const afterResults = audit.checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(true);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(false);
@@ -616,7 +622,7 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      const afterResults = checks['heading-order'].after(results);
+      const afterResults = audit.checks['heading-order'].after(results);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(true);
     });
@@ -649,7 +655,7 @@ describe.skip('heading-order', () => {
         }
       ];
 
-      const afterResults = checks['heading-order'].after(results);
+      const afterResults = audit.checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(true);
       expect(afterResults[1].result).toBe(false);
     });
@@ -710,7 +716,7 @@ describe.skip('heading-order', () => {
         }
       ];
 
-      const afterResults = checks['heading-order'].after(results);
+      const afterResults = audit.checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(true);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(true);
@@ -769,7 +775,7 @@ describe.skip('heading-order', () => {
         }
       ];
 
-      const afterResults = checks['heading-order'].after(results);
+      const afterResults = audit.checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(true);
       expect(afterResults[1].result).toBe(true);
       expect(afterResults[2].result).toBe(true);
@@ -797,7 +803,7 @@ describe.skip('heading-order', () => {
           result: true
         }
       ];
-      const afterResults = checks['heading-order'].after(results);
+      const afterResults = audit.checks['heading-order'].after(results);
       expect(afterResults[0].result).toBe(false);
     });
   });

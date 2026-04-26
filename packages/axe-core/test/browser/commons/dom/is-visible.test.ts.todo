@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.queryFixture (testUtils helper not exposed under Vitest)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: TypeError: computedStyleStub.restore is not a function
 describe('dom.isVisible', function () {
   var fixture = document.getElementById('fixture');
   var queryFixture = axe.testUtils.queryFixture;

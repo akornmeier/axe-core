@@ -1,13 +1,26 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   axe
 } from '@helpers/check-helpers';
+import ariaConditionalAttrEvaluate from '@checks/aria/aria-conditional-attr-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const ariaConditionalAttrEvaluateESM = getCheckEvaluateESM(
+  ariaConditionalAttrEvaluate,
+  {
+    invalidTableRowAttrs: [
+      'aria-posinset',
+      'aria-setsize',
+      'aria-expanded',
+      'aria-level'
+    ]
+  }
+);
 describe('aria-conditional-attr', () => {
   const checkContext = createMockCheckContext();
-  const ariaConditionalCheck = getCheckEvaluate('aria-conditional-attr');
+  const ariaConditionalCheck = ariaConditionalAttrEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

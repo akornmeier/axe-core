@@ -1,11 +1,14 @@
-import { checks } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
+const audit = createSyntheticAudit(['identical-links-same-purpose']);
+
 describe('identical-links-same-purpose-after tests', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  const check = checks['identical-links-same-purpose'];
+  const check = audit.checks['identical-links-same-purpose'];
 
   afterEach(() => {
     fixture.innerHTML = '';

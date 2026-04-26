@@ -1,11 +1,14 @@
 import {
   createMockCheckContext,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   flatTreeSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import tdHasHeaderEvaluate from '@checks/tables/td-has-header-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const tdHasHeaderEvaluateESM = getCheckEvaluateESM(tdHasHeaderEvaluate);
 describe('td-has-header', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -47,7 +50,7 @@ describe('td-has-header', () => {
       '</table>';
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
-    const result = getCheckEvaluate('td-has-header').call(checkContext, node);
+    const result = tdHasHeaderEvaluateESM.call(checkContext, node);
 
     expect(result).toBe(false);
     expect(checkContext._relatedNodes.length).toBe(4);
@@ -59,9 +62,7 @@ describe('td-has-header', () => {
 
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      true
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   it('should return true each non-empty cell has a column header', () => {
@@ -73,9 +74,7 @@ describe('td-has-header', () => {
 
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      true
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   it('should return true each non-empty cell has aria-label', () => {
@@ -87,9 +86,7 @@ describe('td-has-header', () => {
 
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      true
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   it('should return true each non-empty cell has aria-labelledby', () => {
@@ -102,9 +99,7 @@ describe('td-has-header', () => {
 
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      true
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   it('should return true each non-empty cell has a headers attribute', () => {
@@ -118,9 +113,7 @@ describe('td-has-header', () => {
 
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      true
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   it('should return true there is at least one non-empty header', () => {
@@ -132,9 +125,7 @@ describe('td-has-header', () => {
 
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      true
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   it('should return true if the only data cells are empty', () => {
@@ -143,9 +134,7 @@ describe('td-has-header', () => {
 
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      true
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   it('should return false if a cell has no headers', () => {
@@ -155,9 +144,7 @@ describe('td-has-header', () => {
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
 
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      false
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(false);
     expect(checkContext._relatedNodes).toEqual([
       node.rows[0].cells[0],
       node.rows[0].cells[1]
@@ -174,9 +161,7 @@ describe('td-has-header', () => {
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
 
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      false
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(false);
     expect(checkContext._relatedNodes).toEqual([
       node.rows[0].cells[0],
       node.rows[1].cells[0],
@@ -194,9 +179,7 @@ describe('td-has-header', () => {
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
 
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      true
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   it('should return true if the headers element refers to non-existing elements', () => {
@@ -208,9 +191,7 @@ describe('td-has-header', () => {
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
 
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      true
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   it('should return false if all headers are empty', () => {
@@ -222,9 +203,7 @@ describe('td-has-header', () => {
 
     flatTreeSetup(fixture);
     const node = fixture.querySelector('table');
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      false
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(false);
   });
 
   (shadowSupport ? it : it.skip)('recognizes shadow tree content', function () {
@@ -240,8 +219,6 @@ describe('td-has-header', () => {
 
     flatTreeSetup(fixture);
     const node = axe.utils.querySelectorAll(axe._tree, 'table')[0].actualNode;
-    expect(getCheckEvaluate('td-has-header').call(checkContext, node)).toBe(
-      true
-    );
+    expect(tdHasHeaderEvaluateESM.call(checkContext, node)).toBe(true);
   });
 });

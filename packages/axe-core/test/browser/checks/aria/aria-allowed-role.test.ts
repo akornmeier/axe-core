@@ -1,9 +1,15 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import ariaAllowedRoleEvaluate from '@checks/aria/aria-allowed-role-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const ariaAllowedRoleEvaluateESM = getCheckEvaluateESM(
+  ariaAllowedRoleEvaluate,
+  { allowImplicit: true, ignoredTags: [] }
+);
 describe('aria-allowed-role', () => {
   const checkContext = createMockCheckContext();
 
@@ -18,7 +24,7 @@ describe('aria-allowed-role', () => {
     const options = {
       ignoredTags: ['article']
     };
-    const actual = getCheckEvaluate('aria-allowed-role').call(
+    const actual = ariaAllowedRoleEvaluateESM.call(
       checkContext,
       null,
       options,
@@ -36,7 +42,7 @@ describe('aria-allowed-role', () => {
     const options = {
       allowImplicit: false
     };
-    const outcome = getCheckEvaluate('aria-allowed-role').call(
+    const outcome = ariaAllowedRoleEvaluateESM.call(
       checkContext,
       null,
       options,
@@ -52,7 +58,7 @@ describe('aria-allowed-role', () => {
       '<button id="target" type="button" aria-hidden="true"' +
         'role="presentation"></button>'
     );
-    const actual = getCheckEvaluate('aria-allowed-role').call(
+    const actual = ariaAllowedRoleEvaluateESM.call(
       checkContext,
       null,
       null,
@@ -68,7 +74,7 @@ describe('aria-allowed-role', () => {
         'role="presentation"></button>' +
         '</div>'
     );
-    const actual = getCheckEvaluate('aria-allowed-role').call(
+    const actual = ariaAllowedRoleEvaluateESM.call(
       checkContext,
       null,
       null,
@@ -82,24 +88,14 @@ describe('aria-allowed-role', () => {
       '<button id="target" type="menu" role="menuitem"></button>'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
   it('returns true when img has no alt and role="presentation"', () => {
     const vNode = queryFixture('<img id="target" role="presentation"/>');
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
     expect(checkContext._data).toEqual(null);
   });
@@ -107,12 +103,7 @@ describe('aria-allowed-role', () => {
   it('returns true when img has no alt and role="none"', () => {
     const vNode = queryFixture('<img id="target" role="none"/>');
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
     expect(checkContext._data).toEqual(null);
   });
@@ -120,12 +111,7 @@ describe('aria-allowed-role', () => {
   it('returns true when img has empty alt and role="presentation"', () => {
     const vNode = queryFixture('<img id="target" alt="" role="presentation"/>');
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
     expect(checkContext._data).toEqual(null);
   });
@@ -133,12 +119,7 @@ describe('aria-allowed-role', () => {
   it('returns true when img has empty alt and role="none"', () => {
     const vNode = queryFixture('<img id="target" alt="" role="none"/>');
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
     expect(checkContext._data).toEqual(null);
   });
@@ -148,12 +129,7 @@ describe('aria-allowed-role', () => {
       '<img id="target" alt="not empty" role="presentation"/>'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual(['presentation']);
   });
@@ -163,12 +139,7 @@ describe('aria-allowed-role', () => {
       '<img id="target" alt="not empty" role="none"/>'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual(['none']);
   });
@@ -178,12 +149,7 @@ describe('aria-allowed-role', () => {
       '<img id="target" aria-label="foo" role="button"/>'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
     expect(checkContext._data, null).toBeNull();
   });
@@ -193,12 +159,7 @@ describe('aria-allowed-role', () => {
       '<img id="target" aria-label="foo" role="alert"/>'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual(['alert']);
   });
@@ -209,12 +170,7 @@ describe('aria-allowed-role', () => {
         '<img id="target" aria-labelledby="foo" role="menuitem"/>'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
     expect(checkContext._data, null).toBeNull();
   });
@@ -225,12 +181,7 @@ describe('aria-allowed-role', () => {
         '<img id="target" aria-labelledby="foo" role="rowgroup"/>'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual(['rowgroup']);
   });
@@ -241,12 +192,7 @@ describe('aria-allowed-role', () => {
         '<img id="target" title="foo" role="link"/>'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
     expect(checkContext._data, null).toBeNull();
   });
@@ -257,12 +203,7 @@ describe('aria-allowed-role', () => {
         '<img id="target" title="foo" role="radiogroup"/>'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual(['radiogroup']);
   });
@@ -270,12 +211,7 @@ describe('aria-allowed-role', () => {
   it('returns true when input of type image and no role', () => {
     const vNode = queryFixture('<input id="target" type="image"/>');
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
     expect(checkContext._data, null).toBeNull();
   });
@@ -285,12 +221,7 @@ describe('aria-allowed-role', () => {
       '<input id="target" type="checkbox" aria-pressed="">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -299,12 +230,7 @@ describe('aria-allowed-role', () => {
       '<input id="target" type="text" role="combobox">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -313,12 +239,7 @@ describe('aria-allowed-role', () => {
       '<input id="target" type="tel" role="combobox">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -327,12 +248,7 @@ describe('aria-allowed-role', () => {
       '<input id="target" type="url" role="combobox">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -341,12 +257,7 @@ describe('aria-allowed-role', () => {
       '<input id="target" type="search" role="combobox">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -355,12 +266,7 @@ describe('aria-allowed-role', () => {
       '<input id="target" type="email" role="combobox">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -369,12 +275,7 @@ describe('aria-allowed-role', () => {
       '<input id="target" type="text" role="spinbutton">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -383,12 +284,7 @@ describe('aria-allowed-role', () => {
       '<input id="target" type="number" role="spinbutton">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -397,12 +293,7 @@ describe('aria-allowed-role', () => {
       '<input id="target" type="tel" role="spinbutton">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -411,24 +302,14 @@ describe('aria-allowed-role', () => {
       '<input id="target" type="text" role="searchbox">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
   it('returns false when a role is set on an element that does not allow any role', () => {
     const vNode = queryFixture('<dd id="target" role="link">');
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual(['link']);
   });
@@ -436,30 +317,20 @@ describe('aria-allowed-role', () => {
   it('returns true when a role is set on an element that can have any role', () => {
     const vNode = queryFixture('<div id="target" role="link"></dd>');
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
   it('returns true an <a> without a href to have any role', () => {
     const vNode = queryFixture('<a id="target" role="presentation"></a>');
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
   it('returns true <a> with a empty href to have any valid role', () => {
     const vNode = queryFixture('<a id="target" role="link" href=""></a>');
-    const actual = getCheckEvaluate('aria-allowed-role').call(
+    const actual = ariaAllowedRoleEvaluateESM.call(
       checkContext,
       null,
       null,
@@ -473,31 +344,21 @@ describe('aria-allowed-role', () => {
       '<img id="target" role="button" alt="some text">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
   it('should allow <select> without a multiple and size attribute to have a menu role', () => {
     const vNode = queryFixture('<select id="target" role="menu">');
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
     expect(checkContext._data, null).toBeNull();
   });
 
   it('returns true custom element <my-navbar> with a role of navigation', () => {
     const vNode = queryFixture('<my-navbar id="target" role="navigation">');
-    const actual = getCheckEvaluate('aria-allowed-role').call(
+    const actual = ariaAllowedRoleEvaluateESM.call(
       checkContext,
       null,
       null,
@@ -510,12 +371,7 @@ describe('aria-allowed-role', () => {
   it('returns false if a dpub role’s type is not the element’s implicit role', () => {
     const vNode = queryFixture('<article id="target" role="doc-biblioref">');
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
   });
 
@@ -524,12 +380,7 @@ describe('aria-allowed-role', () => {
       '<a id="target" href="foo" role="doc-biblioref">'
     );
     expect(
-      getCheckEvaluate('aria-allowed-role').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaAllowedRoleEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 });

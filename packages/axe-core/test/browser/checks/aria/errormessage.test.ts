@@ -1,12 +1,17 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowCheckSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import ariaErrormessageEvaluate from '@checks/aria/aria-errormessage-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const ariaErrormessageEvaluateESM = getCheckEvaluateESM(
+  ariaErrormessageEvaluate
+);
 describe('aria-errormessage', () => {
   const shadowSupported = shadowSupport.v1;
   const checkContext = createMockCheckContext();
@@ -21,12 +26,7 @@ describe('aria-errormessage', () => {
         '<div id="plain"></div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
   });
 
@@ -36,12 +36,7 @@ describe('aria-errormessage', () => {
         '<div></div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBeUndefined();
   });
 
@@ -51,12 +46,7 @@ describe('aria-errormessage', () => {
         '<div id="alert" role="alert"></div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -66,12 +56,7 @@ describe('aria-errormessage', () => {
         '<div id="live" aria-live="assertive"></div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -81,12 +66,7 @@ describe('aria-errormessage', () => {
         '<div id="plain"></div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -97,12 +77,7 @@ describe('aria-errormessage', () => {
         '<div id="error2">Error 2</div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual({
       messageKey: 'unsupported',
@@ -117,12 +92,7 @@ describe('aria-errormessage', () => {
         '<div id="error2">Error 2</div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual({
       messageKey: 'unsupported',
@@ -138,12 +108,7 @@ describe('aria-errormessage', () => {
         '<div id="error2">Error 2</div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual({
       messageKey: 'unsupported',
@@ -157,12 +122,7 @@ describe('aria-errormessage', () => {
         '<div id="plain"></div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual({
       messageKey: 'unsupported',
@@ -184,12 +144,7 @@ describe('aria-errormessage', () => {
       '<div id="target" aria-errormessage=" " aria-invalid="true"></div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -198,12 +153,7 @@ describe('aria-errormessage', () => {
       '<div id="target" aria-errormessage="plain">' + '<div id="plain"></div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -213,12 +163,7 @@ describe('aria-errormessage', () => {
         '<div id="plain"></div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -236,12 +181,7 @@ describe('aria-errormessage', () => {
       '<div id="target" aria-errormessage=" " aria-invalid="true"></div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
   });
 
@@ -251,12 +191,7 @@ describe('aria-errormessage', () => {
         '<div id="id-message-1" hidden>Error message 1</div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual({
       messageKey: 'hidden',
@@ -270,12 +205,7 @@ describe('aria-errormessage', () => {
         '<div id="id-message-1" style="display: none">Error message 1</div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual({
       messageKey: 'hidden',
@@ -289,12 +219,7 @@ describe('aria-errormessage', () => {
         '<div id="id-message-1" style="visibility: hidden">Error message 1</div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual({
       messageKey: 'hidden',
@@ -308,12 +233,7 @@ describe('aria-errormessage', () => {
         '<div id="id-message-1" aria-hidden="true">Error message 1</div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(false);
     expect(checkContext._data).toEqual({
       messageKey: 'hidden',
@@ -327,12 +247,7 @@ describe('aria-errormessage', () => {
         '<div id="id-message-1" aria-live="assertive" aria-hidden="false">Error message 1</div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -342,12 +257,7 @@ describe('aria-errormessage', () => {
         '<div id="id-message-1" aria-live="assertive">Error message 1</div>'
     );
     expect(
-      getCheckEvaluate('aria-errormessage').call(
-        checkContext,
-        null,
-        null,
-        vNode
-      )
+      ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
     ).toBe(true);
   });
 
@@ -359,7 +269,7 @@ describe('aria-errormessage', () => {
         '<div id="live" aria-live="assertive"></div>'
       );
       expect(
-        getCheckEvaluate('aria-errormessage').apply(checkContext, params as any)
+        ariaErrormessageEvaluateESM.apply(checkContext, params as any)
       ).toBeUndefined();
     }
   );
@@ -373,7 +283,7 @@ describe('aria-errormessage', () => {
           '<div id="live"></div>'
       );
       expect(
-        getCheckEvaluate('aria-errormessage').apply(checkContext, params as any)
+        ariaErrormessageEvaluateESM.apply(checkContext, params as any)
       ).toBe(false);
     }
   );
@@ -387,7 +297,7 @@ describe('aria-errormessage', () => {
           '<div id="live" aria-live="assertive"></div>'
       );
       expect(
-        getCheckEvaluate('aria-errormessage').apply(checkContext, params as any)
+        ariaErrormessageEvaluateESM.apply(checkContext, params as any)
       ).toBe(true);
     }
   );
@@ -402,12 +312,7 @@ describe('aria-errormessage', () => {
         }
       });
       expect(
-        getCheckEvaluate('aria-errormessage').call(
-          checkContext,
-          null,
-          null,
-          vNode
-        )
+        ariaErrormessageEvaluateESM.call(checkContext, null, null, vNode)
       ).toBeUndefined();
       expect(checkContext._data).toEqual({
         messageKey: 'idrefs',

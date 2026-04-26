@@ -19,9 +19,21 @@
 import { defineProject } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+
+// Sprint 5 #16-A: tests now import `lib/index.ts` directly (instead of the
+// pre-built UMD `dist/axe.js`). `lib/index.ts` references `__AXE_VERSION__`
+// — a Vite `define` substitution that the production build replaces. Vitest
+// projects do NOT inherit Vite's build-time `define`, so we mirror it here.
+const PKG_VERSION = JSON.parse(
+  readFileSync(path.resolve(here, 'package.json'), 'utf8')
+).version;
+const DEFINE = {
+  __AXE_VERSION__: JSON.stringify(PKG_VERSION)
+};
 
 // Vitest 4's `defineProject({ test: ... })` does NOT inherit `setupFiles`
 // from the root `vitest.config.ts` `test` block — each project must wire
@@ -46,6 +58,7 @@ export default [
   // Unit tests (Node.js, no DOM by default)
   defineProject({
     resolve: { alias: ALIASES },
+    define: DEFINE,
     test: {
       name: 'unit',
       include: ['test/unit/**/*.test.ts'],
@@ -55,12 +68,19 @@ export default [
   }),
 
   // Browser tests (real browser via Playwright Chromium)
+  // Phase 5 #17: v8 coverage provider does not support multiple browser instances,
+  // so coverage is disabled for this project. Coverage is collected from the unit
+  // project only; browser tests are validated via vitest run without coverage.
   defineProject({
     resolve: { alias: ALIASES },
+    define: DEFINE,
     test: {
       name: 'browser',
       include: ['test/browser/**/*.test.ts'],
       setupFiles: SETUP_FILES,
+      coverage: {
+        enabled: false
+      },
       browser: {
         enabled: true,
         provider: playwright(),
@@ -75,12 +95,19 @@ export default [
   // NOTE: `test/integration/` currently contains LEGACY *.js fixture/spec
   // files served by Karma. The `*.test.ts` glob picks up zero files until
   // task 11 of the Phase 3 plan migrates them. That is the correct state.
+  //
+  // Phase 5 #17: v8 coverage provider does not support multiple browser instances,
+  // so coverage is disabled for this project.
   defineProject({
     resolve: { alias: ALIASES },
+    define: DEFINE,
     test: {
       name: 'integration',
       include: ['test/integration/**/*.test.ts'],
       setupFiles: SETUP_FILES,
+      coverage: {
+        enabled: false
+      },
       browser: {
         enabled: true,
         provider: playwright(),

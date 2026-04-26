@@ -1,9 +1,25 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import ariaRoledescriptionEvaluate from '@checks/aria/aria-roledescription-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const ariaRoledescriptionEvaluateESM = getCheckEvaluateESM(
+  ariaRoledescriptionEvaluate,
+  {
+    supportedRoles: [
+      'button',
+      'img',
+      'checkbox',
+      'radio',
+      'combobox',
+      'menuitemcheckbox',
+      'menuitemradio'
+    ]
+  }
+);
 describe('aria-roledescription', () => {
   const checkContext = createMockCheckContext();
   afterEach(() => {
@@ -14,7 +30,7 @@ describe('aria-roledescription', () => {
     const vNode = queryFixture(
       '<button aria-roledescription="Awesome Button" id="target">Click</button>'
     );
-    const actual = getCheckEvaluate('aria-roledescription').call(
+    const actual = ariaRoledescriptionEvaluateESM.call(
       checkContext,
       null,
       {
@@ -30,7 +46,7 @@ describe('aria-roledescription', () => {
     const vNode = queryFixture(
       '<div role="radio" aria-roledescription="Awesome Radio" id="target">Click</div>'
     );
-    const actual = getCheckEvaluate('aria-roledescription').call(
+    const actual = ariaRoledescriptionEvaluateESM.call(
       checkContext,
       null,
       {
@@ -46,7 +62,7 @@ describe('aria-roledescription', () => {
     const vNode = queryFixture(
       '<div role="main" aria-roledescription="Awesome Main" id="target">The main element</div>'
     );
-    const actual = getCheckEvaluate('aria-roledescription').call(
+    const actual = ariaRoledescriptionEvaluateESM.call(
       checkContext,
       null,
       {},
@@ -60,7 +76,7 @@ describe('aria-roledescription', () => {
     const vNode = queryFixture(
       '<div aria-roledescription="Awesome Main" id="target">The main element</div>'
     );
-    const actual = getCheckEvaluate('aria-roledescription').call(
+    const actual = ariaRoledescriptionEvaluateESM.call(
       checkContext,
       null,
       {},
@@ -74,7 +90,7 @@ describe('aria-roledescription', () => {
     const vNode = queryFixture(
       '<div role="presentation" aria-roledescription="Awesome Main" id="target">The main element</div>'
     );
-    const actual = getCheckEvaluate('aria-roledescription').call(
+    const actual = ariaRoledescriptionEvaluateESM.call(
       checkContext,
       null,
       {},
@@ -89,7 +105,7 @@ describe('aria-roledescription', () => {
       '<div role="none" aria-roledescription="Awesome Main" id="target">The main element</div>'
     );
 
-    const actual = getCheckEvaluate('aria-roledescription').call(
+    const actual = ariaRoledescriptionEvaluateESM.call(
       checkContext,
       null,
       {},

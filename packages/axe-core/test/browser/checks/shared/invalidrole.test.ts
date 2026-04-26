@@ -1,9 +1,9 @@
-import {
-  createMockCheckContext,
-  queryFixture,
-  checks
-} from '@helpers/check-helpers';
+import { createMockCheckContext, queryFixture } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['invalidrole']);
+
 describe('invalidrole', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('invalidrole', () => {
   it('should return true if applied to an empty role', () => {
     const virtualNode = queryFixture('<div id="target" role="">Contents</div>');
     expect(
-      checks.invalidrole.evaluate.call(
+      audit.checks['invalidrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         null,
@@ -34,7 +34,7 @@ describe('invalidrole', () => {
       '<div id="target" role="foo">Contents</div>'
     );
     expect(
-      checks.invalidrole.evaluate.call(
+      audit.checks['invalidrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         null,
@@ -49,7 +49,7 @@ describe('invalidrole', () => {
       '<div id="target" role="alert">Contents</div>'
     );
     expect(
-      checks.invalidrole.evaluate.call(
+      audit.checks['invalidrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         null,
@@ -64,7 +64,7 @@ describe('invalidrole', () => {
       '<div id="target" role="widget">Contents</div>'
     );
     expect(
-      checks.invalidrole.evaluate.call(
+      audit.checks['invalidrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         null,
@@ -79,7 +79,7 @@ describe('invalidrole', () => {
       '<div id="target" role="alert button">Contents</div>'
     );
     expect(
-      checks.invalidrole.evaluate.call(
+      audit.checks['invalidrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         null,
@@ -94,7 +94,7 @@ describe('invalidrole', () => {
       '<div id="target" role="alert button foo bar">Contents</div>'
     );
     expect(
-      checks.invalidrole.evaluate.call(
+      audit.checks['invalidrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         null,
@@ -108,7 +108,7 @@ describe('invalidrole', () => {
       '<div id="target" role="foo bar">Contents</div>'
     );
     expect(
-      checks.invalidrole.evaluate.call(
+      audit.checks['invalidrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         null,
@@ -123,7 +123,7 @@ describe('invalidrole', () => {
       '<div id="target" role="FOO">Contents</div>'
     );
     expect(
-      checks.invalidrole.evaluate.call(
+      audit.checks['invalidrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         null,
@@ -138,7 +138,7 @@ describe('invalidrole', () => {
       '<div id="target" role="BUTTON">Contents</div>'
     );
     expect(
-      checks.invalidrole.evaluate.call(
+      audit.checks['invalidrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         null,

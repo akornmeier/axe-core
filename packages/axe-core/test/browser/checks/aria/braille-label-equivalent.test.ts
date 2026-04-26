@@ -1,12 +1,17 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import brailleLabelEquivalentEvaluate from '@checks/aria/braille-label-equivalent-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const brailleLabelEquivalentEvaluateESM = getCheckEvaluateESM(
+  brailleLabelEquivalentEvaluate
+);
 describe('braille-label-equivalent tests', () => {
   const checkContext = createMockCheckContext();
-  const checkEvaluate = getCheckEvaluate('braille-label-equivalent');
+  const checkEvaluate = brailleLabelEquivalentEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

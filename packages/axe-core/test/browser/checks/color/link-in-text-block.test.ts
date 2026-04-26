@@ -1,9 +1,15 @@
 import {
   createMockCheckContext,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   flatTreeSetup,
   shadowSupport
 } from '@helpers/check-helpers';
+import linkInTextBlockEvaluate from '@checks/color/link-in-text-block-evaluate';
+
+const linkInTextBlockEvaluateESM = getCheckEvaluateESM(
+  linkInTextBlockEvaluate,
+  { requiredContrastRatio: 3, allowSameColor: true }
+);
 import {
   describe,
   it,
@@ -124,9 +130,9 @@ describe('link-in-text-block', () => {
       flatTreeSetup(fixture);
       const linkElm = document.getElementById('link');
 
-      expect(
-        getCheckEvaluate('link-in-text-block').call(checkContext, linkElm)
-      ).toBe(false);
+      expect(linkInTextBlockEvaluateESM.call(checkContext, linkElm)).toBe(
+        false
+      );
       expect(checkContext._data.messageKey).toBe('fgContrast');
     });
 
@@ -141,9 +147,9 @@ describe('link-in-text-block', () => {
 
       flatTreeSetup(fixture);
 
-      expect(
-        getCheckEvaluate('link-in-text-block').call(checkContext, linkElm)
-      ).toBe(false);
+      expect(linkInTextBlockEvaluateESM.call(checkContext, linkElm)).toBe(
+        false
+      );
       expect(checkContext._data.messageKey).toBe('fgContrast');
     });
 
@@ -159,9 +165,9 @@ describe('link-in-text-block', () => {
       flatTreeSetup(fixture);
       const linkElm = div.querySelector('a');
 
-      expect(
-        getCheckEvaluate('link-in-text-block').call(checkContext, linkElm)
-      ).toBe(false);
+      expect(linkInTextBlockEvaluateESM.call(checkContext, linkElm)).toBe(
+        false
+      );
       expect(checkContext._data.messageKey).toBe('fgContrast');
     });
   });
@@ -192,7 +198,7 @@ describe('link-in-text-block', () => {
         }
       );
       expect(
-        getCheckEvaluate('link-in-text-block').call(checkContext, linkElm)
+        linkInTextBlockEvaluateESM.call(checkContext, linkElm)
       ).toBeUndefined();
       expect(checkContext._data.messageKey).toBe('bgImage');
       expect(checkContext._relatedNodes[0]).toBe(linkElm.parentNode);
@@ -207,9 +213,9 @@ describe('link-in-text-block', () => {
           color: '#100'
         }
       );
-      expect(
-        getCheckEvaluate('link-in-text-block').call(checkContext, linkElm)
-      ).toBe(false);
+      expect(linkInTextBlockEvaluateESM.call(checkContext, linkElm)).toBe(
+        false
+      );
       expect(checkContext._data.messageKey).toBe('fgContrast');
     });
 
@@ -224,9 +230,9 @@ describe('link-in-text-block', () => {
           backgroundColor: '#F0F0F0'
         }
       );
-      expect(
-        getCheckEvaluate('link-in-text-block').call(checkContext, linkElm)
-      ).toBe(false);
+      expect(linkInTextBlockEvaluateESM.call(checkContext, linkElm)).toBe(
+        false
+      );
       expect(checkContext._data.messageKey).toBe('fgContrast');
     });
 
@@ -241,9 +247,9 @@ describe('link-in-text-block', () => {
           backgroundColor: '#F0F0F0'
         }
       );
-      expect(
-        getCheckEvaluate('link-in-text-block').call(checkContext, linkElm)
-      ).toBe(false);
+      expect(linkInTextBlockEvaluateESM.call(checkContext, linkElm)).toBe(
+        false
+      );
       expect(checkContext._data.messageKey).toBe('bgContrast');
       expect(checkContext._relatedNodes[0]).toBe(linkElm.parentNode);
     });
@@ -259,9 +265,7 @@ describe('link-in-text-block', () => {
           backgroundColor: '#F0F0F0'
         }
       );
-      expect(
-        getCheckEvaluate('link-in-text-block').call(checkContext, linkElm)
-      ).toBe(true);
+      expect(linkInTextBlockEvaluateESM.call(checkContext, linkElm)).toBe(true);
       expect(checkContext._relatedNodes[0]).toBe(linkElm.parentNode);
     });
 
@@ -276,9 +280,7 @@ describe('link-in-text-block', () => {
           backgroundColor: '#808080'
         }
       );
-      expect(
-        getCheckEvaluate('link-in-text-block').call(checkContext, linkElm)
-      ).toBe(true);
+      expect(linkInTextBlockEvaluateESM.call(checkContext, linkElm)).toBe(true);
       expect(checkContext._relatedNodes[0]).toBe(linkElm.parentNode);
     });
 
@@ -293,7 +295,7 @@ describe('link-in-text-block', () => {
       flatTreeSetup(fixture);
       const linkElm = document.getElementById('link');
 
-      getCheckEvaluate('link-in-text-block').call(checkContext, linkElm);
+      linkInTextBlockEvaluateESM.call(checkContext, linkElm);
 
       expect(checkContext._data).toEqual({
         messageKey: 'fgContrast',
@@ -315,9 +317,9 @@ describe('link-in-text-block', () => {
           backgroundColor: '#F0F0F0'
         }
       );
-      expect(
-        getCheckEvaluate('link-in-text-block').call(checkContext, linkElm)
-      ).toBe(false);
+      expect(linkInTextBlockEvaluateESM.call(checkContext, linkElm)).toBe(
+        false
+      );
 
       expect(checkContext._data).toEqual({
         messageKey: 'bgContrast',
@@ -339,7 +341,7 @@ describe('link-in-text-block', () => {
           }
         );
         expect(
-          getCheckEvaluate('link-in-text-block').call(checkContext, linkElm, {
+          linkInTextBlockEvaluateESM.call(checkContext, linkElm, {
             allowSameColor: true
           })
         ).toBe(true);
@@ -356,7 +358,7 @@ describe('link-in-text-block', () => {
           }
         );
         expect(
-          getCheckEvaluate('link-in-text-block').call(checkContext, linkElm, {
+          linkInTextBlockEvaluateESM.call(checkContext, linkElm, {
             allowSameColor: false
           })
         ).toBe(false);

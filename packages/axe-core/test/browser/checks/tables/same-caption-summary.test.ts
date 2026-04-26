@@ -1,12 +1,17 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowCheckSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import sameCaptionSummaryEvaluate from '@checks/tables/same-caption-summary-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const sameCaptionSummaryEvaluateESM = getCheckEvaluateESM(
+  sameCaptionSummaryEvaluate
+);
 describe('same-caption-summary', () => {
   const checkContext = createMockCheckContext();
 
@@ -21,10 +26,7 @@ describe('same-caption-summary', () => {
     );
 
     expect(
-      getCheckEvaluate('same-caption-summary').apply(
-        checkContext,
-        params as any
-      )
+      sameCaptionSummaryEvaluateESM.apply(checkContext, params as any)
     ).toBe(false);
   });
 
@@ -34,10 +36,7 @@ describe('same-caption-summary', () => {
     );
 
     expect(
-      getCheckEvaluate('same-caption-summary').apply(
-        checkContext,
-        params as any
-      )
+      sameCaptionSummaryEvaluateESM.apply(checkContext, params as any)
     ).toBe(false);
   });
 
@@ -47,10 +46,7 @@ describe('same-caption-summary', () => {
     );
 
     expect(
-      getCheckEvaluate('same-caption-summary').apply(
-        checkContext,
-        params as any
-      )
+      sameCaptionSummaryEvaluateESM.apply(checkContext, params as any)
     ).toBe(false);
   });
 
@@ -60,10 +56,7 @@ describe('same-caption-summary', () => {
     );
 
     expect(
-      getCheckEvaluate('same-caption-summary').apply(
-        checkContext,
-        params as any
-      )
+      sameCaptionSummaryEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -81,10 +74,7 @@ describe('same-caption-summary', () => {
     );
 
     expect(
-      getCheckEvaluate('same-caption-summary').apply(
-        checkContext,
-        params as any
-      )
+      sameCaptionSummaryEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -104,10 +94,7 @@ describe('same-caption-summary', () => {
       );
 
       expect(
-        getCheckEvaluate('same-caption-summary').apply(
-          checkContext,
-          params as any
-        )
+        sameCaptionSummaryEvaluateESM.apply(checkContext, params as any)
       ).toBe(true);
     }
   );

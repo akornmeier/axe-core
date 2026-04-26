@@ -1,12 +1,17 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import hasGlobalAriaAttributeEvaluate from '@checks/aria/has-global-aria-attribute-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const hasGlobalAriaAttributeEvaluateESM = getCheckEvaluateESM(
+  hasGlobalAriaAttributeEvaluate
+);
 describe('has-global-aria-attribute', () => {
   const checkContext = createMockCheckContext();
-  const hasGlobalAriaAttribute = getCheckEvaluate('has-global-aria-attribute');
+  const hasGlobalAriaAttribute = hasGlobalAriaAttributeEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

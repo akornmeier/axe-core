@@ -2,12 +2,15 @@ import {
   createMockCheckContext,
   checkSetup,
   fixtureSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   axe
 } from '@helpers/check-helpers';
+import implicitEvaluate from '@checks/label/implicit-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const implicitLabelEvaluateESM = getCheckEvaluateESM(implicitEvaluate);
 describe('implicit-label', () => {
-  const checkEvaluate = getCheckEvaluate('implicit-label');
+  const checkEvaluate = implicitLabelEvaluateESM;
   const checkContext = createMockCheckContext();
 
   afterEach(() => {

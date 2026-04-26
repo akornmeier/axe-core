@@ -1,9 +1,15 @@
 import {
   createMockCheckContext,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   flatTreeSetup
 } from '@helpers/check-helpers';
+import validScrollableSemanticsEvaluate from '@checks/aria/valid-scrollable-semantics-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const validScrollableSemanticsEvaluateESM = getCheckEvaluateESM(
+  validScrollableSemanticsEvaluate,
+  { roles: ['tooltip'] }
+);
 describe('valid-scrollable-semantics', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -21,9 +27,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', '"banner');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(false);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      false
+    );
   });
 
   it('should return false for role=search', () => {
@@ -31,9 +37,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'search');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(false);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      false
+    );
   });
 
   it('should return true for role=form', () => {
@@ -41,9 +47,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'form');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for role=navigation', () => {
@@ -51,9 +57,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'navigation');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for role=complementary', () => {
@@ -61,9 +67,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'complementary');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for role=contentinfo', () => {
@@ -71,9 +77,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'contentinfo');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for role=main', () => {
@@ -81,9 +87,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'main');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for role=region', () => {
@@ -91,9 +97,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'region');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for role=alertdialog', () => {
@@ -101,9 +107,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'alertdialog');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for role=article', () => {
@@ -111,9 +117,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'article');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for role=dialog', () => {
@@ -121,45 +127,45 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'dialog');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for nav elements', () => {
     const node = document.createElement('nav');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for section elements', () => {
     const node = document.createElement('section');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for article elements', () => {
     const node = document.createElement('article');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for aside elements', () => {
     const node = document.createElement('aside');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for role=tabpanel', () => {
@@ -167,9 +173,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'tabpanel');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   it('should return true for role=tooltip', () => {
@@ -177,9 +183,9 @@ describe('valid-scrollable-semantics', () => {
     node.setAttribute('role', 'tooltip');
     fixture.appendChild(node);
     flatTreeSetup(fixture);
-    expect(
-      getCheckEvaluate('valid-scrollable-semantics').call(checkContext, node)
-    ).toBe(true);
+    expect(validScrollableSemanticsEvaluateESM.call(checkContext, node)).toBe(
+      true
+    );
   });
 
   describe('options', () => {
@@ -189,11 +195,9 @@ describe('valid-scrollable-semantics', () => {
       fixture.appendChild(node);
       flatTreeSetup(fixture);
       expect(
-        getCheckEvaluate('valid-scrollable-semantics').call(
-          checkContext,
-          node,
-          { roles: ['banner'] }
-        )
+        validScrollableSemanticsEvaluateESM.call(checkContext, node, {
+          roles: ['banner']
+        })
       ).toBe(true);
     });
   });

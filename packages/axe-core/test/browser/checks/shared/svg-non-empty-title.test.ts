@@ -1,17 +1,22 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   axe
 } from '@helpers/check-helpers';
+import svgNonEmptyTitleEvaluate from '@checks/shared/svg-non-empty-title-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const svgNonEmptyTitleEvaluateESM = getCheckEvaluateESM(
+  svgNonEmptyTitleEvaluate
+);
 describe('svg-non-empty-title tests', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   const checkContext = createMockCheckContext();
-  const checkEvaluate = getCheckEvaluate('svg-non-empty-title');
+  const checkEvaluate = svgNonEmptyTitleEvaluateESM;
 
   afterEach(() => {
     fixture.innerHTML = '';

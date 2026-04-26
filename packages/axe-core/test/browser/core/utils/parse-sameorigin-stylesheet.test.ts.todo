@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration)
+// FIXME(phase-3-sprint-4b): codemod blocker — helper not exposed (will not be re-exposed): assertStylesheet
 describe('axe.utils.parseSameOriginStylesheet', () => {
   let stylesForPage;
   const styleSheets = {

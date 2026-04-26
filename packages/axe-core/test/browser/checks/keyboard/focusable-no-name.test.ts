@@ -1,12 +1,15 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowCheckSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import focusableNoNameEvaluate from '@checks/keyboard/focusable-no-name-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const focusableNoNameEvaluateESM = getCheckEvaluateESM(focusableNoNameEvaluate);
 describe('focusable-no-name', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -22,39 +25,39 @@ describe('focusable-no-name', () => {
 
   it('should pass if tabindex < 0', () => {
     const params = checkSetup('<a href="#" tabindex="-1" id="target"></a>');
-    expect(
-      getCheckEvaluate('focusable-no-name').apply(checkContext, params as any)
-    ).toBe(false);
+    expect(focusableNoNameEvaluateESM.apply(checkContext, params as any)).toBe(
+      false
+    );
   });
 
   it('should pass element is not natively focusable', () => {
     const params = checkSetup('<span role="link" href="#" id="target"></span>');
-    expect(
-      getCheckEvaluate('focusable-no-name').apply(checkContext, params as any)
-    ).toBe(false);
+    expect(focusableNoNameEvaluateESM.apply(checkContext, params as any)).toBe(
+      false
+    );
   });
 
   it('should fail if element is tabbable with no name - native', () => {
     const params = checkSetup('<a href="#" id="target"></a>');
-    expect(
-      getCheckEvaluate('focusable-no-name').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(focusableNoNameEvaluateESM.apply(checkContext, params as any)).toBe(
+      true
+    );
   });
 
   it('should fail if element is tabbable with no name - ARIA', () => {
     const params = checkSetup(
       '<span tabindex="0" role="link" id="target" href="#"></spam>'
     );
-    expect(
-      getCheckEvaluate('focusable-no-name').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(focusableNoNameEvaluateESM.apply(checkContext, params as any)).toBe(
+      true
+    );
   });
 
   it('should pass if the element is tabbable but has an accessible name', () => {
     const params = checkSetup('<a href="#" title="Hello" id="target"></a>');
-    expect(
-      getCheckEvaluate('focusable-no-name').apply(checkContext, params as any)
-    ).toBe(false);
+    expect(focusableNoNameEvaluateESM.apply(checkContext, params as any)).toBe(
+      false
+    );
   });
 
   (shadowSupport.v1 ? it : it.skip)(
@@ -66,7 +69,7 @@ describe('focusable-no-name', () => {
       );
 
       expect(
-        getCheckEvaluate('focusable-no-name').apply(checkContext, params as any)
+        focusableNoNameEvaluateESM.apply(checkContext, params as any)
       ).toBe(false);
     }
   );
@@ -81,9 +84,7 @@ describe('focusable-no-name', () => {
         }
       });
 
-      expect(getCheckEvaluate('focusable-no-name')(null, {}, serialNode)).toBe(
-        false
-      );
+      expect(focusableNoNameEvaluateESM(null, {}, serialNode)).toBe(false);
     });
 
     it('should pass element is not natively focusable', () => {
@@ -95,9 +96,7 @@ describe('focusable-no-name', () => {
         }
       });
 
-      expect(getCheckEvaluate('focusable-no-name')(null, {}, serialNode)).toBe(
-        false
-      );
+      expect(focusableNoNameEvaluateESM(null, {}, serialNode)).toBe(false);
     });
 
     it('should fail if element is tabbable with no name - native', () => {
@@ -109,9 +108,7 @@ describe('focusable-no-name', () => {
       });
       serialNode.children = [];
 
-      expect(getCheckEvaluate('focusable-no-name')(null, {}, serialNode)).toBe(
-        true
-      );
+      expect(focusableNoNameEvaluateESM(null, {}, serialNode)).toBe(true);
     });
 
     it('should return undefined if element is tabbable with no name nor children - native', () => {
@@ -122,9 +119,7 @@ describe('focusable-no-name', () => {
         }
       });
 
-      expect(
-        getCheckEvaluate('focusable-no-name')(null, {}, serialNode)
-      ).toBeUndefined();
+      expect(focusableNoNameEvaluateESM(null, {}, serialNode)).toBeUndefined();
     });
 
     it('should pass if the element is tabbable but has an accessible name', () => {
@@ -137,9 +132,7 @@ describe('focusable-no-name', () => {
       });
       serialNode.children = [];
 
-      expect(getCheckEvaluate('focusable-no-name')(null, {}, serialNode)).toBe(
-        false
-      );
+      expect(focusableNoNameEvaluateESM(null, {}, serialNode)).toBe(false);
     });
   });
 });

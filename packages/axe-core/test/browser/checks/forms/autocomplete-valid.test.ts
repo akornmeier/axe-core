@@ -1,16 +1,35 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import autocompleteValidEvaluate from '@checks/forms/autocomplete-valid-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const autocompleteValidEvaluateESM = getCheckEvaluateESM(
+  autocompleteValidEvaluate,
+  {
+    stateTerms: [
+      'none',
+      'false',
+      'true',
+      'disabled',
+      'enabled',
+      'undefined',
+      'null',
+      'xoff',
+      'xon'
+    ],
+    ignoredValues: ['text', 'pronouns', 'gender', 'message', 'content']
+  }
+);
 describe('autocomplete-valid', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   const checkContext = createMockCheckContext();
-  const evaluate = getCheckEvaluate('autocomplete-valid');
+  const evaluate = autocompleteValidEvaluateESM;
 
   afterEach(() => {
     fixture.innerHTML = '';

@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); destructures 'queryFixture' from axe.testUtils (testUtils helper not exposed under Vitest)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: TypeError: Cannot read properties of null (reading 'style')
 describe('color.stackingContext', () => {
   const { Color, getStackingContext, stackingContextToColor } =
     axe.commons.color;

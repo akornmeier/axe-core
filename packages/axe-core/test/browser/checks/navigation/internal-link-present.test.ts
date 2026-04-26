@@ -1,12 +1,17 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowCheckSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import internalLinkPresentEvaluate from '@checks/navigation/internal-link-present-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const internalLinkPresentEvaluateESM = getCheckEvaluateESM(
+  internalLinkPresentEvaluate
+);
 describe('internal-link-present', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -23,24 +28,14 @@ describe('internal-link-present', () => {
   it('should return true when an internal link is found', () => {
     const vNode = queryFixture('<div id="target"><a href="#haha">hi</a></div>');
     expect(
-      getCheckEvaluate('internal-link-present').call(
-        checkContext,
-        null,
-        {},
-        vNode
-      )
+      internalLinkPresentEvaluateESM.call(checkContext, null, {}, vNode)
     ).toBe(true);
   });
 
   it('should return false when a hashbang URL was used', () => {
     const vNode = queryFixture('<div id="target"><a href="#!foo">hi</a></div>');
     expect(
-      getCheckEvaluate('internal-link-present').call(
-        checkContext,
-        null,
-        {},
-        vNode
-      )
+      internalLinkPresentEvaluateESM.call(checkContext, null, {}, vNode)
     ).toBe(false);
   });
 
@@ -49,12 +44,7 @@ describe('internal-link-present', () => {
       '<div id="target"><a href="#/home">hi</a></div>'
     );
     expect(
-      getCheckEvaluate('internal-link-present').call(
-        checkContext,
-        null,
-        {},
-        vNode
-      )
+      internalLinkPresentEvaluateESM.call(checkContext, null, {}, vNode)
     ).toBe(false);
   });
 
@@ -63,12 +53,7 @@ describe('internal-link-present', () => {
       '<div id="target"><a href="#!/home">hi</a></div>'
     );
     expect(
-      getCheckEvaluate('internal-link-present').call(
-        checkContext,
-        null,
-        {},
-        vNode
-      )
+      internalLinkPresentEvaluateESM.call(checkContext, null, {}, vNode)
     ).toBe(false);
   });
 
@@ -77,12 +62,7 @@ describe('internal-link-present', () => {
       '<div id="target"><a href="http://www.deque.com/#haha">hi</a></div>'
     );
     expect(
-      getCheckEvaluate('internal-link-present').call(
-        checkContext,
-        null,
-        {},
-        vNode
-      )
+      internalLinkPresentEvaluateESM.call(checkContext, null, {}, vNode)
     ).toBe(false);
   });
 
@@ -95,12 +75,7 @@ describe('internal-link-present', () => {
       );
       const vNode = params[2];
       expect(
-        getCheckEvaluate('internal-link-present').call(
-          checkContext,
-          null,
-          {},
-          vNode
-        )
+        internalLinkPresentEvaluateESM.call(checkContext, null, {}, vNode)
       ).toBe(true);
     }
   );

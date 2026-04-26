@@ -1,5 +1,8 @@
-import { checks } from '@helpers/check-helpers';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
+const audit = createSyntheticAudit(['caption-faked']);
+
 describe('caption-faked', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -11,7 +14,7 @@ describe('caption-faked', () => {
 
   let captionFaked;
   beforeEach(() => {
-    captionFaked = checks['caption-faked'];
+    captionFaked = audit.checks['caption-faked'];
   });
 
   it('returns true if the first row has multiple cells', () => {

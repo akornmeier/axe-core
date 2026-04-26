@@ -1,10 +1,15 @@
 import {
   createMockCheckContext,
   fixtureSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   axe
 } from '@helpers/check-helpers';
+import landmarkIsUniqueEvaluate from '@checks/landmarks/landmark-is-unique-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const landmarkIsUniqueEvaluateESM = getCheckEvaluateESM(
+  landmarkIsUniqueEvaluate
+);
 describe('landmark-is-unique', () => {
   const checkContext = new createMockCheckContext();
   let fixture;
@@ -34,12 +39,7 @@ describe('landmark-is-unique', () => {
     axe._tree = axe.utils.getFlattenedTree(fixture);
     const virtualNode = axe.utils.getNodeFromTree(axe._tree[0], node);
     expect(
-      getCheckEvaluate('landmark-is-unique').call(
-        checkContext,
-        node,
-        {},
-        virtualNode
-      )
+      landmarkIsUniqueEvaluateESM.call(checkContext, node, {}, virtualNode)
     ).toBe(true);
     expect(checkContext._data).toEqual(expectedData);
     expect(checkContext._relatedNodes).toEqual([node]);
@@ -55,12 +55,7 @@ describe('landmark-is-unique', () => {
     axe._tree = axe.utils.getFlattenedTree(fixture);
     const virtualNode = axe.utils.getNodeFromTree(axe._tree[0], node);
     expect(
-      getCheckEvaluate('landmark-is-unique').call(
-        checkContext,
-        node,
-        {},
-        virtualNode
-      )
+      landmarkIsUniqueEvaluateESM.call(checkContext, node, {}, virtualNode)
     ).toBe(true);
     expect(checkContext._data).toEqual(expectedData);
     expect(checkContext._relatedNodes).toEqual([node]);

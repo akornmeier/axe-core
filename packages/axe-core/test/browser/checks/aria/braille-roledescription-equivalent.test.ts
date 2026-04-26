@@ -1,12 +1,17 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import brailleRoledescriptionEquivalentEvaluate from '@checks/aria/braille-roledescription-equivalent-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const brailleRoledescriptionEquivalentEvaluateESM = getCheckEvaluateESM(
+  brailleRoledescriptionEquivalentEvaluate
+);
 describe('braille-roledescription-equivalent tests', () => {
   const checkContext = createMockCheckContext();
-  const checkEvaluate = getCheckEvaluate('braille-roledescription-equivalent');
+  const checkEvaluate = brailleRoledescriptionEquivalentEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

@@ -1,12 +1,34 @@
+// FIXME(phase-05-sprint-5): 3 tests fail with `Cannot read properties of undefined (reading 'shadowId')` — flatTreeSetup-based vNode lacks shadow context expected by query-selector-all-filter.
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   flatTreeSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import ariaRequiredChildrenEvaluate from '@checks/aria/aria-required-children-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const ariaRequiredChildrenEvaluateESM = getCheckEvaluateESM(
+  ariaRequiredChildrenEvaluate,
+  {
+    reviewEmpty: [
+      'doc-bibliography',
+      'doc-endnotes',
+      'grid',
+      'list',
+      'listbox',
+      'menu',
+      'menubar',
+      'table',
+      'tablist',
+      'tree',
+      'treegrid',
+      'rowgroup'
+    ]
+  }
+);
 describe('aria-required-children', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -14,7 +36,7 @@ describe('aria-required-children', () => {
   });
   const shadowSupported = shadowSupport.v1;
   const checkContext = createMockCheckContext();
-  const requiredChildrenCheck = getCheckEvaluate('aria-required-children');
+  const requiredChildrenCheck = ariaRequiredChildrenEvaluateESM;
 
   afterEach(() => {
     fixture.innerHTML = '';

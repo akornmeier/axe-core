@@ -1,15 +1,21 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import attrNonSpaceContentEvaluate from '@checks/generic/attr-non-space-content-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const nonEmptyPlaceholderEvaluateESM = getCheckEvaluateESM(
+  attrNonSpaceContentEvaluate,
+  { attribute: 'placeholder' }
+);
 describe('non-empty-placeholder', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  const checkEvaluate = getCheckEvaluate('non-empty-placeholder');
+  const checkEvaluate = nonEmptyPlaceholderEvaluateESM;
   const checkContext = createMockCheckContext();
 
   afterEach(() => {

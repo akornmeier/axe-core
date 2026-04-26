@@ -1,8 +1,12 @@
-import { createMockCheckContext, checks } from '@helpers/check-helpers';
+import { createMockCheckContext } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['css-orientation-lock']);
+
 describe('css-orientation-lock tests', () => {
   const checkContext = createMockCheckContext();
-  const check = checks['css-orientation-lock'];
+  const check = audit.checks['css-orientation-lock'];
   const dynamicDoc = document.implementation.createHTMLDocument(
     'Dynamic document for CSS Orientation Lock tests'
   );

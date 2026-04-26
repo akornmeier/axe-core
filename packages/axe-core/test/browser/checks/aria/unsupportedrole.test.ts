@@ -1,13 +1,16 @@
 import {
   createMockCheckContext,
   checkSetup,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['unsupportedrole']);
+
 describe('unsupportedrole', () => {
   const checkContext = createMockCheckContext();
-  const check = checks.unsupportedrole;
+  const check = audit.checks['unsupportedrole'];
   afterEach(() => {
     checkContext.reset();
     axe.reset();

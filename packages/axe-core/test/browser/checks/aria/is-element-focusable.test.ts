@@ -1,12 +1,17 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import isElementFocusableEvaluate from '@checks/aria/is-element-focusable-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const isElementFocusableEvaluateESM = getCheckEvaluateESM(
+  isElementFocusableEvaluate
+);
 describe('is-element-focusable', () => {
   const checkContext = createMockCheckContext();
-  const isFocusable = getCheckEvaluate('is-element-focusable');
+  const isFocusable = isElementFocusableEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

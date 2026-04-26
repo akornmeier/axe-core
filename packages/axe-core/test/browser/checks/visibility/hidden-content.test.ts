@@ -1,12 +1,15 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   flatTreeSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import hiddenContentEvaluate from '@checks/visibility/hidden-content-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const hiddenContentEvaluateESM = getCheckEvaluateESM(hiddenContentEvaluate);
 /* global it.skip */
 describe('hidden content', () => {
   let fixture: HTMLElement;
@@ -26,7 +29,7 @@ describe('hidden content', () => {
       '<div id="target" style="display: none;"><p>Some paragraph text.</p></div>'
     );
     expect(
-      getCheckEvaluate('hidden-content').apply(checkContext, params as any)
+      hiddenContentEvaluateESM.apply(checkContext, params as any)
     ).toBeUndefined();
   });
 
@@ -35,7 +38,7 @@ describe('hidden content', () => {
       '<div id="target" style="visibility: hidden;"><p>Some paragraph text.</p></div>'
     );
     expect(
-      getCheckEvaluate('hidden-content').apply(checkContext, params as any)
+      hiddenContentEvaluateESM.apply(checkContext, params as any)
     ).toBeUndefined();
   });
 
@@ -43,27 +46,25 @@ describe('hidden content', () => {
     const params = checkSetup(
       '<div style="visibility: hidden;"><p id="target" style="visibility: hidden;">Some paragraph text.</p></div>'
     );
-    expect(
-      getCheckEvaluate('hidden-content').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(hiddenContentEvaluateESM.apply(checkContext, params as any)).toBe(
+      true
+    );
   });
 
   it('should return true with aria-hidden and no content', () => {
     const params = checkSetup(
       '<span id="target" class="icon" aria-hidden="true"></span>'
     );
-    expect(
-      getCheckEvaluate('hidden-content').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(hiddenContentEvaluateESM.apply(checkContext, params as any)).toBe(
+      true
+    );
   });
 
   it('should skip whitelisted elements', () => {
     const node = document.querySelector('head');
     flatTreeSetup(document.documentElement);
     const virtualNode = axe.utils.getNodeFromTree(node);
-    expect(
-      getCheckEvaluate('hidden-content')(node, undefined, virtualNode)
-    ).toBe(true);
+    expect(hiddenContentEvaluateESM(node, undefined, virtualNode)).toBe(true);
   });
 
   (shadowSupport ? it : it.skip)(
@@ -80,21 +81,21 @@ describe('hidden content', () => {
 
       const shadow = document.querySelector('#shadow');
       const virtualShadow = axe.utils.getNodeFromTree(shadow);
-      expect(
-        getCheckEvaluate('hidden-content')(shadow, undefined, virtualShadow)
-      ).toBe(true);
+      expect(hiddenContentEvaluateESM(shadow, undefined, virtualShadow)).toBe(
+        true
+      );
 
       const target = shadowRoot.querySelector('#target');
       const virtualTarget = axe.utils.getNodeFromTree(target);
       expect(
-        getCheckEvaluate('hidden-content')(target, undefined, virtualTarget)
+        hiddenContentEvaluateESM(target, undefined, virtualTarget)
       ).toBeUndefined();
 
       const content = document.querySelector('#content');
       const virtualContent = axe.utils.getNodeFromTree(content);
-      expect(
-        getCheckEvaluate('hidden-content')(content, undefined, virtualContent)
-      ).toBe(true);
+      expect(hiddenContentEvaluateESM(content, undefined, virtualContent)).toBe(
+        true
+      );
     }
   );
 });

@@ -1,13 +1,16 @@
 import {
   createMockCheckContext,
   checkSetup,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['aria-unsupported-attr']);
+
 describe('unsupportedattr', () => {
   const checkContext = createMockCheckContext();
-  const check = checks['aria-unsupported-attr'];
+  const check = audit.checks['aria-unsupported-attr'];
 
   afterEach(() => {
     checkContext.reset();

@@ -1,13 +1,16 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   axe
 } from '@helpers/check-helpers';
+import deprecatedroleEvaluate from '@checks/aria/deprecatedrole-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const deprecatedroleEvaluateESM = getCheckEvaluateESM(deprecatedroleEvaluate);
 describe('deprecatedrole', () => {
   const checkContext = createMockCheckContext();
-  const checkEvaluate = getCheckEvaluate('deprecatedrole');
+  const checkEvaluate = deprecatedroleEvaluateESM;
   afterEach(() => {
     checkContext.reset();
     axe.reset();

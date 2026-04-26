@@ -2,13 +2,21 @@ import {
   createMockCheckContext,
   checkSetup,
   queryFixture,
-  getCheckEvaluate,
-  checks
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
+import noFocusableContentEvaluate from '@checks/keyboard/no-focusable-content-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const noFocusableContentEvaluateESM = getCheckEvaluateESM(
+  noFocusableContentEvaluate
+);
+const audit = createSyntheticAudit(['no-focusable-content']);
+
 describe('no-focusable-content tests', () => {
-  const noFocusableContent = getCheckEvaluate('no-focusable-content');
-  const check = checks['no-focusable-content'];
+  const noFocusableContent = noFocusableContentEvaluateESM;
+  const check = audit.checks['no-focusable-content'];
   const checkContext = new createMockCheckContext();
 
   afterEach(() => {

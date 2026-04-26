@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
 describe('aria-has-attr-matches', function () {
   const queryFixture = axe.testUtils.queryFixture;
   const fixtureSetup = axe.testUtils.fixtureSetup;
