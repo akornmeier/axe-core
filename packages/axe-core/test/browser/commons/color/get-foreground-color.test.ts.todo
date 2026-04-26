@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+// FIXME(phase-05-sprint-5b): chai+testUtils chain failed: ⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
 describe('color.getForegroundColor', () => {
   const { getForegroundColor, Color } = axe.commons.color;
   const { queryFixture, queryShadowFixture } = axe.testUtils;

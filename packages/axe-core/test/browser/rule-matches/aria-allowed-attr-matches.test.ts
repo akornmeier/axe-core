@@ -1,6 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, queryFixture } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('aria-allowed-attr-matches', function () {
-  const queryFixture = axe.testUtils.queryFixture;
   let rule;
 
   beforeEach(function () {
@@ -8,7 +17,7 @@ describe('aria-allowed-attr-matches', function () {
   });
 
   it('is a function', function () {
-    assert.isFunction(rule.matches);
+    expect(typeof rule.matches).toBe('function');
   });
 
   it('should return true on elements that have aria attributes', function () {

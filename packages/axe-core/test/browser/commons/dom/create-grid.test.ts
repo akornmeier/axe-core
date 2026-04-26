@@ -1,11 +1,19 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, fixtureSetup, queryFixture } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 // Additional tests for createGrid are part of createRectStack tests,
 // which is what createGrid was originally part of
 describe('create-grid', () => {
   let fixture;
   const createGrid = axe.commons.dom.createGrid;
-  const fixtureSetup = axe.testUtils.fixtureSetup;
-  const queryFixture = axe.testUtils.queryFixture;
   const gridSize = axe.constants.gridSize;
 
   function findPositions(grid, vNode) {
@@ -82,13 +90,11 @@ describe('create-grid', () => {
       expect(vNode._stackingOrder).toHaveLength(1);
       // purposefully do not test stackLevel and treeOrder values as they are
       // implementation details that can easily change
-      assert.hasAllKeys(vNode._stackingOrder[0], [
-        'stackLevel',
-        'treeOrder',
-        'vNode'
-      ]);
-      assert.typeOf(vNode._stackingOrder[0].stackLevel, 'number');
-      assert.typeOf(vNode._stackingOrder[0].treeOrder, 'number');
+      expect(Object.keys(vNode._stackingOrder[0]).sort()).toEqual(
+        [...['stackLevel', 'treeOrder', 'vNode']].sort()
+      );
+      expect(typeof vNode._stackingOrder[0].stackLevel).toBe('number');
+      expect(typeof vNode._stackingOrder[0].treeOrder).toBe('number');
       expect(vNode._stackingOrder[0].vNode).toBeNull(); // root stack
     });
 
@@ -142,7 +148,13 @@ describe('create-grid', () => {
       fixture = fixtureSetup('<div style="display: none">hidden</div>');
       createGrid();
       const position = findPositions(fixture._grid, fixture.children[0]);
-      assert.isEmpty(position);
+      expect(
+        position == null
+          ? 0
+          : typeof position === 'string' || Array.isArray(position)
+            ? position.length
+            : Object.keys(position).length
+      ).toBe(0);
       expect(fixture.children[0]._grid).toBeUndefined();
     });
 
@@ -152,7 +164,13 @@ describe('create-grid', () => {
       );
       createGrid();
       const position = findPositions(fixture._grid, fixture.children[0]);
-      assert.isEmpty(position);
+      expect(
+        position == null
+          ? 0
+          : typeof position === 'string' || Array.isArray(position)
+            ? position.length
+            : Object.keys(position).length
+      ).toBe(0);
       expect(fixture.children[0]._grid).toBeUndefined();
     });
 
@@ -196,7 +214,10 @@ describe('create-grid', () => {
 
       createGrid();
       childElms.forEach((child, index) => {
-        expect(child._grid, `Expect child ${index} to be defined`).toBeDefined();
+        expect(
+          child._grid,
+          `Expect child ${index} to be defined`
+        ).toBeDefined();
         const position = findPositions(child._grid, child);
         expect(position).toEqual([{ col: 0, row: index - gridScroll }]);
       });
@@ -222,7 +243,10 @@ describe('create-grid', () => {
 
       createGrid();
       childElms.forEach((child, index) => {
-        expect(child._grid, `Expect child ${index} to be defined`).toBeDefined();
+        expect(
+          child._grid,
+          `Expect child ${index} to be defined`
+        ).toBeDefined();
         const position = findPositions(child._grid, child);
         expect(position).toEqual([{ col: index - gridScroll, row: 0 }]);
       });
@@ -264,7 +288,13 @@ describe('create-grid', () => {
       createGrid();
       const vSpan = fixture.children[0].children[0];
       const position = findPositions(fixture._grid, vSpan);
-      assert.isEmpty(position);
+      expect(
+        position == null
+          ? 0
+          : typeof position === 'string' || Array.isArray(position)
+            ? position.length
+            : Object.keys(position).length
+      ).toBe(0);
     });
 
     it('adds scrollable children to the subGrid', () => {

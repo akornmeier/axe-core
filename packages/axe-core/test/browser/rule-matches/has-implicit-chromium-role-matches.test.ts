@@ -1,10 +1,19 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, queryFixture } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('has-implicit-chromium-role-matches', function () {
   let rule;
-  const fixture = document.getElementById('fixture');
-  const queryFixture = axe.testUtils.queryFixture;
-
+  let fixture: HTMLElement;
   beforeEach(function () {
+    fixture = document.getElementById('fixture') as HTMLElement;
     rule = axe.utils.getRule('presentation-role-conflict');
   });
 
@@ -13,7 +22,7 @@ describe('has-implicit-chromium-role-matches', function () {
   });
 
   it('is a function', function () {
-    assert.isFunction(rule.matches);
+    expect(typeof rule.matches).toBe('function');
   });
 
   it('matches elements with an implicit role', function () {

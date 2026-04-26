@@ -1,10 +1,20 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, fixtureSetup } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('duplicate-id-active matches', function () {
-  const fixture = document.getElementById('fixture');
-  const fixtureSetup = axe.testUtils.fixtureSetup;
+  let fixture: HTMLElement;
   let rule;
 
   beforeEach(function () {
+    fixture = document.getElementById('fixture') as HTMLElement;
     rule = axe.utils.getRule('duplicate-id-active');
   });
 
@@ -13,7 +23,7 @@ describe('duplicate-id-active matches', function () {
   });
 
   it('is a function', function () {
-    assert.isFunction(rule.matches);
+    expect(typeof rule.matches).toBe('function');
   });
 
   it('returns false if the ID is of an inactive non-referenced element', function () {

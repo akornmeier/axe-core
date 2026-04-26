@@ -1,10 +1,19 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, fixtureSetup, queryFixture } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('axe.utils.checkHelper', () => {
-  const { queryFixture, fixtureSetup } = axe.testUtils;
   function noop() {}
 
   it('should be a function', () => {
-    assert.isFunction(axe.utils.checkHelper);
+    expect(typeof axe.utils.checkHelper).toBe('function');
   });
 
   it('should accept 4 named parameters', () => {
@@ -12,7 +21,10 @@ describe('axe.utils.checkHelper', () => {
   });
 
   it('should return an object', () => {
-    assert.isObject(axe.utils.checkHelper());
+    expect(
+      typeof axe.utils.checkHelper() === 'object' &&
+        axe.utils.checkHelper() !== null
+    ).toBe(true);
   });
 
   describe('return value', () => {
@@ -59,14 +71,17 @@ describe('axe.utils.checkHelper', () => {
           expected = { monkeys: 'bananas' },
           helper = axe.utils.checkHelper(target, noop);
 
-        assert.notProperty(target, 'data');
+        expect(target).not.toHaveProperty('data');
         helper.data(expected);
         expect(target.data).toBe(expected);
       });
     });
 
     describe('relatedNodes', () => {
-      const fixture = document.getElementById('fixture');
+      let fixture: HTMLElement;
+      beforeEach(() => {
+        fixture = document.getElementById('fixture') as HTMLElement;
+      });
       const getSelector = node => node.selector;
 
       it('returns DqElements', () => {
@@ -74,7 +89,7 @@ describe('axe.utils.checkHelper', () => {
         const target = {};
         const helper = axe.utils.checkHelper(target, noop);
         helper.relatedNodes(fixture.children);
-        assert.instanceOf(target.relatedNodes[0], axe.utils.DqElement);
+        expect(target.relatedNodes[0]).toBeInstanceOf(axe.utils.DqElement);
       });
 
       it('should accept NodeList', () => {
@@ -166,9 +181,9 @@ describe('axe.utils.checkHelper', () => {
         const nodes = new axe.SerialVirtualNode({
           nodeName: 'div'
         });
-        assert.doesNotThrow(() => {
+        expect(() => {
           helper.relatedNodes(nodes);
-        });
+        }).not.toThrow();
         expect(target.relatedNodes).toHaveLength(0);
       });
     });

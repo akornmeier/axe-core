@@ -1,15 +1,27 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, queryFixture, shadowSupport } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('axe.utils.getScroll', function () {
-  var fixture = document.getElementById('fixture');
-  var queryFixture = axe.testUtils.queryFixture;
-  var shadowSupported = axe.testUtils.shadowSupport.v1;
+  let fixture: HTMLElement;
+  beforeEach(() => {
+    fixture = document.getElementById('fixture') as HTMLElement;
+  });
+  var shadowSupported = shadowSupport.v1;
 
   afterEach(function () {
     fixture.innerHTML = '';
   });
 
   it('is a function', function () {
-    assert.isFunction(axe.utils.getScroll);
+    expect(typeof axe.utils.getScroll).toBe('function');
   });
 
   it('returns undefined when element is not scrollable', function () {
@@ -66,7 +78,9 @@ describe('axe.utils.getScroll', function () {
     );
     var actual = axe.utils.getScroll(target.actualNode);
     expect(actual).toBeDefined();
-    assert.hasAllKeys(actual, ['elm', 'top', 'left']);
+    expect(Object.keys(actual).sort()).toEqual(
+      [...['elm', 'top', 'left']].sort()
+    );
     expect(actual.top).toBe(0);
     expect(actual.left).toBe(0);
   });
@@ -85,7 +99,9 @@ describe('axe.utils.getScroll', function () {
     );
     var actual = axe.utils.getScroll(target.actualNode);
     expect(actual).toBeDefined();
-    assert.hasAllKeys(actual, ['elm', 'top', 'left']);
+    expect(Object.keys(actual).sort()).toEqual(
+      [...['elm', 'top', 'left']].sort()
+    );
     expect(actual.top).toBe(0);
     expect(actual.left).toBe(0);
   });
@@ -123,7 +139,9 @@ describe('axe.utils.getScroll', function () {
       var target = axe.utils.querySelectorAll(tree, 'p')[0];
       var actual = axe.utils.getScroll(target.actualNode);
       expect(actual).toBeDefined();
-      assert.hasAllKeys(actual, ['elm', 'top', 'left']);
+      expect(Object.keys(actual).sort()).toEqual(
+        [...['elm', 'top', 'left']].sort()
+      );
       expect(actual.top).toBe(0);
       expect(actual.left).toBe(0);
     });

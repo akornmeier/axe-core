@@ -1,6 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, fixtureSetup } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('getOffset', () => {
-  const fixtureSetup = axe.testUtils.fixtureSetup;
   const getOffset = axe.commons.math.getOffset;
   const round = 0.2;
 
@@ -11,7 +20,7 @@ describe('getOffset', () => {
     `);
     const nodeA = fixture.children[1];
     const nodeB = fixture.children[3];
-    assert.closeTo(getOffset(nodeA, nodeB), 38, round);
+    expect(Math.abs(getOffset(nodeA, nodeB) - 38)).toBeLessThanOrEqual(round);
   });
 
   it('returns center to edge of square when one is undersized', () => {
@@ -21,7 +30,7 @@ describe('getOffset', () => {
     `);
     const nodeA = fixture.children[1];
     const nodeB = fixture.children[3];
-    assert.closeTo(getOffset(nodeA, nodeB), 45, round);
+    expect(Math.abs(getOffset(nodeA, nodeB) - 45)).toBeLessThanOrEqual(round);
   });
 
   it('returns center to corner of square when at a diagonal', () => {
@@ -31,7 +40,7 @@ describe('getOffset', () => {
     `);
     const nodeA = fixture.children[1];
     const nodeB = fixture.children[3];
-    assert.closeTo(getOffset(nodeA, nodeB), 63.6, round);
+    expect(Math.abs(getOffset(nodeA, nodeB) - 63.6)).toBeLessThanOrEqual(round);
   });
 
   it('returns null if nodeA is overlapped by nodeB', () => {
@@ -83,7 +92,9 @@ describe('getOffset', () => {
     `);
     const nodeA = fixture.children[1];
     const nodeB = fixture.children[3];
-    assert.closeTo(getOffset(nodeA, nodeB, 30), 20, round);
+    expect(Math.abs(getOffset(nodeA, nodeB, 30) - 20)).toBeLessThanOrEqual(
+      round
+    );
   });
 
   it('returns 0 if center of nodeA is enclosed by nodeB', () => {

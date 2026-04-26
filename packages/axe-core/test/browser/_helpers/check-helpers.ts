@@ -57,10 +57,19 @@ import './init-axe-global';
 // ESM default export from the engine. After this import resolves,
 // `lib/index.ts` has populated both `axeExport` and `globalThis.axe`, and
 // `load(defaultConfig)` has set `globalThis.axe._audit`.
-import axeExport from '../../../lib/index';
+//
+// IMPORTANT: We bind `axe` to `globalThis.axe`, NOT to `axeExport`. The two
+// are NOT the same object. Vite's `axeGlobalPlugin` injects `var axe = {};`
+// per chunk at build time and `lib/index.ts` then `Object.assign`s
+// `axeExport`'s function references onto that ambient global. Internal
+// engine writes (`axe._audit = ...`, `axe._tree = ...`, `axe._selectorData
+// = ...`) target the ambient global, NOT `axeExport`. Tests that read
+// internal state through the imported reference would see stale `undefined`
+// values if we bound to `axeExport` here. Sprint 5b B1.
+import '../../../lib/index';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const axe = axeExport as any;
+const axe = (globalThis as { axe: any }).axe;
 
 export interface MockCheckContext {
   _data: unknown;

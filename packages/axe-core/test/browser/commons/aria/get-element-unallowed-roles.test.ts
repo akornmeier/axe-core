@@ -1,6 +1,15 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, flatTreeSetup } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('aria.getElementUnallowedRoles', function () {
-  var flatTreeSetup = axe.testUtils.flatTreeSetup;
   var getElementUnallowedRoles = axe.commons.aria.getElementUnallowedRoles;
 
   it('returns unallowed role=application when used on a input elm', function () {
@@ -11,7 +20,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', role);
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node);
-    assert.isNotEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).not.toBe(0);
     expect(actual).toContain(role);
   });
 
@@ -21,7 +36,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('aria-pressed', '');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns unallowed role=menubar when used on a li elm', function () {
@@ -30,7 +51,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', role);
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node);
-    assert.isNotEmpty(actual, role);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).not.toBe(0);
   });
 
   it('returns empty on role=menuitemcheckbox with type=button on input elm', function () {
@@ -40,7 +67,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('type', 'button');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns unallowed role=option when used on section elm', function () {
@@ -49,7 +82,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', role);
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node);
-    assert.isNotEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).not.toBe(0);
     expect(actual).toContain(role);
   });
 
@@ -60,7 +99,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('type', 'radio');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns unallowed role=textbox on a input elm and  allowImplicit is true (default)', function () {
@@ -69,7 +114,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', role);
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node, true);
-    assert.isEmpty(actual, role);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns empty on role=button on div elm when role is not implicit and allowImplicit: false', function () {
@@ -77,7 +128,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'button');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node, false);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns unallowed role=contentinfo on footer elm and allowImplicit: false', function () {
@@ -85,7 +142,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'contentinfo');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node, false);
-    assert.isNotEmpty(actual, 'contentinfo');
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).not.toBe(0);
   });
 
   it('returns unallowed role=banner on header elm and allowImplicit:false', function () {
@@ -93,7 +156,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'banner');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node, false);
-    assert.isNotEmpty(actual, 'banner');
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).not.toBe(0);
   });
 
   it('returns empty on role=contentinfo on footer elm when allowImplicit:true', function () {
@@ -101,7 +170,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'contentinfo');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns empty on role=banner on header elm when allowImplicit:true', function () {
@@ -109,7 +184,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'banner');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns empty role=doc-backlink on anchor elm and allowImplicit:false', function () {
@@ -118,7 +199,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'doc-backlink');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node, false);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns empty on role=doc-backlink on anchor elm when allowImplicit:true', function () {
@@ -127,7 +214,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'doc-backlink');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns unallowed role=doc-backlink on anchor elm without href attr and allowImplicit:false', function () {
@@ -135,7 +228,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'doc-backlink');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node, false);
-    assert.isNotEmpty(actual, 'doc-backlink');
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).not.toBe(0);
   });
 
   it('returns unallowed role=doc-backlink on anchor elm without href attr and allowImplicit:true', function () {
@@ -143,7 +242,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'doc-backlink');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node);
-    assert.isNotEmpty(actual, 'doc-backlink');
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).not.toBe(0);
   });
 
   it('returns empty role=banner on header elm when using axe.configure and allowImplicit:false', function () {
@@ -161,7 +266,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'banner');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node, false);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns empty role=contentinfo on footer elm when using axe.configure and allowImplicit:false', function () {
@@ -179,7 +290,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'contentinfo');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node, false);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns unallowed role=row when when used on TR element and allowImplicit:false', function () {
@@ -187,7 +304,13 @@ describe('aria.getElementUnallowedRoles', function () {
     node.setAttribute('role', 'row');
     flatTreeSetup(node);
     var actual = getElementUnallowedRoles(node, false);
-    assert.isNotEmpty(actual, 'row');
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).not.toBe(0);
   });
 
   it('returns empty on type=checkbox and aria-pressed attr on SerialVirtualNode with a input elm', function () {
@@ -199,7 +322,13 @@ describe('aria.getElementUnallowedRoles', function () {
       }
     });
     var actual = getElementUnallowedRoles(vNode);
-    assert.isEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).toBe(0);
   });
 
   it('returns unallowed role=application for a SerialVirtualNode with a input elm', function () {
@@ -212,7 +341,13 @@ describe('aria.getElementUnallowedRoles', function () {
       }
     });
     var actual = getElementUnallowedRoles(vNode);
-    assert.isNotEmpty(actual);
+    expect(
+      actual == null
+        ? 0
+        : typeof actual === 'string' || Array.isArray(actual)
+          ? actual.length
+          : Object.keys(actual).length
+    ).not.toBe(0);
     expect(actual).toContain('application');
   });
 });

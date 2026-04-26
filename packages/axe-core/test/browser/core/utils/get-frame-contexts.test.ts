@@ -1,12 +1,24 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, shadowSupport } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('utils.getFrameContexts', function () {
   var getFrameContexts = axe.utils.getFrameContexts;
-  var shadowSupported = axe.testUtils.shadowSupport.v1;
-  var fixture = document.querySelector('#fixture');
-
+  var shadowSupported = shadowSupport.v1;
+  let fixture: HTMLElement;
+  beforeEach(() => {
+    fixture = document.getElementById('fixture') as HTMLElement;
+  });
   it('returns an empty array if the page has no frames', function () {
     var frameContext = getFrameContexts();
-    assert.isArray(frameContext);
+    expect(Array.isArray(frameContext)).toBe(true);
     expect(frameContext).toHaveLength(0);
   });
 

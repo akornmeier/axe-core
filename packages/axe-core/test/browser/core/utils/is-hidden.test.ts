@@ -1,4 +1,14 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, shadowSupport } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 function createContentHidden() {
   var group = document.createElement('div');
   group.innerHTML =
@@ -15,15 +25,18 @@ function makeShadowTreeHidden(node) {
 }
 
 describe('axe.utils.isHidden', function () {
-  var fixture = document.getElementById('fixture');
-  var shadowSupported = axe.testUtils.shadowSupport.v1;
+  let fixture: HTMLElement;
+  beforeEach(() => {
+    fixture = document.getElementById('fixture') as HTMLElement;
+  });
+  var shadowSupported = shadowSupport.v1;
 
   afterEach(function () {
     fixture.innerHTML = '';
   });
 
   it('should be a function', function () {
-    assert.isFunction(axe.utils.isHidden);
+    expect(typeof axe.utils.isHidden).toBe('function');
   });
 
   it('should return false on detached elements', function () {

@@ -68,9 +68,13 @@ export default [
   }),
 
   // Browser tests (real browser via Playwright Chromium)
-  // Phase 5 #17: v8 coverage provider does not support multiple browser instances,
-  // so coverage is disabled for this project. Coverage is collected from the unit
-  // project only; browser tests are validated via vitest run without coverage.
+  // Sprint 5b B3: v8 coverage provider is disabled here because it rejects the
+  // workspace if ANY project has multiple instances (integration: chromium+firefox).
+  // Attempted Options A (enable browser coverage) and B (per-project merge), but
+  // both failed due to root-level v8 validation. Workaround: measure unit-only
+  // coverage at 4% threshold (lib/core tested ~30%, but checks/rules at 0%).
+  // Combined coverage (unit+browser) measured manually at ~46% when both complete.
+  // Proper fix: migrate to Istanbul provider or wait for Vitest 5 v8 support.
   defineProject({
     resolve: { alias: ALIASES },
     define: DEFINE,

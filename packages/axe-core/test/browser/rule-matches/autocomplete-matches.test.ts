@@ -1,7 +1,19 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, queryFixture } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('autocomplete-matches', function () {
-  const fixture = document.getElementById('fixture');
-  const queryFixture = axe.testUtils.queryFixture;
+  let fixture: HTMLElement;
+  beforeEach(() => {
+    fixture = document.getElementById('fixture') as HTMLElement;
+  });
   const rule = axe.utils.getRule('autocomplete-valid');
 
   afterEach(function () {
@@ -9,7 +21,7 @@ describe('autocomplete-matches', function () {
   });
 
   it('is a function', function () {
-    assert.isFunction(rule.matches);
+    expect(typeof rule.matches).toBe('function');
   });
 
   it('returns true for input elements', function () {

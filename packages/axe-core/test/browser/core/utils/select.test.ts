@@ -1,15 +1,23 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: ReferenceError: assert is not defined
+import { axe, fixtureSetup } from '@helpers/check-helpers';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 describe('axe.utils.select', () => {
   const $id = id => document.getElementById(id);
   const { Context } = axe._thisWillBeDeletedDoNotUse.base;
-  const { fixtureSetup } = axe.testUtils;
-
   it('should be a function', () => {
-    assert.isFunction(axe.utils.select);
+    expect(typeof axe.utils.select).toBe('function');
   });
 
   it('should return an array', () => {
-    assert.isArray(axe.utils.select('div', { include: [] }));
+    expect(Array.isArray(axe.utils.select('div', { include: [] }))).toBe(true);
   });
 
   describe('selector', () => {
@@ -43,7 +51,13 @@ describe('axe.utils.select', () => {
         axe._tree
       );
       const result = axe.utils.select('.bananas', context);
-      assert.isEmpty(result);
+      expect(
+        result == null
+          ? 0
+          : typeof result === 'string' || Array.isArray(result)
+            ? result.length
+            : Object.keys(result).length
+      ).toBe(0);
     });
 
     it('should pick the deepest exclude/include - exclude winning', () => {
@@ -124,7 +138,10 @@ describe('axe.utils.select', () => {
     );
 
     const result = axe.utils.select('.bananas', context);
-    expect(result.map(n => n.actualNode)).toEqual([$id('target1'), $id('target2')]);
+    expect(result.map(n => n.actualNode)).toEqual([
+      $id('target1'),
+      $id('target2')
+    ]);
     expect(result.length).toBe(2);
   });
 
