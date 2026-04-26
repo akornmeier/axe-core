@@ -96,9 +96,9 @@ export default [
   // Integration tests (full axe.run() against fixtures via Playwright,
   // exercised in both Chromium and Firefox).
   //
-  // NOTE: `test/integration/` currently contains LEGACY *.js fixture/spec
-  // files served by Karma. The `*.test.ts` glob picks up zero files until
-  // task 11 of the Phase 3 plan migrates them. That is the correct state.
+  // Sprint 5c Wave A: a Node http fixture server (`_helpers/fixture-server.ts`)
+  // is started by `_helpers/global-setup.ts` and exposes its base URL to
+  // tests via Vitest's typed `inject('axeFixtureUrl')` channel.
   //
   // Phase 5 #17: v8 coverage provider does not support multiple browser instances,
   // so coverage is disabled for this project.
@@ -109,6 +109,7 @@ export default [
       name: 'integration',
       include: ['test/integration/**/*.test.ts'],
       setupFiles: SETUP_FILES,
+      globalSetup: ['./test/integration/_helpers/global-setup.ts'],
       coverage: {
         enabled: false
       },

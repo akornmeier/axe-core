@@ -16,6 +16,21 @@ function flattenTitles(test) {
   runner.on('end', function () {
     window.mochaResults = runner.stats;
     window.mochaResults.reports = failedTests;
+    // Sprint 5c Wave A: bubble results to the parent window so the Vitest
+    // page-fixture-runner can harvest them across the cross-origin boundary.
+    // Target origin is `'*'` because the fixture server binds to a dynamic
+    // port that the embedded fixture cannot know in advance.
+    // Harmless under the legacy Selenium driver (no parent listener exists).
+    if (window.parent && window.parent !== window) {
+      try {
+        window.parent.postMessage(
+          { type: 'axe-fixture-results', results: window.mochaResults },
+          '*'
+        );
+      } catch (e) {
+        // Ignore: structured-clone of mochaResults may fail on exotic shapes.
+      }
+    }
   });
   runner.on('fail', function logFailure(test, err) {
     failedTests.push({
