@@ -405,3 +405,29 @@ For each cluster:
 3. **Decide** per page: real product bug (fix in `lib/`), fixture drift (rewrite fixture as proper `axe.run` integration test — Phase 4 already plans this for the full-suite per Sprint 5c §"Notes"), or environmental issue (extend the harness).
 
 Together with the 19 ACT skipTests entries, this brings the Sprint 5c full carryover surface to **36 parked tests across the integration project**, all rooted in pre-existing axe-side regressions or harness-equivalence mismatches that Phase 4 / PRD-04 §5.1 owns.
+
+---
+
+## Companion follow-up: Pre-existing oxlint debt in `test/`
+
+Surfaced when running `pnpm validate` after Sprint 5c. The repo-root lint task fails with **15 errors and 1090 warnings** across 825 files. None of the errors are in Sprint 5c-authored files — they predate the sprint. The lint job in CI has presumably been red on `develop` too, but the gate was never turned blocking on the workflow.
+
+### Categories (15 errors total)
+
+| Rule | Sample location | Cluster |
+|---|---|---|
+| `jest(no-standalone-expect)` | `test/browser/checks/navigation/region.test.ts:484` | `expect()` calls inside helper functions called from `it` blocks; false positive against `(condition ? it : it.skip)('...', () => { ... })` patterns. |
+| `jest(no-disabled-tests)` | `test/browser/commons/table/is-data-table.test.ts:416` | Intentional `it.skip(...)` for sauce-labs flake. |
+| `jest(expect-expect)` | various | Tests that call helper `assert` functions instead of inline `expect`. |
+| `jest(require-to-throw-message)` / `jest(valid-expect)` / `jest(valid-title)` | various | Pre-existing assertion-style drift. |
+| `vitest(warn-todo)` | various | `it.todo(...)` markers that are intentional Phase 4 carryovers. |
+| `no-var` / `no-constant-condition` / `no-constant-binary-expression` / `no-extra-boolean-cast` / `no-unused-expressions` / `no-misleading-character-class` / `no-unassigned-vars` | various | Stale code patterns from pre-modernization Karma days. |
+
+### Sprint 5c response
+
+- Sprint 5c-authored files were cleaned: the 3 violations in `test/unit/virtual-rules.test.ts` and `test/unit/jsdom-smoke.test.ts` are fixed (replaced conditional `it` guard with top-level `expect`; suppressed the intentional `.todo` carryover with `oxlint-disable-next-line`).
+- Sprint 5c does NOT touch the other 12 errors in pre-existing files. Phase 4 / PRD-04 cleanup pass owns them.
+
+### Phase 4 fix
+
+A single sweep with `oxlint --fix` (or hand-edits for the false-positive `jest(no-standalone-expect)` cases) would clear most of these. Some require small refactors (e.g., extracting helper-function assertions into the `it` block, or converting the `(condition ? it : it.skip)` pattern to `it.skipIf(!condition)`).

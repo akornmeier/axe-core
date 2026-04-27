@@ -60,6 +60,7 @@ describe('jsdom axe-core smoke', () => {
   // shapes) all rely on `new JSDOM(...)` instances whose `Node` constructor
   // is cross-realm to the one axe captured. They already fail on the
   // legacy harness; Phase 4 reworks them.
+  // oxlint-disable-next-line vitest/warn-todo
   it.todo(
     'covers axe.setup / axe.commons / isCurrentPageLink (Phase 4 carryover)'
   );

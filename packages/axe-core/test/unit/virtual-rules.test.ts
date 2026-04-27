@@ -28,6 +28,7 @@ import {
   beforeAll,
   beforeEach,
   describe,
+  expect,
   it
 } from 'vitest';
 
@@ -76,13 +77,14 @@ afterAll(() => {
   delete g.axe;
 });
 
+// Sanity-check that fixture discovery actually found something. If this
+// goes red, the glob path drifted and the suite below silently runs zero
+// tests.
+it('discovers virtual-rule fixtures', () => {
+  expect(fixtureFiles.length).toBeGreaterThan(0);
+});
+
 describe('virtual-rule node tests', () => {
-  if (fixtureFiles.length === 0) {
-    it('discovered zero fixtures (regression — expected ~47)', () => {
-      throw new Error(`No virtual-rule fixtures found in ${fixtureDir}`);
-    });
-    return;
-  }
   // Each `requireCjs(file)` evaluates a fixture whose top level is a
   // `describe(...)` call — Vitest collects those nested suites.
   for (const file of fixtureFiles) {
