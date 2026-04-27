@@ -126,13 +126,13 @@ Phase 4 picks these up. All are documented in `specs/phase-04-a3-carryover-bugs.
 5. ✅ `test/get-webdriver.js` deleted.
 6. ✅ R2-revised: `selenium-webdriver`, `chromedriver`, `start-server-and-test`, `http-server`, `serve-handler` all absent. `mocha`, `chai`, `sinon`, `jquery` retained (R2; tracked Phase 4).
 7. ✅ All 15 retired scripts absent from `package.json`.
-8. ✅ `.github/workflows/test.yml` defines `unit`, `browser`, `integration`, `typecheck`; 9 obsolete jobs removed.
+8. ✅ `.github/workflows/test.yml` defines `unit`, `browser`, `integration`, `typecheck`; 9 obsolete jobs removed. `.github/workflows/nightly-tests.yml` updated to use the new Vitest scripts (3 legacy jobs collapsed to 1 `vitest_latest_upstream`).
 9. ✅ `pnpm --filter axe-core test` green; `test:tsc` clean.
-10. _(`pnpm validate` repo-root check pending the next CI run.)_
-11. ✅ `specs/phase-04-a3-carryover-bugs.md` exists with all four bug clusters + three companion follow-ups (vendor flake, locale drift, jsdom cross-realm). No edits to `lib/checks/`, `lib/rules/`, `lib/commons/`, or `lib/standards/`.
+10. ⚠️ **Partial.** `pnpm validate` exits 1 due to **12 pre-existing lint errors** in files Sprint 5c never touched (`region.test.ts`, `is-data-table.test.ts`, `pollyfills-elements-from-point.test.ts`, plus various Phase 1 unit stubs). Documented as a Phase 4 cleanup carryover. typecheck and format:check are green; the four Vitest projects are green. Sprint 5c-authored files are themselves lint-clean.
+11. ✅ `specs/phase-04-a3-carryover-bugs.md` exists with all four bug clusters + four companion follow-ups (vendor flake, locale drift, jsdom cross-realm, full-suite assertion drift, ACT testcase drift, oxlint debt). No edits to `lib/checks/`, `lib/rules/`, `lib/commons/`, or `lib/standards/`.
 12. ✅ This document.
 
-## Commits (10 — `29c08c44..HEAD`)
+## Commits (13 — `29c08c44..HEAD`)
 
 ```
 ad4f1edf chore(test): land Vitest integration harness for Sprint 5c
@@ -145,9 +145,10 @@ c4ef6935 test(axe-core): migrate APG suite to Vitest integration project
 e1662269 test(axe-core): migrate integration/full page-driven suite to Vitest
 efe02d2f chore(axe-core): retire Selenium devDep cluster and legacy test files
 81a40f4a ci: collapse to four-job target shape (unit/browser/integration/typecheck)
+dedb5d16 docs(specs): document Sprint 5c outcomes; mark Phase 3 complete
+d7adb146 chore: unblock pnpm validate format gate; clean Sprint 5c lint debt
+734cd45f ci: update nightly tests to use new Vitest scripts
 ```
-
-Plus the results doc + phase-tracker updates that will land alongside this file.
 
 ## Phase 3 — closed
 
