@@ -6,3 +6,10 @@
 // Phase 3, Sprint 5c — Wave A harness.
 
 export const FIXTURE_URL_KEY = 'axeFixtureUrl' as const;
+
+/**
+ * Cross-process value passing for fixture indices that require Node-side
+ * filesystem access (glob, fs). Values are populated by `global-setup.ts`
+ * and consumed by integration tests via `inject(...)`.
+ */
+export const APG_EXAMPLES_KEY = 'axeApgExamples' as const;
