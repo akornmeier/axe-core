@@ -298,3 +298,67 @@ When upstream Vitest 4.2+ ships orchestrator reconnection (or we migrate to Vite
 3. **File** an upstream issue against `vitest-dev/vitest` if one isn't already tracking this — link the cascade signature, the per-attempt flake rate, and our wrapper's heuristics so they can land a real fix.
 
 **Why this is not a product bug.** The wrapper retries are bounded, scoped, and gated on a transport-layer signature only. Every test that runs to completion still passes; the zero-false-positive guarantee is unaffected. This is shipping infrastructure to absorb a vendor flake, not papering over a real defect.
+
+---
+
+## Companion follow-up: Locale schema drift (build-system bug)
+
+Surfaced during Sprint 5c Wave B's `test-locales.js` migration. Captured here because it shares a "real bug, deferred to Phase 4" character with the four parked clusters above.
+
+### Symptom
+
+Running `pnpm --filter axe-core test:locales` (legacy) or the new `test/unit/locales.test.ts` (Sprint 5c) shows 18 of 19 locale JSON files rejected by `axe.configure({ locale })` with errors like:
+
+```
+Locale provided for unknown check: "autocomplete-appropriate"
+Locale provided for unknown check: "aria-busy"
+Locale provided for unknown check: "fallbackrole"
+```
+
+Only `nl.json` configures cleanly. Every other locale in `packages/axe-core/locales/` references at least one orphan check — a check whose source still lives in `lib/checks/{aria,forms}/` but which no rule's `any`/`all`/`none` array references. The Vite build correctly drops orphan checks from `dist/axe.{js,cjs,mjs}`; the locale strings for them remain.
+
+### Why this is faithfully preserved, not fixed
+
+Sprint 5c's job is to migrate runners, not edit locale JSON or product code. The new `test/unit/locales.test.ts` makes the schema drift a green test by inverting the assertion on the 18 known-broken locales (each is expected to throw an `Locale provided for unknown check` error). The legacy `test-locales.js` already failed the same way on this branch — the migration mirrors that exact state.
+
+### Phase 4 fix
+
+Either path works:
+
+1. **Prune the orphan refs from each locale.** Lowest-risk; pure data edit. Touches 18 files in `packages/axe-core/locales/`.
+2. **Restore the orphan checks** by referencing them from a rule (or remove the orphan check JSON files and their localized strings together).
+
+Once the locale files are clean, the `KNOWN_ORPHAN_LOCALES` allowlist in `test/unit/locales.test.ts` should shrink to the empty set, and the inverted-assertion `it.each(orphanLocales)` block deletes itself.
+
+---
+
+## Companion follow-up: jsdom cross-realm `Node` mismatch in unit tests
+
+Surfaced during Sprint 5c Wave B's `test/node/jsdom.js` and `test/node/node.js` migrations. The legacy harness exhibited the same regression — most jsdom unit tests already failed on this branch (`pnpm test:jsdom` reports 8 failing).
+
+### Symptom
+
+`axe.run(domEl, options)` throws `TypeError: axe.run arguments are invalid` when `domEl` comes from a freshly-constructed `new JSDOM(domStr).window.document` and the test is running in a Vitest jsdom environment.
+
+The trigger is in `lib/core/utils/is-context.ts:19`:
+
+```ts
+contextList instanceof window.Node
+```
+
+`window.Node` here is the constructor axe captured at module load time — i.e., the Vitest-provided jsdom env's Node. A `documentElement` from a fresh `new JSDOM(...)` instance has its OWN `Node` constructor, not the captured one, so the `instanceof` check fails (cross-realm). Same problem in pure-node + manual JSDOM: axe captures `global` as its window at load time, so `window.Node` is undefined when the `instanceof` runs.
+
+`axe.setup(...)` and `axe.commons.aria.getRole(...)` exhibit related failures: `axe._tree` is undefined and `setupGlobals` throws `ReferenceError: document is not defined`.
+
+### Why this is faithfully preserved, not fixed
+
+The legacy `test/node/jsdom.js` covers ~10 cases that touch this path. 8 of them already fail on the current `chore/modernize-phase-5` branch. Sprint 5c's `jsdom-smoke.test.ts` migrates the smoke shape to the Vitest-provided jsdom document (which works) and parks the remaining 8 cases as `it.todo` with this carryover note.
+
+### Phase 4 fix
+
+Refactor `is-context.ts` and the `axe.setup`/`commons` codepaths so they:
+
+1. Detect the actual realm of the passed-in DOM nodes via `node.ownerDocument?.defaultView?.Node` rather than the axe-captured `window.Node`.
+2. Tolerate `axe.run` being called multiple times against documents from different jsdom realms within the same Node process (the legacy multi-`new JSDOM(...)` test pattern).
+
+Phase 4 should also decide whether the `nodeToDeps` jsdom-version matrix in legacy `test/node/node.js` needs to come back. Sprint 5c dropped it (per #16-D); if the Phase 4 jsdom rework finds Node-version-specific code paths, the matrix becomes worth restoring.
