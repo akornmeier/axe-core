@@ -18,9 +18,6 @@ concurrency:
 
 permissions: {}
 
-env:
-  CHROME_DEVEL_SANDBOX: /opt/google/chrome/chrome-sandbox
-
 jobs:
   lint:
     runs-on: ubuntu-24.04
@@ -71,10 +68,6 @@ jobs:
         # Run from repo root so Turborepo builds workspace dependencies in
         # the right order — `@axe-core/schemas` must be built before
         # `axe-core` so its `dist/index.d.ts` is on disk for tsc to resolve.
-        # Building from packages/axe-core/ alone (the prior behavior) only
-        # ran Vite for axe-core and skipped schemas, which is why
-        # test_chrome / test_firefox failed at `tsc` with "Cannot find
-        # module '@axe-core/schemas'".
         run: pnpm run build
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
@@ -82,81 +75,88 @@ jobs:
           path: packages/axe-core/dist/axe.js
           retention-days: 1
 
-  test_chrome:
+  # Vitest unit project — Node.js, no browser. Source-of-truth coverage
+  # gate (currently 4% threshold; lifts when browser/integration coverage
+  # reconciles, see Phase 5 #17).
+  unit:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    env:
-      DISPLAY: :99
-    steps:
-      - *checkout
-      - &install-deps-with-xvfb
-        name: Install Deps
-        uses: ./.github/actions/install-deps
-        id: install-deps
-        with:
-          start-xvfb: ${{ env.DISPLAY }}
-      - *build
-      - name: Run Tests Against Chrome
-        env:
-          CHROME_BIN: ${{ steps.install-deps.outputs.chrome-path }}
-          CHROMEDRIVER_BIN: ${{ steps.install-deps.outputs.chromedriver-path }}
-        run: pnpm run test -- --browsers Chrome
-        working-directory: packages/axe-core
-      - name: Run Chrome Integration Tests
-        env:
-          CHROME_BIN: ${{ steps.install-deps.outputs.chrome-path }}
-          CHROMEDRIVER_BIN: ${{ steps.install-deps.outputs.chromedriver-path }}
-        run: pnpm run test:integration:chrome
-        working-directory: packages/axe-core
-
-  test_firefox:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    env:
-      DISPLAY: :99
-    steps:
-      - *checkout
-      - *install-deps-with-xvfb
-      - *build
-      - name: Run Tests Against Firefox
-        env:
-          FIREFOX_BIN: ${{ steps.install-deps.outputs.firefox-path }}
-        run: pnpm run test -- --browsers Firefox
-        working-directory: packages/axe-core
-      - name: Run Firefox Integration Tests
-        env:
-          FIREFOX_BIN: ${{ steps.install-deps.outputs.firefox-path }}
-        run: pnpm run test:integration:firefox
-        working-directory: packages/axe-core
-
-  # Vitest pilot: runs the Sprint 1 migrated subset (unit + browser + integration)
-  # in parallel with the Karma jobs above. Strangler-fig migration — both stacks
-  # must remain green for Sprints 2–3 of the Phase 3 plan.
-  vitest_pilot:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
     steps:
       - *checkout
       - *enable-corepack
       - *setup-node
       - *install-deps-directly
       - *build
-      - name: Cache Playwright browsers
+      - name: Run Vitest Unit Project
+        run: pnpm run test:vitest:unit
+        working-directory: packages/axe-core
+
+  # Vitest browser project — single-instance Chromium via Playwright.
+  # Wrapped by `node ./test/setup/run-vitest-browser.mjs` to retry on the
+  # known birpc-disconnect cascade in @vitest/browser-playwright@4.1.5
+  # (vendor flake; see phase-04-a3-carryover-bugs.md).
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - *checkout
+      - *enable-corepack
+      - *setup-node
+      - *install-deps-directly
+      - *build
+      - &cache-playwright
+        name: Cache Playwright browsers
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
-      - name: Install Playwright browsers
+      - &install-playwright
+        name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium firefox
         working-directory: packages/axe-core
-      - name: Install Playwright system deps (cache hit)
+      - &install-playwright-deps
+        name: Install Playwright system deps (cache hit)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium firefox
         working-directory: packages/axe-core
-      - name: Run Vitest Pilot Suite
-        run: pnpm run test:vitest
+      - name: Run Vitest Browser Project
+        run: pnpm run test:vitest:browser
+        working-directory: packages/axe-core
+
+  # Vitest integration project — Chromium + Firefox via Playwright.
+  # Drives ACT-rules, APG, and integration/full/* fixtures through the
+  # in-tree fixture server (test/integration/_helpers/fixture-server.ts).
+  integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - *checkout
+      - *enable-corepack
+      - *setup-node
+      - *install-deps-directly
+      - *build
+      - *cache-playwright
+      - *install-playwright
+      - *install-playwright-deps
+      - name: Run Vitest Integration Project
+        run: pnpm run test:vitest:integration
+        working-directory: packages/axe-core
+
+  # Static type-check — separate job because tsc parallelizes poorly with
+  # the test runs and a fast type signal is valuable on every PR.
+  typecheck:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - *checkout
+      - *enable-corepack
+      - *setup-node
+      - *install-deps-directly
+      - *build
+      - name: Run Type Check
+        run: pnpm run test:tsc
         working-directory: packages/axe-core
 
   # Run examples under `doc/examples`
@@ -174,77 +174,6 @@ jobs:
         run: pnpm run test:examples
         working-directory: packages/axe-core
 
-  test_act:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    needs: build
-    steps:
-      - *checkout
-      - *install-deps
-      - &restore-axe-build
-        name: Restore axe build
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
-        with:
-          name: axe-core
-          path: packages/axe-core/dist
-      - name: Run ACT Tests
-        env:
-          CHROME_BIN: ${{ steps.install-deps.outputs.chrome-path }}
-          CHROMEDRIVER_BIN: ${{ steps.install-deps.outputs.chromedriver-path }}
-        run: pnpm run test:act
-        working-directory: packages/axe-core
-
-  test_aria_practices:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    needs: build
-    steps:
-      - *checkout
-      - *install-deps
-      - *restore-axe-build
-      - name: Run ARIA Practices Tests
-        env:
-          CHROME_BIN: ${{ steps.install-deps.outputs.chrome-path }}
-          CHROMEDRIVER_BIN: ${{ steps.install-deps.outputs.chromedriver-path }}
-        run: pnpm run test:apg
-        working-directory: packages/axe-core
-
-  test_locales:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    needs: build
-    steps:
-      - *checkout
-      - *install-deps
-      - *restore-axe-build
-      - name: Run Locale Tests
-        run: pnpm run test:locales
-        working-directory: packages/axe-core
-
-  test_virtual_rules:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    needs: build
-    steps:
-      - *checkout
-      - *install-deps
-      - *restore-axe-build
-      - name: Run Virtual Rules Tests
-        run: pnpm run test:virtual-rules
-        working-directory: packages/axe-core
-
-  test_jsdom:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    needs: build
-    steps:
-      - *checkout
-      - *install-deps
-      - *restore-axe-build
-      - name: Run jsdom Tests
-        run: pnpm run test:jsdom
-        working-directory: packages/axe-core
-
   build_api_docs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -253,17 +182,6 @@ jobs:
       - *install-deps
       - name: Run API Docs Build
         run: pnpm run api-docs
-        working-directory: packages/axe-core
-
-  test_rule_help_version:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    if: ${{ github.ref_name == 'master' }}
-    steps:
-      - *checkout
-      - *install-deps
-      - name: Run Rule Help Version Tests
-        run: pnpm run test:rule-help-version
         working-directory: packages/axe-core
 
   sri-validate:
@@ -275,7 +193,11 @@ jobs:
     steps:
       - *checkout
       - *install-deps
-      - *restore-axe-build
+      - name: Restore axe build
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: axe-core
+          path: packages/axe-core/dist
       - name: Validate Subresource Integrity
         run: pnpm run sri-validate
         working-directory: packages/axe-core
