@@ -362,3 +362,21 @@ Refactor `is-context.ts` and the `axe.setup`/`commons` codepaths so they:
 2. Tolerate `axe.run` being called multiple times against documents from different jsdom realms within the same Node process (the legacy multi-`new JSDOM(...)` test pattern).
 
 Phase 4 should also decide whether the `nodeToDeps` jsdom-version matrix in legacy `test/node/node.js` needs to come back. Sprint 5c dropped it (per #16-D); if the Phase 4 jsdom rework finds Node-version-specific code paths, the matrix becomes worth restoring.
+
+---
+
+## Companion follow-up: ACT testcase failures (color-algebra echo)
+
+Surfaced during Sprint 5c Wave B ACT migration. 13 wcag-act-rules testcases under three rules fail with `color-contrast` / `avoid-inline-spacing` violations on fixtures the upstream marks as `passed` or `inapplicable`:
+
+| ACT rule | Spec file | testcase IDs (skipTests) | Likely root cause |
+|---|---|---:|---|
+| `afw4f7` (Text minimum contrast) | `test/integration/act-rules/text-contrast-afw4f7.test.ts` | 9 | Color-algebra carryover — Cluster 2 sibling. |
+| `09o5cg` (Text enhanced contrast) | `test/integration/act-rules/text-contrast-enhanced-09o5cg.test.ts` | 8 | Same — same testcase IDs cloned under 09o5cg's directory. |
+| `78fd32` (Line height not !important) | `test/integration/act-rules/line-height-not-important-78fd32.test.ts` | 2 | `avoid-inline-spacing` rule regression, possibly related but distinct. |
+
+The Sprint 5c ACT migration handles them with the existing `skipTests` mechanism (already used in the legacy `act-runner.js` for `2ee8b8`). The skipped testcases are documented in their `.test.ts` files with explicit cross-references to this Phase 4 carryover.
+
+**Phase 4 fix.** Once the color-algebra carryover lands (PRD-04 §5.1) and the `avoid-inline-spacing` regression is investigated, the `skipTests` arrays in the three affected ACT files shrink to whatever genuine upstream-issue references remain (currently just `2ee8b8`'s issue #4311). Each entry in this table is a candidate for removal — re-run ACT and the testcase should now pass on its own.
+
+**Note on testcaseId uniqueness.** The wcag-act-rules schema reuses `testcaseId` across rules (each rule gets its own copy of the same fixture HTML at `testcases/<ruleId>/<testcaseId>.html`). When pruning skipTests in Phase 4, do it per-rule, not globally — a `testcaseId` listed under both `afw4f7` and `09o5cg` is two distinct testcases that pass/fail independently.

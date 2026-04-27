@@ -13,3 +13,5 @@ export const FIXTURE_URL_KEY = 'axeFixtureUrl' as const;
  * and consumed by integration tests via `inject(...)`.
  */
 export const APG_EXAMPLES_KEY = 'axeApgExamples' as const;
+
+export const ACT_TESTCASES_KEY = 'axeActTestcases' as const;
