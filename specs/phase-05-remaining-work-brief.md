@@ -11,17 +11,31 @@
 - **Phase 0 (monorepo):** complete
 - **Phase 1 (TS strict + Zod, PRD-01 §4.1 carryovers):** complete (`031008eb` closed memoize / valid-langs / uuid)
 - **Phase 2 (Vite + Rolldown):** complete
-- **Phase 3 (Vitest + Playwright):** Sprint 4b landed; **Sprint 5 not started**
-- **Phase 4 (rules/checks optimization):** not started
+- **Phase 3 (Vitest + Playwright):** **complete** — Sprint 5c landed 2026-04-27. See `specs/phase-05-sprint-5c-results.md`.
+- **Phase 4 (rules/checks optimization):** not started — all carryovers documented in `specs/phase-04-a3-carryover-bugs.md`.
 
-Test counts at `b9da71e2`:
+### Sprint 5 history
+
+| Sprint | Focus | Status |
+|---|---|---|
+| 5a | Bulk browser-test migration | ✅ Landed |
+| 5b | Karma retirement + #16-A keystone | ✅ Landed (PR #4 merged at `b9da71e2`) |
+| 5c | Preserved-suite migration (ACT / APG / full / node-smoke) + Selenium retire + CI consolidation | ✅ Landed (this branch — pending merge) |
+
+Test counts at Sprint 5c close:
 
 ```
-Test Files  244 passed | 33 skipped (277)
-Tests      2475 passed | 39 skipped | 66 todo (2648)
-.test.ts.todo files remaining: 148 (all under test/browser/)
-74 check tests still on UMD-hybrid path (gated on Sprint 5 #16-A)
+unit         Tests  589 passed | 2 skipped | 61 todo (720)
+browser      Tests  2519 passed | 38 skipped | 6 todo (2563)
+integration  Tests  1540 passed | 56 skipped | 38 todo (1634)
+Aggregate    4,648 passing | 96 skipped | 105 todo across 4,849 tests.
 ```
+
+Vs. baseline `b9da71e2`: **+2,171 passing tests** (+88%).
+
+### Section 2 (Sprint 5 task list) — closed.
+
+The detailed Sprint 5 task list below was the working plan during Sprints 5a–5c. All tasks are now complete; the file is preserved as historical record. New work tracks against `phase-04-a3-carryover-bugs.md` and `PRD-04-rules-checks-optimization.md`.
 
 ---
 
