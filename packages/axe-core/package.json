@@ -89,7 +89,7 @@
     "test:tsc": "tsc",
     "test:vitest": "vitest run",
     "test:vitest:unit": "vitest run --project unit",
-    "test:vitest:browser": "vitest run --project browser",
+    "test:vitest:browser": "node ./test/setup/run-vitest-browser.mjs",
     "test:vitest:integration": "vitest run --project integration",
     "test:vitest:watch": "vitest",
     "integration": "node test/integration/full/test-webdriver.js",
