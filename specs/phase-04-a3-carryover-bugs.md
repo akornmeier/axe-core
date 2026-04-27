@@ -380,3 +380,28 @@ The Sprint 5c ACT migration handles them with the existing `skipTests` mechanism
 **Phase 4 fix.** Once the color-algebra carryover lands (PRD-04 §5.1) and the `avoid-inline-spacing` regression is investigated, the `skipTests` arrays in the three affected ACT files shrink to whatever genuine upstream-issue references remain (currently just `2ee8b8`'s issue #4311). Each entry in this table is a candidate for removal — re-run ACT and the testcase should now pass on its own.
 
 **Note on testcaseId uniqueness.** The wcag-act-rules schema reuses `testcaseId` across rules (each rule gets its own copy of the same fixture HTML at `testcases/<ruleId>/<testcaseId>.html`). When pruning skipTests in Phase 4, do it per-rule, not globally — a `testcaseId` listed under both `afw4f7` and `09o5cg` is two distinct testcases that pass/fail independently.
+
+---
+
+## Companion follow-up: Full-suite assertion drift (17 fixtures parked)
+
+Surfaced during Sprint 5c Wave B's full-suite migration of `test/integration/full/`. The fixtures themselves are unchanged — same HTML, same inline mocha+chai, same axe build — but 17 of 131 pages produce real mocha assertion failures or no test output under the migrated harness. Each is parked as `it.todo` in its `page.test.ts` with a back-reference to this doc.
+
+| Cluster | Pages | Likely root cause |
+|---|---|---|
+| Color-algebra echo | `contrast/{code-highlighting,memory,shadow-dom,sticky-header}.html`, `contrast-enhanced/simple.html`, `incomplete/color-contrast.html` | Same as Cluster 2 / PRD-04 §5.1. Color algebra regression. |
+| UMD wrapper detection | `umd/{umd-define,umd-module-exports}.html` | Fixtures assert `define`/`module.exports` shape that depends on environment-specific UMD detection. Vitest browser tester is neither AMD nor CJS, so the UMD branch axe takes is different from the Selenium branch. Phase 4 should decide whether these fixtures still test something meaningful or should be retired. |
+| run-partial / serializer / patch / preload-cssom | `run-partial/{after-method,context-size-focusable}.html`, `serializer/serializer.html`, `patch/patch.html`, `preload-cssom/preload-cssom.html` | These test axe internals (`axe.runPartial`, `axe.serialize`, `axe.utils.patch`, preload behavior). Need re-validation against the harness-loaded axe — likely small surface mismatches, not deep bugs. |
+| isolated-env | `isolated-env/isolated-env.html` | Fixture fetches `/axe.js` and evals it inside a sandboxed scope (`window`/`document` shadowed). The fetch + eval path has cross-origin policy implications under the new fixture-server. Phase 4 reworks the iframe loading model to support sandboxed-axe scenarios. |
+| error-occurred fixtures | `error-occurred/{error-frame,error-occurred}.html` | Intentionally trigger frame-error paths. Legacy harness handled these as expected, the migrated harness surfaces them as failures. Adapter tweak likely. |
+| context | `context/context.html` | Configures a complex iframe shape that the harness's single-iframe model doesn't reproduce. May need to extend `runPageFixture` to handle nested frames. |
+
+### Phase 4 next steps
+
+For each cluster:
+
+1. **Wake the page** — un-`it.todo` it (move from `knownFailingPages` to `pages` in the affected `page.test.ts`).
+2. **Run** `pnpm --filter axe-core exec vitest run --project integration test/integration/full/<dir>/page.test.ts` and observe what actually fails.
+3. **Decide** per page: real product bug (fix in `lib/`), fixture drift (rewrite fixture as proper `axe.run` integration test — Phase 4 already plans this for the full-suite per Sprint 5c §"Notes"), or environmental issue (extend the harness).
+
+Together with the 19 ACT skipTests entries, this brings the Sprint 5c full carryover surface to **36 parked tests across the integration project**, all rooted in pre-existing axe-side regressions or harness-equivalence mismatches that Phase 4 / PRD-04 §5.1 owns.
