@@ -535,7 +535,7 @@ describe('composeResult any/all/none semantics', () => {
 });
 ```
 
-> The incomplete-dominance rule must match the current engine. Cross-check against `packages/axe-core/lib/core/base/rule.ts` / the result-grouping logic. If the current engine's precedence differs, match IT (parity), and note the canonical truth table in a comment.
+> The incomplete-dominance rule must match the current engine. **Before writing the implementation, read `packages/axe-core/lib/core/base/rule.ts` and `lib/core/base/check-result.ts`, extract the current engine's actual any/all/none → status precedence, and paste it verbatim as the oracle in this test file** (as a comment + the asserted expectations). This locks parity at unit-test time rather than first discovering a mismatch at the Task 14 gate. If the current engine's precedence differs from the table above, match IT and note the canonical table in a comment.
 
 - [ ] **Step 2: Run, verify fail.**
 
@@ -685,6 +685,8 @@ describe('cdpToFlatTree', () => {
 
 - [ ] **Step 6: Commit** `feat(host-node): SnapshotSource — CDP DOMSnapshot → FlatTree`.
 
+> **Capture-config contract (read before Task 12 Step 4):** the CDP `DOMSnapshot.captureSnapshot` call must request every computed-style property the ported checks read, or those checks will silently fall to `incomplete` for want of data — surfacing at the Task 14 gate as confusing divergences traceable to capture config, not port logic. For the proof subset that means at minimum: `color`, `background-color`, `font-size`, `font-weight` (color-contrast ratio) **plus** `display`, `visibility`, `opacity` (color-contrast visibility path). The Playwright capture helper (`src/capture/playwright-capture.ts`) and `SnapshotSource` must default to this list; expose it as an option so future rules can extend it.
+
 ---
 
 ## Task 11: Worker pool (SAB) + main-thread fallback
@@ -800,7 +802,7 @@ describe('legacyV4Reporter', () => {
 - Create: `packages/engine/test/parity/golden/` (committed captures)
 - Create: `packages/engine/test/parity/parity.test.ts`
 
-- [ ] **Step 1: Select the corpus subset.** From `packages/axe-core/test/integration/rules/`, take the fixtures for the 5 ported rules: `document-title`, `html-has-lang`, `html-lang-valid`, `image-alt`, `color-contrast` (+ `text-shadows` for color-contrast). Add a handful of `test/integration/full/` pages that exercise these rules. Record provenance in `corpus-manifest.json`. **Choose only fixtures within this plan's boundary coverage** (no cross-origin iframes / closed shadow).
+- [ ] **Step 1: Select the corpus subset.** Gather the fixtures for the 5 ported rules. NOTE the actual locations (verified): `image-alt` and `color-contrast` (+ `text-shadows`) live under `packages/axe-core/test/integration/rules/<rule>/`; `document-title`, `html-has-lang`, `html-lang-valid` live under `packages/axe-core/test/integration/full/`. Add a handful of additional `test/integration/full/` pages that exercise these rules. Record provenance in `corpus-manifest.json`. **Choose only fixtures within this plan's boundary coverage** (no cross-origin iframes / closed shadow).
 
 - [ ] **Step 2: Implement `capture-golden.ts`.** For each fixture HTML: run the **current** `axe-core` engine (import from the built `packages/axe-core`), restricted via `runOnly` to the 5 rules, and write the v4 result blob to `golden/<fixture>.json`. This is a dev script: `pnpm --filter @axe-core/engine parity:capture`. Commit the golden files.
 
