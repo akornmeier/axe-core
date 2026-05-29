@@ -256,7 +256,14 @@ interface Audit {
   id: AuditId; startedAt: string; finishedAt: string; durationMs: number;
   engine: { name: 'axe-core'; version: string };
   runtime: { name: string; version: string };
-  source: { kind: 'cdp-snapshot' | 'live-dom' | 'playwright'; /* … */ };
+  // `source` owns capture metadata AND per-capture viewport. Per-page viewport for
+  // multi-page audits lives on each Page (Page.viewport), not here. The legacy
+  // top-level testEnvironment viewport fields collapse into these two homes.
+  source: {
+    kind: 'cdp-snapshot' | 'live-dom' | 'playwright';
+    capturedAt: string;
+    viewport?: { w: number; h: number };   // primary-frame capture viewport
+  };
   rules: { id: RuleId; version: string; category: string }[];
   page: Page; frames: Frame[];
   locale: { primary: string; direction: 'ltr' | 'rtl'; fallbacks: string[] };
@@ -360,7 +367,8 @@ logical locations and PR checks show browsable summaries without inline annotati
 
 - `failureSummary` → replaced by structured `message` + reporter-side formatting.
 - `html` field → replaced by `outerHtmlHash` + opt-in lookup.
-- Top-level `testEnvironment` viewport fields → moved into `runtime.source` (per-page).
+- Top-level `testEnvironment` viewport fields → moved into `Audit.source.viewport`
+  (primary capture) and `Page.viewport` (per-page, multi-page audits).
 - Four parallel arrays → one `results[]` with a `status` field.
 
 ---
@@ -383,6 +391,13 @@ logical locations and PR checks show browsable summaries without inline annotati
 - **`ResultId`** — identity of *this occurrence* (audit × node × rule). Stable across re-runs.
 - **`FingerprintId`** — identity of *the underlying defect*. Multiple results sharing a
   fingerprint are the same bug observed in different places.
+
+**Cross-run stability invariant:** neither `ResultId` nor any `FingerprintId` may depend
+on the audit-scoped `NodeId` (which encodes a flat-tree index and is stable only *within*
+one audit). `ResultId` hashes the canonical node *path* (`selector` + `ancestry`), and
+fingerprints hash canonical structural patterns + check-data projections. NodeId is never
+an input to cross-run identity. This is load-bearing for diffing, `priorResults`, and the
+history observatory (Section 7.6).
 
 ### Three default fingerprint dimensions
 
@@ -489,6 +504,10 @@ interface Auditor {
   setLocale(bundle: LocaleBundle): void;
   dispose(): Promise<void>;
 }
+
+// PRECONDITION: audit() rejects (AxeStateError) if neither ingest() nor attach()
+// has completed for this auditor. There is no implicit snapshot — the consumer
+// must supply one before auditing.
 
 interface AuditOptions {
   signal?: AbortSignal;
@@ -1180,9 +1199,14 @@ regressions; CLI exit-code mapping and pipe detection.
 
 ### Performance budgets
 
-10K-node fixture under budget (worker mode); meta-bundle ≤220KB gz (PRD target); engine
-tree-shakes with one rule; FlatTree build O(n). Benchmarked against current engine;
-order-of-magnitude slowdown is a regression.
+A **single committed reference fixture** (`test/parity/fixtures/perf-10k.html`, a
+DOM of ~10,000 nodes) anchors all perf assertions so node-count and result-count units
+are reconciled against one artifact. Budgets: audit under target (worker mode);
+meta-bundle ≤220KB gz (PRD target); engine tree-shakes with one rule; FlatTree build
+O(n) (2× nodes ≤ 2.2× build time). Benchmarked against the current engine on identical
+hardware; order-of-magnitude slowdown is a regression. The Section 2.6 "~700ms on a
+10K-*result* page" figure is fingerprint overhead specifically and is measured against
+this same fixture's result set, not its node count.
 
 ### CI gate composition
 
