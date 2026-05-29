@@ -1,25 +1,19 @@
 // Pilot integration test for the `aria-hidden-body` rule.
 //
-// The legacy harness (`test/integration/full/aria-hidden-body/fail.html` +
-// `fail.js`) stands up a full HTML page with iframes, mocha-in-page, and
-// a Selenium adapter that posts results back. Reproducing that for the
-// pilot would require the JSON-driver framework that task #11 builds.
-// For Sprint 1 we exercise the same RULE end-to-end with a hand-written
-// fixture: inject HTML into the iframe, call `axe.run`, and assert the
-// expected rule fires (or doesn't).
+// Validates Wave A's harness end-to-end: `loadAxe()` fetches the built
+// `dist/axe.js` from the fixture server and attaches it to `window.axe`.
 //
 // Refs specs/PRD-03-test-infrastructure-modernization.md §2.3.
-// TODO(Sprint 3 task #11): replace with the JSON-driver framework.
-import { afterEach, describe, expect, it } from 'vitest';
-import '../../../dist/axe.js';
-
-const axe = (
-  globalThis as unknown as {
-    axe: { run: (ctx: unknown, opts: unknown) => Promise<any> };
-  }
-).axe;
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { loadAxe, type AxeApi } from '../_helpers/load-fixture';
 
 describe('integration: aria-hidden-body', () => {
+  let axe: AxeApi;
+
+  beforeAll(async () => {
+    axe = await loadAxe();
+  });
+
   afterEach(() => {
     document.body.removeAttribute('aria-hidden');
     document.body.innerHTML = '';
@@ -34,7 +28,7 @@ describe('integration: aria-hidden-body', () => {
       runOnly: { type: 'rule', values: ['aria-hidden-body'] }
     });
 
-    const violationIds = results.violations.map((v: { id: string }) => v.id);
+    const violationIds = results.violations.map(v => v.id);
     expect(violationIds).toContain('aria-hidden-body');
     expect(results.violations).toHaveLength(1);
   });

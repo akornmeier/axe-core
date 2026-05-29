@@ -1,70 +1,75 @@
 // Browser test helpers — replacement for the legacy `test/testutils.js` shim.
 //
 // =============================================================================
-// Modernization stance (Sprint 3, per user direction)
+// Modernization stance (Sprint 5, #16-A — ESM-direct status)
 // =============================================================================
 //
-// This module replaces `axe.testUtils.*` for migrated tests, but it is NOT a
-// 1:1 port. We deliberately keep the surface narrow:
+// As of Sprint 5 #16-A the UMD-bundle import (`dist/axe.js`) is gone. We import
+// the ESM default export from `lib/index` directly. Module-evaluation order:
+//
+//   1. `init-axe-global` runs first (initializes `globalThis.axe ??= {}`),
+//      giving `lib/core/public/load.ts`'s `axe._audit = …` write a target.
+//   2. `lib/index` evaluates, populates `axeExport` AND `Object.assign`s into
+//      `globalThis.axe`, then calls `load(defaultConfig)` which sets
+//      `globalThis.axe._audit`.
+//   3. We re-export the ESM default as `axe` (typed `any` to keep callers
+//      such as `axe.run`, `axe.configure`, `axe._audit` working without a
+//      bigger refactor).
 //
 //   Kept (used everywhere):
 //     - `checkSetup` / `queryFixture` / `fixtureSetup` — fixture mounting
 //     - `createMockCheckContext` — ergonomic Check `this`-binding mock
-//     - `getCheckEvaluate(id)` — UMD-bundle hybrid (transitional)
-//     - `getCheckEvaluateESM(evaluator)` — ESM-direct (preferred for new tests)
+//     - `getCheckEvaluateESM(evaluator)` — ESM-direct (preferred)
+//     - `axe` — re-exported lib default; provides `.run`, `.configure`,
+//       `.setup`, `.teardown`, `.utils`, `._audit` (populated by `load()`),
+//       and the full public API surface for tests that exercise it.
 //
 //   Compatibility-only (avoid in new tests):
-//     - `flatTreeSetup`, `shadowCheckSetup`, `queryShadowFixture`, `checks`,
+//     - `flatTreeSetup`, `shadowCheckSetup`, `queryShadowFixture`,
 //       `shadowSupport` — these mirror legacy patterns for the bulk codemod
 //       output. Prefer `getCheckEvaluateESM` + per-test DOM construction in
 //       new tests; rely on Vitest's `beforeEach` fixture container for
 //       isolation rather than mutating `axe._tree` / `axe._audit` directly.
 //
-// Tests that hit the compatibility-only surface and break in non-trivial ways
-// are marked `it.todo('FIXME(phase-03-modern): ...')` rather than papered
-// over with more helper code. The follow-up work is to rewrite those tests
-// against the kept surface.
+//   Removed (Sprint 5 #16-A):
+//     - `getCheckEvaluate(checkId)` — replaced by `getCheckEvaluateESM`. The
+//       remaining 74 UMD-hybrid callers are flipped mechanically by #16-B.
+//     - `checks` re-export — the ~14 `axe._audit.checks` callers will be
+//       fixed by #16-C synthetic-audit; expect them to fail until then.
 //
 // =============================================================================
-// D1 — Canonical evaluator-import pattern (Sprint 3, task #10)
+// D1 — Canonical evaluator-import pattern
 // =============================================================================
 //
-// Sprint 1 routed every check through the built UMD bundle (`dist/axe.js`) so
-// `axe._audit.checks[id]` was populated. PRD-03 §2.3.2 says Sprint 3 should
-// move to direct ESM imports of evaluator functions from
-// `lib/checks/<category>/<name>-evaluate.ts`. The PRD-01 §4.1 carryover —
-// `lib/core/utils/memoize.ts` mutates `axe._memoizedFns` at module top
-// level — blocks the pure-ESM path for any evaluator whose import closure
-// transitively pulls `commons/` or `core/utils/`. That is most evaluators.
-//
-// Decision tree for choosing a path in a per-check test file:
-//
-//   1. Open `lib/checks/<category>/<name>-evaluate.ts`.
-//   2. Does it import from `../../core/utils*` or `../../commons/*`?
-//        - YES → use `getCheckEvaluate(id)` (UMD-bundle hybrid). The `_audit`
-//                lookup is the only thing that survives the memoize global
-//                side effect cleanly today.
-//        - NO  → use `getCheckEvaluateESM(evaluator, defaultOptions?)`. The
-//                evaluator is imported directly from `lib/`, no bundle
-//                dependency.
-//   3. Once PRD-01 §4.1 closes (memoize converted to a non-side-effect
-//      module-local cache), the ESM path becomes the default and the UMD
-//      hybrid is deprecated. Each check file flips with a one-line edit.
+// Now that the dual-instance issue (UMD bundle + ESM project holding separate
+// copies of `lib/core/base/cache.ts`, `lib/standards/*`, `AbstractVirtualNode`)
+// has dissolved with the bundle removal, every check evaluator should import
+// directly from `lib/checks/<category>/<name>-evaluate.ts` and route through
+// `getCheckEvaluateESM`. PRD-01 §4.1 closures (memoize / valid-langs / uuid)
+// shipped in commit `031008eb`, removing the last barrier to the pure-ESM path.
 //
 // =============================================================================
-//
-// We load the UMD bundle for its side effect of registering `globalThis.axe`
-// with `_audit` populated. The ESM default export (`axeExport`) intentionally
-// omits the `_audit` field, so importing default would not give us access to
-// the registered checks.
-import '../../../dist/axe.js';
 
-const axe = (globalThis as unknown as { axe: any }).axe;
-if (!axe || !axe._audit) {
-  throw new Error(
-    'check-helpers: globalThis.axe._audit is undefined — the UMD bundle did not initialize.'
-  );
-}
+// Side-effect import: must come BEFORE the lib import so `globalThis.axe`
+// exists when `lib/core/public/load.ts` writes `axe._audit = …`.
+import './init-axe-global';
+
+// ESM default export from the engine. After this import resolves,
+// `lib/index.ts` has populated both `axeExport` and `globalThis.axe`, and
+// `load(defaultConfig)` has set `globalThis.axe._audit`.
+//
+// IMPORTANT: We bind `axe` to `globalThis.axe`, NOT to `axeExport`. The two
+// are NOT the same object. Vite's `axeGlobalPlugin` injects `var axe = {};`
+// per chunk at build time and `lib/index.ts` then `Object.assign`s
+// `axeExport`'s function references onto that ambient global. Internal
+// engine writes (`axe._audit = ...`, `axe._tree = ...`, `axe._selectorData
+// = ...`) target the ambient global, NOT `axeExport`. Tests that read
+// internal state through the imported reference would see stale `undefined`
+// values if we bound to `axeExport` here. Sprint 5b B1.
+import '../../../lib/index';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const axe = (globalThis as { axe: any }).axe;
 
 export interface MockCheckContext {
   _data: unknown;
@@ -102,43 +107,10 @@ export function createMockCheckContext(): MockCheckContext {
 }
 
 /**
- * UMD-bundle hybrid path. Returns a wrapped check evaluator that resolves
- * the registered `Check` instance from `axe._audit.checks[id]` and forwards
- * the call with the right `this` context and option-resolution semantics.
- *
- * Use this when the evaluator's import closure pulls `commons/` or
- * `core/utils/`, since pure-ESM imports throw under `lib/core/utils/memoize.ts`'s
- * top-level `axe._memoizedFns = []` mutation (PRD-01 §4.1).
- */
-export function getCheckEvaluate(checkId: string) {
-  const audit = (axe as unknown as { _audit: { checks: Record<string, any> } })
-    ._audit;
-  const check = audit.checks[checkId];
-  if (!check) {
-    throw new Error(
-      `getCheckEvaluate: check id "${checkId}" not registered on axe._audit.checks`
-    );
-  }
-  return function evaluateWrapper(
-    this: MockCheckContext,
-    node: HTMLElement,
-    options: unknown,
-    virtualNode: unknown,
-    context?: unknown
-  ) {
-    const opts = check.getOptions(options);
-    return check.evaluate.call(this, node, opts, virtualNode, context);
-  };
-}
-
-/**
  * ESM-direct path. Wraps an evaluator imported straight from
  * `lib/checks/<category>/<name>-evaluate.ts`. Replicates `Check#getOptions`
  * locally: caller-supplied options take precedence over `defaultOptions`,
  * and `defaultOptions` defaults to `{}`.
- *
- * Use this when the evaluator does NOT transitively import `commons/` or
- * `core/utils/` (so it does not trip the PRD-01 §4.1 memoize global).
  *
  * @example
  *   import ariaBusyEvaluate from '../../../lib/checks/aria/aria-busy-evaluate';
@@ -146,6 +118,7 @@ export function getCheckEvaluate(checkId: string) {
  *   expect(checkEvaluate.apply(checkContext, params as any)).toBe(false);
  */
 export function getCheckEvaluateESM<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends (this: MockCheckContext, ...args: any[]) => any
 >(evaluator: T, defaultOptions: Record<string, unknown> = {}) {
   return function evaluateWrapper(
@@ -155,10 +128,22 @@ export function getCheckEvaluateESM<
     virtualNode: unknown,
     context?: unknown
   ): ReturnType<T> {
-    const opts =
-      options && typeof options === 'object'
-        ? { ...defaultOptions, ...(options as Record<string, unknown>) }
-        : defaultOptions;
+    // Mirror the runtime `normalizeOptions` (lib/core/base/check.ts §87): an
+    // array or scalar gets wrapped as `{ value: <input> }`; a plain object
+    // is merged with `defaultOptions`. Spreading an array into a plain
+    // object collapses index access — the bug that bit
+    // `aria/valid-attr.test.ts` and `aria/valid-attr-value.test.ts` once
+    // they were re-flipped to `getCheckEvaluateESM` in #16-B.
+    let opts: unknown;
+    if (Array.isArray(options)) {
+      opts = { value: options };
+    } else if (options && typeof options === 'object') {
+      opts = { ...defaultOptions, ...(options as Record<string, unknown>) };
+    } else if (options !== undefined && options !== null) {
+      opts = { value: options };
+    } else {
+      opts = defaultOptions;
+    }
     return evaluator.call(this, node, opts, virtualNode, context);
   };
 }
@@ -207,17 +192,9 @@ export function checkSetup(
   // otherwise fall back to the conventional `#target` selector.
   const resolvedTarget =
     target ?? (typeof content === 'string' ? '#target' : null);
-  const utils = (
-    axe as unknown as {
-      utils: any;
-      teardown: () => void;
-      setup: (n: Node) => unknown;
-    }
-  ).utils;
-  (axe as unknown as { teardown: () => void }).teardown();
-  const rootNode = (axe as unknown as { setup: (n: Node) => unknown }).setup(
-    fixture
-  ) as { actualNode: HTMLElement };
+  const utils = axe.utils;
+  axe.teardown();
+  const rootNode = axe.setup(fixture) as { actualNode: HTMLElement };
   const found =
     resolvedTarget !== null
       ? utils.querySelectorAll(rootNode, resolvedTarget)[0]
@@ -236,17 +213,9 @@ export function queryFixture(html: string, query = '#target') {
   const fixture = ensureFixture();
   fixture.id = 'fixture';
   fixture.innerHTML = html;
-  const utils = (
-    axe as unknown as {
-      utils: any;
-      teardown: () => void;
-      setup: (n: Node) => unknown;
-    }
-  ).utils;
-  (axe as unknown as { teardown: () => void }).teardown();
-  const rootNode = (axe as unknown as { setup: (n: Node) => unknown }).setup(
-    fixture
-  );
+  const utils = axe.utils;
+  axe.teardown();
+  const rootNode = axe.setup(fixture);
   const vNode = utils.querySelectorAll(rootNode, query)[0];
   if (!vNode) {
     throw new Error(`queryFixture: target "${query}" not found in fixture`);
@@ -264,6 +233,7 @@ export function queryFixture(html: string, query = '#target') {
  * `aria-valid-attr-value` get the right view of attributes after `axe.setup`
  * runs.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function fixtureSetup(content?: string | Node | Node[]): any {
   const fixture = ensureFixture();
   fixture.id = 'fixture';
@@ -281,8 +251,8 @@ export function fixtureSetup(content?: string | Node | Node[]): any {
   // No-arg form: keep whatever the test already injected into `fixture`
   // (callers sometimes mutate `fixture.innerHTML` and attach a shadow root
   // before calling `fixtureSetup()` to register the composed tree).
-  (axe as unknown as { teardown: () => void }).teardown();
-  return (axe as unknown as { setup: (n: Node) => unknown }).setup(fixture);
+  axe.teardown();
+  return axe.setup(fixture);
 }
 
 /**
@@ -291,12 +261,10 @@ export function fixtureSetup(content?: string | Node | Node[]): any {
  * a virtual node directly to a check evaluator without going through
  * `checkSetup` / `queryFixture`.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function flatTreeSetup(content: HTMLElement | string): any[] {
-  const utils = (axe as unknown as { utils: any })._audit
-    ? (axe as unknown as { utils: any }).utils
-    : (axe as unknown as { utils: any }).utils;
-  const tree = utils.getFlattenedTree(content);
-  (axe as unknown as { _tree: any })._tree = tree;
+  const tree = axe.utils.getFlattenedTree(content);
+  axe._tree = tree;
   return tree;
 }
 
@@ -312,6 +280,7 @@ export const shadowSupport = {
     return (
       typeof document !== 'undefined' &&
       !!document.body &&
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       typeof (document.body as any).createShadowRoot === 'function'
     );
   },
@@ -337,6 +306,7 @@ export function queryShadowFixture(
   content: string | Node,
   shadowContent: string | Node,
   targetSelector: string = '#target'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any {
   const fixture = ensureFixture();
   fixture.id = 'fixture';
@@ -377,11 +347,9 @@ export function queryShadowFixture(
       `queryShadowFixture: target "${targetSelector}" not found in shadow tree`
     );
   }
-  const utils = (axe as unknown as { utils: any }).utils;
-  (axe as unknown as { teardown: () => void }).teardown();
-  const vFixture = (axe as unknown as { setup: (n: Node) => unknown }).setup(
-    fixture
-  );
+  const utils = axe.utils;
+  axe.teardown();
+  const vFixture = axe.setup(fixture);
   return utils.getNodeFromTree(targetCandidate) ?? vFixture;
 }
 
@@ -395,17 +363,5 @@ export function shadowCheckSetup(
   const node = queryShadowFixture(content, shadowContent, targetSelector);
   return [node.actualNode, opts, node];
 }
-
-/**
- * Reference to `axe._audit.checks` so tests can match the legacy
- * `checks.<id>.evaluate(...)` pattern without reaching through `axe`.
- *
- * Prefer `getCheckEvaluate(id)` for new tests — it wraps the evaluator with
- * the same `getOptions` semantics the audit applies. `checks[id]` is exposed
- * for the bulk-migrated suites that called the evaluator without options.
- */
-export const checks: Record<string, any> = (
-  axe as unknown as { _audit: { checks: Record<string, any> } }
-)._audit.checks;
 
 export { axe };

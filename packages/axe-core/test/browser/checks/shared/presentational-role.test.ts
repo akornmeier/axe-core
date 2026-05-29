@@ -1,15 +1,20 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import presentationalRoleEvaluate from '@checks/shared/presentational-role-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const presentationalRoleEvaluateESM = getCheckEvaluateESM(
+  presentationalRoleEvaluate
+);
 describe('presentational-role', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  const checkEvaluate = getCheckEvaluate('presentational-role');
+  const checkEvaluate = presentationalRoleEvaluateESM;
   const checkContext = createMockCheckContext();
 
   afterEach(() => {

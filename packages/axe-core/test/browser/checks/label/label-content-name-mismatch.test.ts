@@ -1,7 +1,11 @@
-import { queryFixture, checks } from '@helpers/check-helpers';
+import { queryFixture } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeAll } from 'vitest';
+const audit = createSyntheticAudit(['label-content-name-mismatch']);
+
 describe('label-content-name-mismatch tests', () => {
-  const check = checks['label-content-name-mismatch'];
+  const check = audit.checks['label-content-name-mismatch'];
   const options = undefined;
 
   const fontApiSupport = !!document.fonts;

@@ -1,5 +1,12 @@
-import { getCheckEvaluate, flatTreeSetup, axe } from '@helpers/check-helpers';
+import {
+  getCheckEvaluateESM,
+  flatTreeSetup,
+  axe
+} from '@helpers/check-helpers';
+import helpSameAsLabelEvaluate from '@checks/label/help-same-as-label-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const helpSameAsLabelEvaluateESM = getCheckEvaluateESM(helpSameAsLabelEvaluate);
 describe('help-same-as-label', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -19,7 +26,7 @@ describe('help-same-as-label', () => {
     fixture.appendChild(node);
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('help-same-as-label')(
+      helpSameAsLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)
@@ -41,7 +48,7 @@ describe('help-same-as-label', () => {
 
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('help-same-as-label')(
+      helpSameAsLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)
@@ -58,7 +65,7 @@ describe('help-same-as-label', () => {
 
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('help-same-as-label')(
+      helpSameAsLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)
@@ -79,7 +86,7 @@ describe('help-same-as-label', () => {
 
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('help-same-as-label')(
+      helpSameAsLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)

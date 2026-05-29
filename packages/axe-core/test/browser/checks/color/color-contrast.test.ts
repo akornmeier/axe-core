@@ -35,12 +35,25 @@ import {
   axe,
   checkSetup,
   createMockCheckContext,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import colorContrastEvaluate from '@checks/color/color-contrast-evaluate';
 
+const colorContrastEvaluateESM = getCheckEvaluateESM(colorContrastEvaluate, {
+  ignoreUnicode: true,
+  ignoreLength: false,
+  ignorePseudo: false,
+  boldValue: 700,
+  boldTextPt: 14,
+  largeTextPt: 18,
+  contrastRatio: { normal: { expected: 4.5 }, large: { expected: 3 } },
+  pseudoSizeThreshold: 0.25,
+  shadowOutlineEmMax: 0.2,
+  textStrokeEmMin: 0.03
+});
 describe('color-contrast (pilot — PRD §6.2 risk)', () => {
   const checkContext = createMockCheckContext();
-  const contrastEvaluate = getCheckEvaluate('color-contrast');
+  const contrastEvaluate = colorContrastEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

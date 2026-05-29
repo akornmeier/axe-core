@@ -1,10 +1,13 @@
 import {
   createMockCheckContext,
   checkSetup,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
+const audit = createSyntheticAudit(['focusable-element']);
+
 describe('focusable-element tests', () => {
   let check;
   let fixture: HTMLElement;
@@ -13,7 +16,7 @@ describe('focusable-element tests', () => {
   });
   const checkContext = createMockCheckContext();
   beforeAll(() => {
-    check = checks['focusable-element'];
+    check = audit.checks['focusable-element'];
   });
 
   afterEach(() => {

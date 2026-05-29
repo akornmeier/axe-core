@@ -1,12 +1,15 @@
 import {
   createMockCheckContext,
   checkSetup,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['no-autoplay-audio']);
+
 describe('no-autoplay-audio', () => {
-  const check = checks['no-autoplay-audio'];
+  const check = audit.checks['no-autoplay-audio'];
   const checkContext = createMockCheckContext();
   const preloadOptions = { preload: { assets: ['media'] } };
 

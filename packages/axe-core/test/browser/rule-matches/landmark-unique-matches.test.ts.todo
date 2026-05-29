@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.shadowSupport (testUtils helper not exposed under Vitest)
+// FIXME(phase-3-sprint-4b): codemod blocker — helper not exposed (will not be re-exposed): local `shadowSupport` shadows helper import — manual rewrite required
 describe('landmark-unique-matches', function () {
   let rule;
   let fixture;

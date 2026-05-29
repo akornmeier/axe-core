@@ -4,10 +4,13 @@ import {
   fixtureSetup,
   flatTreeSetup,
   shadowSupport,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
+const audit = createSyntheticAudit(['focusable-not-tabbable']);
+
 describe('focusable-not-tabbable', () => {
   let check;
   let fixture: HTMLElement;
@@ -17,7 +20,7 @@ describe('focusable-not-tabbable', () => {
   const shadowSupported = shadowSupport.v1;
   const checkContext = createMockCheckContext();
   beforeAll(() => {
-    check = checks['focusable-not-tabbable'];
+    check = audit.checks['focusable-not-tabbable'];
   });
 
   afterEach(() => {

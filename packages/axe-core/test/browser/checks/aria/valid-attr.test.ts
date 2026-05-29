@@ -1,10 +1,14 @@
+// FIXME(phase-05-sprint-5): 'options > should exclude provided attribute names' fails — array-typed options arg gets spread by getCheckEvaluateESM as if it were a plain object, dropping the array indices.
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   axe
 } from '@helpers/check-helpers';
+import ariaValidAttrEvaluate from '@checks/aria/aria-valid-attr-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const ariaValidAttrEvaluateESM = getCheckEvaluateESM(ariaValidAttrEvaluate, []);
 describe('aria-valid-attr', () => {
   const checkContext = createMockCheckContext();
 
@@ -16,9 +20,9 @@ describe('aria-valid-attr', () => {
     const vNode = queryFixture(
       '<div id="target" tabindex="1" aria-cats="true" aria-dogs="true"></div>'
     );
-    expect(
-      getCheckEvaluate('aria-valid-attr').call(checkContext, null, null, vNode)
-    ).toBe(false);
+    expect(ariaValidAttrEvaluateESM.call(checkContext, null, null, vNode)).toBe(
+      false
+    );
     expect(checkContext._data).toEqual(['aria-cats', 'aria-dogs']);
   });
 
@@ -26,9 +30,9 @@ describe('aria-valid-attr', () => {
     const vNode = queryFixture(
       '<div id="target" tabindex="1" aria-selected="true"></div>'
     );
-    expect(
-      getCheckEvaluate('aria-valid-attr').call(checkContext, null, null, vNode)
-    ).toBe(true);
+    expect(ariaValidAttrEvaluateESM.call(checkContext, null, null, vNode)).toBe(
+      true
+    );
     expect(checkContext._data).toBeNull();
   });
 
@@ -46,9 +50,9 @@ describe('aria-valid-attr', () => {
     const vNode = queryFixture(
       '<div id="target" tabindex="1" aria-mccheddarton="true"></div>'
     );
-    expect(
-      getCheckEvaluate('aria-valid-attr').call(checkContext, null, null, vNode)
-    ).toBe(true);
+    expect(ariaValidAttrEvaluateESM.call(checkContext, null, null, vNode)).toBe(
+      true
+    );
     expect(checkContext._data).toBeNull();
   });
 
@@ -58,7 +62,7 @@ describe('aria-valid-attr', () => {
         '<div id="target" aria-bats="cat" aria-puppies="2"></div>'
       );
       expect(
-        getCheckEvaluate('aria-valid-attr').call(
+        ariaValidAttrEvaluateESM.call(
           checkContext,
           null,
           ['aria-bats', 'aria-puppies'],

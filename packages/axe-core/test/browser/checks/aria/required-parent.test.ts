@@ -1,12 +1,18 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   flatTreeSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import ariaRequiredParentEvaluate from '@checks/aria/aria-required-parent-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const ariaRequiredParentEvaluateESM = getCheckEvaluateESM(
+  ariaRequiredParentEvaluate,
+  { ownGroupRoles: ['listitem', 'treeitem'] }
+);
 describe('aria-required-parent', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -25,10 +31,7 @@ describe('aria-required-parent', () => {
       '<div><p role="listitem" id="target">Nothing here.</p></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(false);
     expect(checkContext._data).toEqual(['list']);
   });
@@ -49,10 +52,7 @@ describe('aria-required-parent', () => {
 
       const params = [shadowContent, undefined, virtualTarget];
       expect(
-        getCheckEvaluate('aria-required-parent').apply(
-          checkContext,
-          params as any
-        )
+        ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
       ).toBe(false);
       expect(checkContext._data).toEqual(['list']);
     }
@@ -64,10 +64,7 @@ describe('aria-required-parent', () => {
       '<div id="parent"><p role="listitem" id="target">Nothing here.</p></div>';
     const params = checkSetup(snippet);
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -77,10 +74,7 @@ describe('aria-required-parent', () => {
         '<div><p role="listitem" id="target">Nothing here.</p></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(false);
     expect(checkContext._data).toEqual(['list']);
   });
@@ -90,10 +84,7 @@ describe('aria-required-parent', () => {
       '<div role="list" aria-owns="target"></div><div><p role="listitem" id="target">Nothing here.</p></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -102,10 +93,7 @@ describe('aria-required-parent', () => {
       '<div role="grid"><p role="row" id="target">Nothing here.</p></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -114,10 +102,7 @@ describe('aria-required-parent', () => {
       '<div role="list"><p role="listitem" id="target">Nothing here.</p></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -126,10 +111,7 @@ describe('aria-required-parent', () => {
       '<div role="list"><div role="tabpanel"><p role="listitem" id="target">Nothing here.</p></div></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(false);
   });
 
@@ -138,10 +120,7 @@ describe('aria-required-parent', () => {
       '<div role="list"><div role="presentation"><p role="listitem" id="target">Nothing here.</p></div></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -150,10 +129,7 @@ describe('aria-required-parent', () => {
       '<ul role="menu"><li role="group"><button role="menuitem" id="target">Nothing here.</button></li></ul>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -162,10 +138,7 @@ describe('aria-required-parent', () => {
       '<ul role="none"><li role="group"><button role="menuitem" id="target">Nothing here.</button></li></ul>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(false);
     expect(checkContext._data).toEqual(['menu', 'menubar']);
   });
@@ -175,10 +148,7 @@ describe('aria-required-parent', () => {
       '<div role="menu"><div role="group"><p role="listitem" id="target">Nothing here.</p></div></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(false);
   });
 
@@ -196,10 +166,7 @@ describe('aria-required-parent', () => {
       );
 
       expect(
-        getCheckEvaluate('aria-required-parent').apply(
-          checkContext,
-          params as any
-        )
+        ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
       ).toBe(true);
     });
 
@@ -216,10 +183,7 @@ describe('aria-required-parent', () => {
       );
 
       expect(
-        getCheckEvaluate('aria-required-parent').apply(
-          checkContext,
-          params as any
-        )
+        ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
       ).toBe(false);
     });
 
@@ -236,10 +200,7 @@ describe('aria-required-parent', () => {
       );
 
       expect(
-        getCheckEvaluate('aria-required-parent').apply(
-          checkContext,
-          params as any
-        )
+        ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
       ).toBe(false);
     });
   });
@@ -249,10 +210,7 @@ describe('aria-required-parent', () => {
       '<div role="list"><div role="none"><p role="listitem" id="target">Nothing here.</p></div></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -261,10 +219,7 @@ describe('aria-required-parent', () => {
       '<div role="list" aria-owns="target"><div role="navigation"><p role="listitem" id="target">Nothing here.</p></div></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -273,10 +228,7 @@ describe('aria-required-parent', () => {
       '<div role="tree"><div role="none"><div role="group"><div role="none"><div role="group"><div role="treeitem" id="target">Nothing here.</div></div></div></div></div></div>'
     );
     expect(
-      getCheckEvaluate('aria-required-parent').apply(
-        checkContext,
-        params as any
-      )
+      ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
     ).toBe(true);
   });
 
@@ -296,10 +248,7 @@ describe('aria-required-parent', () => {
 
       const params = [shadowContent, undefined, virtualTarget];
       expect(
-        getCheckEvaluate('aria-required-parent').apply(
-          checkContext,
-          params as any
-        )
+        ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
       ).toBe(true);
     }
   );
@@ -321,10 +270,7 @@ describe('aria-required-parent', () => {
 
       const params = [shadowContent, undefined, virtualTarget];
       expect(
-        getCheckEvaluate('aria-required-parent').apply(
-          checkContext,
-          params as any
-        )
+        ariaRequiredParentEvaluateESM.apply(checkContext, params as any)
       ).toBe(false);
     }
   );

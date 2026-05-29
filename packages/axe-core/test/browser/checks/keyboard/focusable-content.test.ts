@@ -3,10 +3,13 @@ import {
   checkSetup,
   fixtureSetup,
   shadowSupport,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
+const audit = createSyntheticAudit(['focusable-content']);
+
 describe('focusable-content tests', () => {
   let check;
   let fixture: HTMLElement;
@@ -16,7 +19,7 @@ describe('focusable-content tests', () => {
   const shadowSupported = shadowSupport.v1;
   const checkContext = createMockCheckContext();
   beforeAll(() => {
-    check = checks['focusable-content'];
+    check = audit.checks['focusable-content'];
   });
 
   afterEach(() => {

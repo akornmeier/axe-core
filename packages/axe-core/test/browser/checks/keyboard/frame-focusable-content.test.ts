@@ -1,11 +1,16 @@
-import { queryFixture, getCheckEvaluate } from '@helpers/check-helpers';
+import { queryFixture, getCheckEvaluateESM } from '@helpers/check-helpers';
+import frameFocusableContentEvaluate from '@checks/keyboard/frame-focusable-content-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const frameFocusableContentEvaluateESM = getCheckEvaluateESM(
+  frameFocusableContentEvaluate
+);
 describe('frame-focusable-content tests', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  const frameFocusableContent = getCheckEvaluate('frame-focusable-content');
+  const frameFocusableContent = frameFocusableContentEvaluateESM;
 
   afterEach(() => {
     fixture.innerHTML = '';

@@ -1,16 +1,21 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import hasLangEvaluate from '@checks/language/has-lang-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const hasLangEvaluateESM = getCheckEvaluateESM(hasLangEvaluate, {
+  attributes: ['lang', 'xml:lang']
+});
 describe('has-lang', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   const checkContext = createMockCheckContext();
-  const hasLangEvaluate = getCheckEvaluate('has-lang');
+  const hasLangEvaluate = hasLangEvaluateESM;
 
   afterEach(() => {
     fixture.innerHTML = '';

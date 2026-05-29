@@ -1,9 +1,9 @@
-import {
-  createMockCheckContext,
-  queryFixture,
-  checks
-} from '@helpers/check-helpers';
+import { createMockCheckContext, queryFixture } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['abstractrole']);
+
 describe('abstractrole', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -21,7 +21,7 @@ describe('abstractrole', () => {
       '<div id="target" role="alert">Contents</div>'
     );
     expect(
-      checks.abstractrole.evaluate.call(
+      audit.checks['abstractrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         'radio',
@@ -36,7 +36,7 @@ describe('abstractrole', () => {
       '<div id="target" role="foo">Contents</div>'
     );
     expect(
-      checks.abstractrole.evaluate.call(
+      audit.checks['abstractrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         'radio',
@@ -51,7 +51,7 @@ describe('abstractrole', () => {
       '<div id="target" role="widget">Contents</div>'
     );
     expect(
-      checks.abstractrole.evaluate.call(
+      audit.checks['abstractrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         'radio',
@@ -66,7 +66,7 @@ describe('abstractrole', () => {
       '<div id="target" role="alert button">Contents</div>'
     );
     expect(
-      checks.abstractrole.evaluate.call(
+      audit.checks['abstractrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         'radio',
@@ -81,7 +81,7 @@ describe('abstractrole', () => {
       '<div id="target" role="alert widget structure">Contents</div>'
     );
     expect(
-      checks.abstractrole.evaluate.call(
+      audit.checks['abstractrole'].evaluate.call(
         checkContext,
         virtualNode.actualNode,
         'radio',

@@ -1,7 +1,10 @@
-import { queryFixture, getCheckEvaluate, axe } from '@helpers/check-helpers';
+import { queryFixture, getCheckEvaluateESM, axe } from '@helpers/check-helpers';
+import ariaLabelledbyEvaluate from '@checks/shared/aria-labelledby-evaluate';
 import { describe, it, expect } from 'vitest';
+
+const ariaLabelledbyEvaluateESM = getCheckEvaluateESM(ariaLabelledbyEvaluate);
 describe('aria-labelledby', () => {
-  const checkEvaluate = getCheckEvaluate('aria-labelledby');
+  const checkEvaluate = ariaLabelledbyEvaluateESM;
 
   it('should return true if an aria-labelledby and its target is present', () => {
     const node = queryFixture(

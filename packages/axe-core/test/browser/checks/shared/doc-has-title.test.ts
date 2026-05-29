@@ -1,5 +1,8 @@
-import { getCheckEvaluate } from '@helpers/check-helpers';
+import { getCheckEvaluateESM } from '@helpers/check-helpers';
+import docHasTitleEvaluate from '@checks/shared/doc-has-title-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const docHasTitleEvaluateESM = getCheckEvaluateESM(docHasTitleEvaluate);
 describe('doc-has-title', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -12,14 +15,14 @@ describe('doc-has-title', () => {
   it('should return false if title is empty', () => {
     const orig = document.title;
     document.title = '';
-    expect(getCheckEvaluate('doc-has-title')(fixture)).toBe(false);
+    expect(docHasTitleEvaluateESM(fixture)).toBe(false);
     document.title = orig;
   });
 
   it('should return false if title contains only whitespace', () => {
     const orig = document.title;
     document.title = ' \t\r\n \n   \r \n\t';
-    expect(getCheckEvaluate('doc-has-title')(fixture)).toBe(false);
+    expect(docHasTitleEvaluateESM(fixture)).toBe(false);
     document.title = orig;
   });
 
@@ -27,7 +30,7 @@ describe('doc-has-title', () => {
     const orig = document.title;
     document.title = 'Bananas';
 
-    expect(getCheckEvaluate('doc-has-title')(fixture)).toBe(true);
+    expect(docHasTitleEvaluateESM(fixture)).toBe(true);
     document.title = orig;
   });
 });

@@ -1,0 +1,55 @@
+import { axe } from '@helpers/check-helpers';
+import { beforeEach, describe, expect, it } from 'vitest';
+describe('axe.utils.nodeSorter', function () {
+  function $id(id) {
+    return document.getElementById(id);
+  }
+  let fixture: HTMLElement;
+  beforeEach(() => {
+    fixture = document.getElementById('fixture') as HTMLElement;
+  });
+
+  it('should exist', function () {
+    expect(typeof axe.utils.nodeSorter).toBe('function');
+  });
+
+  it('should return -1 if a comes before b', function () {
+    fixture.innerHTML = '<div id="a"></div><div id="b"></div>';
+
+    expect(
+      axe.utils.nodeSorter({ actualNode: $id('a') }, { actualNode: $id('b') })
+    ).toBe(-1);
+  });
+
+  it('should return -1 if a comes before b - nested', function () {
+    fixture.innerHTML = '<div id="a"><div id="b"></div></div>';
+
+    expect(
+      axe.utils.nodeSorter({ actualNode: $id('a') }, { actualNode: $id('b') })
+    ).toBe(-1);
+  });
+
+  it('should return 1 if b comes before a', function () {
+    fixture.innerHTML = '<div id="b"></div><div id="a"></div>';
+
+    expect(
+      axe.utils.nodeSorter({ actualNode: $id('a') }, { actualNode: $id('b') })
+    ).toBe(1);
+  });
+
+  it('should return 1 if b comes before a - nested', function () {
+    fixture.innerHTML = '<div id="b"><div id="a"></div></div>';
+
+    expect(
+      axe.utils.nodeSorter({ actualNode: $id('a') }, { actualNode: $id('b') })
+    ).toBe(1);
+  });
+
+  it('should return 0 if a === b', function () {
+    fixture.innerHTML = '<div id="a"></div>';
+
+    expect(
+      axe.utils.nodeSorter({ actualNode: $id('a') }, { actualNode: $id('a') })
+    ).toBe(0);
+  });
+});

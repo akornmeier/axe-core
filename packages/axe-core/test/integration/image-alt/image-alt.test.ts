@@ -1,22 +1,19 @@
 // Pilot integration test for the `image-alt` rule.
 //
-// Pairs with `aria-hidden-body.test.ts` to give the integration project two
-// independent rule end-to-ends in Sprint 1. This rule was picked because
-// it is one of the most popular axe rules and has zero scaffolding cost
-// (no iframes, no <title>, no Selenium harness needed).
+// Validates Wave A's harness end-to-end: `loadAxe()` fetches the built
+// `dist/axe.js` from the fixture server and attaches it to `window.axe`.
 //
 // Refs specs/PRD-03-test-infrastructure-modernization.md §2.3.
-// TODO(Sprint 3 task #11): fold into the JSON-driver framework once it lands.
-import { afterEach, describe, expect, it } from 'vitest';
-import '../../../dist/axe.js';
-
-const axe = (
-  globalThis as unknown as {
-    axe: { run: (ctx: unknown, opts: unknown) => Promise<any> };
-  }
-).axe;
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { loadAxe, type AxeApi } from '../_helpers/load-fixture';
 
 describe('integration: image-alt', () => {
+  let axe: AxeApi;
+
+  beforeAll(async () => {
+    axe = await loadAxe();
+  });
+
   afterEach(() => {
     document.body.innerHTML = '';
   });
@@ -29,7 +26,7 @@ describe('integration: image-alt', () => {
       runOnly: { type: 'rule', values: ['image-alt'] }
     });
 
-    const violationIds = results.violations.map((v: { id: string }) => v.id);
+    const violationIds = results.violations.map(v => v.id);
     expect(violationIds).toContain('image-alt');
   });
 

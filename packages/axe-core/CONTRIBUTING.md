@@ -69,9 +69,9 @@ For any proposed changes to rules, checks, commons, or other APIs to be accepted
 
 We expect all code to be 100% covered by tests. We don't have or want code coverage metrics but we will review tests and suggest changes when we think the test(s) do(es) not adequately exercise the code/code changes.
 
-Tests should be added to the `test` directory using the same file path and name of the source file the test is for. For example, the source file `lib/commons/text/sanitize.js` should have a test file at `test/commons/text/sanitize.js`.
+Tests should be added to the `test` directory using the same file path and name of the source file the test is for. For example, the source file `lib/commons/text/sanitize.ts` should have a test file at `test/browser/commons/text/sanitize.test.ts` (browser-mode tests) or `test/unit/commons/text/sanitize.test.ts` (Node-mode tests).
 
-Axe uses Karma / Mocha / Chai as its testing framework.
+Axe uses [Vitest 4](https://vitest.dev/) (powered by [Playwright](https://playwright.dev/) in browser mode) as its testing framework.
 
 ### Documentation and Comments
 
@@ -145,90 +145,7 @@ pnpm build
 
 ## Developing and testing
 
-In order to run axe tests, `axe.js` must be built using `pnpm build`. To run the unit tests:
-
-```console
-pnpm test
-```
-
-To continually watch changes to the axe source files and re-build on changes, use:
-
-```console
-pnpm run develop
-```
-
-This will also rerun any tests that have been changed, and any changes to the axe source files will trigger a rerun of that files tests.
-
-To run axe integration tests:
-
-```console
-pnpm run test:integration
-```
-
-Lastly, there are a few other tests that get run during the continuous integration process:
-
-```console
-# run the tests from `doc/examples/*` using the current local build of `axe.js`
-pnpm run test:examples
-
-# run the tests from `test/node`
-pnpm run test:node
-```
-
-### Running and debugging specific unit tests
-
-If you want to run a specific set of unit tests instead of all the unit tests, you can use one of the following commands:
-
-```console
-# run just the tests from `test/core`
-pnpm run test:unit:core
-
-# run just the tests from `test/commons`
-pnpm run test:unit:commons
-
-# run just the tests from `test/rule-matches`
-pnpm run test:unit:rule-matches
-
-# run just the tests from `test/checks`
-pnpm run test:unit:checks
-
-# run just the tests from `test/integration/rules`
-pnpm run test:unit:integration
-
-# run just the tests from `test/integration/api`
-pnpm run test:unit:api
-
-# run just the tests from `test/integration/virtual-rules`
-pnpm run test:unit:virtual-rules
-```
-
-If you need to debug the unit tests in a browser, you can run:
-
-```console
-pnpm run test:debug
-```
-
-This will start the Karma server and open up the Chrome browser. Click the `Debug` button to start debugging the tests. You can either use that browser's debugger or attach an external debugger on port 9765; [a VS Code launch profile](./.vscode/launch.json) is provided. You can also navigate to the listed URL in your browser of choice to debug tests using that browser.
-
-Because the amount of tests is so large, it's recommended to debug only a specific set of unit tests rather than the whole test suite. You can use the `testDirs` argument when using the debug command and pass a specific test directory. The test directory names are the same as those used for `test:unit:*`:
-
-```console
-# accepts a single directory or a comma-separated list of directories
-pnpm run test:debug -- testDirs=core,commons
-```
-
-### Test infrastructure (Phase 3 work in progress)
-
-We are introducing [Vitest 4](https://vitest.dev/) and [Playwright](https://playwright.dev/) alongside the existing Karma/Mocha/Chai stack as part of a strangler-fig migration. Both runners coexist for the duration of Phase 3 — the Karma scripts above (`pnpm test:unit`, `pnpm test:integration:*`) remain the source of truth for test correctness until Sprint 4, when the legacy stack is removed.
-
-The new dev-dependency entry points are:
-
-- `vitest` — the new test runner (unit + browser)
-- `@vitest/browser-playwright` — Playwright provider for Vitest browser mode
-- `@vitest/coverage-v8` — V8-based coverage reporter
-- `playwright` — browser automation library (drives Chromium/Firefox/WebKit)
-
-After `pnpm install`, contributors should run the following one-time setup to download the Playwright browser binaries used by the new browser-mode test suites:
+After `pnpm install`, run the one-time Playwright browser setup so that browser-mode tests have Chromium/Firefox available locally:
 
 ```console
 pnpm --filter=axe-core exec playwright install chromium firefox
@@ -236,7 +153,58 @@ pnpm --filter=axe-core exec playwright install chromium firefox
 
 On macOS this populates `~/Library/Caches/ms-playwright/`. On Linux/CI runners the browsers go under `~/.cache/ms-playwright/`. No `apt-get` / `brew` system packages are required for local development on macOS; CI runner system dependencies are handled in the workflow configuration.
 
-For any test-related questions during this migration, please reference [`specs/phase-03-test-infrastructure-modernization-plan.md`](../../specs/phase-03-test-infrastructure-modernization-plan.md).
+To run the full Vitest suite (TypeScript typecheck + all three projects: unit, browser, integration):
+
+```console
+pnpm test
+```
+
+The Vitest workspace is split into three projects. To run a single project:
+
+```console
+# Browser-mode tests (Playwright + Chromium) — covers checks, commons,
+# core, and rule-matches under test/browser/
+pnpm test:vitest:browser
+
+# Integration tests (Playwright + Chromium and Firefox) under test/integration/
+pnpm test:vitest:integration
+```
+
+To run with coverage (v8 provider; thresholds are configured in `vitest.config.ts`):
+
+```console
+pnpm test:vitest --coverage
+```
+
+To run in watch mode (re-runs affected tests on file change):
+
+```console
+pnpm test:vitest:watch
+```
+
+### Preserved Mocha-driven conformance suites (pending Sprint 5b)
+
+A few legacy Mocha-driven conformance suites remain alongside the Vitest suite while their migration is finalized in Sprint 5b. They run the WCAG-ACT, ARIA Practices, locale, virtual-rules, and Selenium-driven cross-browser integration suites against the built bundle:
+
+```console
+pnpm test:act               # WCAG-ACT rules conformance (mocha)
+pnpm test:apg               # ARIA Practices Guide (mocha + start-server-and-test)
+pnpm test:locales           # Locale JSON validation (mocha)
+pnpm test:virtual-rules     # Virtual rules conformance (mocha)
+pnpm test:integration:chrome   # Selenium WebDriver — Chrome
+pnpm test:integration:firefox  # Selenium WebDriver — Firefox
+pnpm test:node              # Node-side bundle smoke (no JSDOM)
+pnpm test:jsdom             # Node-side bundle smoke (with JSDOM)
+```
+
+These commands run the legacy Mocha-driven conformance suites that have not yet been ported to Vitest; they are scheduled for migration in Sprint 5b.
+
+There are also a few non-test scripts that get run during continuous integration:
+
+```console
+# Run the tests from `doc/examples/*` using the current local build of `axe.js`
+pnpm test:examples
+```
 
 ## Using axe with TypeScript
 

@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); destructures 'captureError' from axe.testUtils (testUtils helper not exposed under Vitest)
+// FIXME(phase-3-sprint-4b): codemod blocker — helper not exposed (will not be re-exposed): captureError
 describe('runRules', () => {
   let ver = axe.version.substring(0, axe.version.lastIndexOf('.'));
   const { captureError } = axe.testUtils;

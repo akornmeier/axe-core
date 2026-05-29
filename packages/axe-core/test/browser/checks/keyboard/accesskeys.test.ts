@@ -1,13 +1,19 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
-  checks
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
+import accesskeysEvaluate from '@checks/keyboard/accesskeys-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const accesskeysEvaluateESM = getCheckEvaluateESM(accesskeysEvaluate);
+const audit = createSyntheticAudit(['accesskeys']);
+
 describe('accesskeys', () => {
   const checkContext = createMockCheckContext();
-  const checkEvaluate = getCheckEvaluate('accesskeys');
+  const checkEvaluate = accesskeysEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();
@@ -60,7 +66,7 @@ describe('accesskeys', () => {
         { data: 'A', relatedNodes: ['fred'] }
       ];
 
-      const result = checks.accesskeys.after(results);
+      const result = audit.checks['accesskeys'].after(results);
 
       expect(result).toHaveLength(1);
       expect(result[0].data).toBe('A');
@@ -75,7 +81,7 @@ describe('accesskeys', () => {
         { data: 'B', relatedNodes: ['fred'] }
       ];
 
-      const result = checks.accesskeys.after(results);
+      const result = audit.checks['accesskeys'].after(results);
 
       expect(result).toHaveLength(2);
       expect(result[0].result).toBe(true);
@@ -83,7 +89,7 @@ describe('accesskeys', () => {
     });
 
     it('should consider accesskeys with different cases as the same result', () => {
-      const result = checks.accesskeys.after([
+      const result = audit.checks['accesskeys'].after([
         { data: 'A', relatedNodes: ['bob'] },
         { data: 'a', relatedNodes: ['fred'] }
       ]);

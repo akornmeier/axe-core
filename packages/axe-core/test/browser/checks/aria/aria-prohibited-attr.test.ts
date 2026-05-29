@@ -1,12 +1,18 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import ariaProhibitedAttrEvaluate from '@checks/aria/aria-prohibited-attr-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const ariaProhibitedAttrEvaluateESM = getCheckEvaluateESM(
+  ariaProhibitedAttrEvaluate,
+  { elementsAllowedAriaLabel: ['applet', 'input'] }
+);
 describe('aria-prohibited-attr', () => {
   const checkContext = createMockCheckContext();
-  const checkEvaluate = getCheckEvaluate('aria-prohibited-attr');
+  const checkEvaluate = ariaProhibitedAttrEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

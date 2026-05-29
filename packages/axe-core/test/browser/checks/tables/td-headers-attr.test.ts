@@ -1,16 +1,19 @@
 import {
   createMockCheckContext,
   fixtureSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import tdHeadersAttrEvaluate from '@checks/tables/td-headers-attr-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const tdHeadersAttrEvaluateESM = getCheckEvaluateESM(tdHeadersAttrEvaluate);
 describe('td-headers-attr', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   const checkContext = createMockCheckContext();
-  const check = getCheckEvaluate('td-headers-attr');
+  const check = tdHeadersAttrEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

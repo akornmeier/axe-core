@@ -1,16 +1,21 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowSupport
 } from '@helpers/check-helpers';
+import hasDescendantEvaluate from '@checks/generic/has-descendant-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const landmarkEvaluateESM = getCheckEvaluateESM(hasDescendantEvaluate, {
+  selector: 'main, [role=main]'
+});
 describe('landmark', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  const checkEvaluate = getCheckEvaluate('landmark');
+  const checkEvaluate = landmarkEvaluateESM;
   const checkContext = createMockCheckContext();
 
   afterEach(() => {

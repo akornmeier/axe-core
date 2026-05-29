@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.shadowSupport (testUtils helper not exposed under Vitest)
+// FIXME(phase-05-sprint-5b): chai+testUtils chain failed: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
 function createContentGetSelector() {
   var group = document.createElement('div');
   group.innerHTML =

@@ -1,11 +1,17 @@
 import {
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   flatTreeSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import duplicateImgLabelEvaluate from '@checks/label/duplicate-img-label-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const duplicateImgLabelEvaluateESM = getCheckEvaluateESM(
+  duplicateImgLabelEvaluate,
+  { parentSelector: 'button, [role=button], a[href], p, li, td, th' }
+);
 describe('duplicate-img-label', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -20,7 +26,7 @@ describe('duplicate-img-label', () => {
     fixture.innerHTML = '<button><img id="target" alt="Plain text"></button>';
     const node = fixture.querySelector('#target');
     flatTreeSetup(fixture);
-    const result = getCheckEvaluate('duplicate-img-label')(
+    const result = duplicateImgLabelEvaluateESM(
       node,
       undefined,
       axe.utils.getNodeFromTree(node)
@@ -34,7 +40,7 @@ describe('duplicate-img-label', () => {
     const node = fixture.querySelector('#target');
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('duplicate-img-label')(
+      duplicateImgLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)
@@ -48,7 +54,7 @@ describe('duplicate-img-label', () => {
     const node = fixture.querySelector('#target');
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('duplicate-img-label')(
+      duplicateImgLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)
@@ -62,7 +68,7 @@ describe('duplicate-img-label', () => {
     const node = fixture.querySelector('#target');
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('duplicate-img-label')(
+      duplicateImgLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)
@@ -76,7 +82,7 @@ describe('duplicate-img-label', () => {
     const node = fixture.querySelector('#target');
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('duplicate-img-label')(
+      duplicateImgLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)
@@ -89,7 +95,7 @@ describe('duplicate-img-label', () => {
     const node = fixture.querySelector('#target');
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('duplicate-img-label')(
+      duplicateImgLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)
@@ -103,7 +109,7 @@ describe('duplicate-img-label', () => {
     const node = fixture.querySelector('#target');
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('duplicate-img-label')(
+      duplicateImgLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)
@@ -117,7 +123,7 @@ describe('duplicate-img-label', () => {
     const node = fixture.querySelector('#target');
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('duplicate-img-label')(
+      duplicateImgLabelEvaluateESM(
         node,
         undefined,
         axe.utils.getNodeFromTree(node)
@@ -131,7 +137,7 @@ describe('duplicate-img-label', () => {
     const node = fixture.querySelector('#target');
     flatTreeSetup(fixture);
     expect(
-      getCheckEvaluate('duplicate-img-label')(
+      duplicateImgLabelEvaluateESM(
         node,
         { parentSelector: 'div' },
         axe.utils.getNodeFromTree(node)
@@ -151,7 +157,7 @@ describe('duplicate-img-label', () => {
       flatTreeSetup(fixture);
       const node = shadow.querySelector('#target');
       expect(
-        getCheckEvaluate('duplicate-img-label')(
+        duplicateImgLabelEvaluateESM(
           node,
           undefined,
           axe.utils.getNodeFromTree(node)
@@ -173,7 +179,7 @@ describe('duplicate-img-label', () => {
       flatTreeSetup(fixture);
       const node = button.querySelector('#target');
       expect(
-        getCheckEvaluate('duplicate-img-label')(
+        duplicateImgLabelEvaluateESM(
           node,
           undefined,
           axe.utils.getNodeFromTree(node)
@@ -192,9 +198,7 @@ describe('duplicate-img-label', () => {
       shadow.innerHTML = '<slot></slot><img alt="My image">';
       const checkArgs = checkSetup(button);
 
-      expect(
-        getCheckEvaluate('duplicate-img-label').apply(null, checkArgs)
-      ).toBe(false);
+      expect(duplicateImgLabelEvaluateESM.apply(null, checkArgs)).toBe(false);
     }
   );
 });

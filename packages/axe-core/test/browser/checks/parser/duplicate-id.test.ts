@@ -1,10 +1,16 @@
 import {
   createMockCheckContext,
-  getCheckEvaluate,
-  shadowSupport,
-  checks
+  getCheckEvaluateESM,
+  shadowSupport
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
+import duplicateIdEvaluate from '@checks/parsing/duplicate-id-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const duplicateIdEvaluateESM = getCheckEvaluateESM(duplicateIdEvaluate);
+const audit = createSyntheticAudit(['duplicate-id']);
+
 describe('duplicate-id', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -20,9 +26,7 @@ describe('duplicate-id', () => {
   it('should return true if there is only one element with an ID', () => {
     fixture.innerHTML = '<div id="target"></div>';
     const node = fixture.querySelector('#target');
-    expect(getCheckEvaluate('duplicate-id').call(checkContext, node)).toBe(
-      true
-    );
+    expect(duplicateIdEvaluateESM.call(checkContext, node)).toBe(true);
     expect(checkContext._data).toBe(node.id);
     expect(checkContext._relatedNodes).toEqual([]);
   });
@@ -30,16 +34,14 @@ describe('duplicate-id', () => {
   it('should return false if there are multiple elements with an ID', () => {
     fixture.innerHTML = '<div id="target"></div><div id="target"></div>';
     const node = fixture.querySelector('#target');
-    expect(getCheckEvaluate('duplicate-id').call(checkContext, node)).toBe(
-      false
-    );
+    expect(duplicateIdEvaluateESM.call(checkContext, node)).toBe(false);
     expect(checkContext._data).toBe(node.id);
     expect(checkContext._relatedNodes).toEqual([node.nextSibling]);
   });
 
   it('should return remove duplicates', () => {
     expect(
-      checks['duplicate-id'].after([
+      audit.checks['duplicate-id'].after([
         { data: 'a' },
         { data: 'b' },
         { data: 'b' }
@@ -52,9 +54,7 @@ describe('duplicate-id', () => {
       '<div data-testelm="1" id=""></div><div data-testelm="2"  id=""></div>';
     const node = fixture.querySelector('[data-testelm="1"]');
 
-    expect(getCheckEvaluate('duplicate-id').call(checkContext, node)).toBe(
-      true
-    );
+    expect(duplicateIdEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   it('should allow overwrote ids', () => {
@@ -64,9 +64,7 @@ describe('duplicate-id', () => {
       '</label></form>';
     const node = fixture.querySelector('[data-testelm="1"]');
 
-    expect(getCheckEvaluate('duplicate-id').call(checkContext, node)).toBe(
-      true
-    );
+    expect(duplicateIdEvaluateESM.call(checkContext, node)).toBe(true);
   });
 
   (shadowSupport.v1 ? it : it.skip)(
@@ -79,9 +77,7 @@ describe('duplicate-id', () => {
       const node = shadow.querySelector('span');
       fixture.appendChild(div);
 
-      expect(getCheckEvaluate('duplicate-id').call(checkContext, node)).toBe(
-        false
-      );
+      expect(duplicateIdEvaluateESM.call(checkContext, node)).toBe(false);
       expect(checkContext._relatedNodes).toHaveLength(1);
       expect(checkContext._relatedNodes).toEqual([shadow.querySelector('p')]);
     }
@@ -96,9 +92,7 @@ describe('duplicate-id', () => {
       shadow.innerHTML = '<span id="target"></span>';
       fixture.appendChild(node);
 
-      expect(getCheckEvaluate('duplicate-id').call(checkContext, node)).toBe(
-        true
-      );
+      expect(duplicateIdEvaluateESM.call(checkContext, node)).toBe(true);
       expect(checkContext._relatedNodes).toHaveLength(0);
     }
   );
@@ -113,9 +107,7 @@ describe('duplicate-id', () => {
       const node = shadow.querySelector('#target');
       fixture.appendChild(div);
 
-      expect(getCheckEvaluate('duplicate-id').call(checkContext, node)).toBe(
-        true
-      );
+      expect(duplicateIdEvaluateESM.call(checkContext, node)).toBe(true);
       expect(checkContext._relatedNodes).toHaveLength(0);
     }
   );
@@ -130,9 +122,7 @@ describe('duplicate-id', () => {
       shadow.innerHTML = '<span id="target"><slot></slot></span>';
       fixture.appendChild(node);
 
-      expect(getCheckEvaluate('duplicate-id').call(checkContext, node)).toBe(
-        false
-      );
+      expect(duplicateIdEvaluateESM.call(checkContext, node)).toBe(false);
       expect(checkContext._relatedNodes).toHaveLength(1);
       expect(checkContext._relatedNodes).toEqual([node.querySelector('p')]);
     }

@@ -1,13 +1,20 @@
+// FIXME(phase-05-sprint-5): 'options > should exclude supplied attributes' fails — array-typed options arg gets spread by getCheckEvaluateESM as if it were a plain object, dropping the array indices.
 import {
   createMockCheckContext,
   queryFixture,
   fixtureSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowCheckSetup,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import ariaValidAttrValueEvaluate from '@checks/aria/aria-valid-attr-value-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const ariaValidAttrValueEvaluateESM = getCheckEvaluateESM(
+  ariaValidAttrValueEvaluate,
+  []
+);
 describe('aria-valid-attr-value', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -15,7 +22,7 @@ describe('aria-valid-attr-value', () => {
   });
   const checkContext = createMockCheckContext();
   const shadowSupported = shadowSupport.v1;
-  const validAttrValueCheck = getCheckEvaluate('aria-valid-attr-value');
+  const validAttrValueCheck = ariaValidAttrValueEvaluateESM;
 
   afterEach(() => {
     fixture.innerHTML = '';

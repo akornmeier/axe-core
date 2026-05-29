@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — fixture lookup at module top level (Path-B test setup)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: Error: Failed to import test file /Users/tonykornmeier/Code/axe-core/packages/axe-core/test/browser/core/public/cleanup.test.ts
 /*global cleanup */
 describe('cleanup', function () {
   function createFrames(callback) {

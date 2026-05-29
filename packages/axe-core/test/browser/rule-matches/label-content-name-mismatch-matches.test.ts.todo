@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.queryFixture (testUtils helper not exposed under Vitest)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: TypeError: Cannot set properties of null (setting 'innerHTML')
 describe('label-content-name-mismatch-matches tests', function () {
   const fixture = document.getElementById('fixture');
   const queryFixture = axe.testUtils.queryFixture;

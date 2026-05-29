@@ -3,13 +3,16 @@ import {
   checkSetup,
   shadowCheckSetup,
   shadowSupport,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['landmark-is-top-level']);
+
 describe('landmark-is-top-level', () => {
   const shadowSupported = shadowSupport.v1;
-  const check = checks['landmark-is-top-level'];
+  const check = audit.checks['landmark-is-top-level'];
   const checkContext = new createMockCheckContext();
 
   afterEach(() => {

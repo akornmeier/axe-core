@@ -1,16 +1,19 @@
 import {
   createMockCheckContext,
   queryFixture,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['no-implicit-explicit-label']);
+
 describe('no-implicit-explicit-label', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  const check = checks['no-implicit-explicit-label'];
+  const check = audit.checks['no-implicit-explicit-label'];
   const checkContext = createMockCheckContext();
 
   afterEach(() => {

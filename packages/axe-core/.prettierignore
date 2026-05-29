@@ -9,3 +9,5 @@ lib/core/base/metadata-function-map.ts
 lib/core/generated/
 tmp/
 logs/
+coverage/
+.claude/

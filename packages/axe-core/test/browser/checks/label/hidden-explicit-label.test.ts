@@ -1,16 +1,24 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowCheckSetup,
   shadowSupport,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
+import hiddenExplicitLabelEvaluate from '@checks/label/hidden-explicit-label-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const hiddenExplicitLabelEvaluateESM = getCheckEvaluateESM(
+  hiddenExplicitLabelEvaluate
+);
+const audit = createSyntheticAudit(['hidden-explicit-label']);
+
 describe('hidden-explicit-label', () => {
   const checkContext = createMockCheckContext();
-  const check = checks['hidden-explicit-label'];
+  const check = audit.checks['hidden-explicit-label'];
 
   afterEach(() => {
     checkContext.reset();
@@ -101,9 +109,7 @@ describe('hidden-explicit-label', () => {
           type: 'text'
         }
       });
-      expect(getCheckEvaluate('hidden-explicit-label')(null, {}, vNode)).toBe(
-        false
-      );
+      expect(hiddenExplicitLabelEvaluateESM(null, {}, vNode)).toBe(false);
     });
 
     it('should return undefined if it has id', () => {
@@ -114,9 +120,7 @@ describe('hidden-explicit-label', () => {
           id: 'foobar'
         }
       });
-      expect(
-        getCheckEvaluate('hidden-explicit-label')(null, {}, vNode)
-      ).toBeUndefined();
+      expect(hiddenExplicitLabelEvaluateESM(null, {}, vNode)).toBeUndefined();
     });
   });
 });

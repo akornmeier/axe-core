@@ -4,7 +4,7 @@
 
 axe-core is the most widely adopted accessibility testing engine on the web. We are modernizing the build, test, and type infrastructure across four phased workstreams. See `specs/PRD-00-axe-core-modernization-overview.md` for the full master plan.
 
-**Current branch:** `chore/modernize-phase-00` (Phase 0 — Monorepo Scaffolding)
+**Current branch:** `chore/modernize-phase-5` (Phase 3 closing — Sprint 5c complete; see `specs/phase-05-sprint-5c-results.md`)
 
 ## Target Stack
 
@@ -21,13 +21,13 @@ axe-core is the most widely adopted accessibility testing engine on the web. We 
 
 ## Phase Order & Dependencies
 
-| Phase | Title | Depends On |
-|---|---|---|
-| **Phase 0** | Monorepo Scaffolding (PNPM + Turborepo) | None |
-| **Phase 1** | Type System Modernization | Phase 0 |
-| **Phase 2** | Build System Modernization | Phase 1 (partial) |
-| **Phase 3** | Test Infrastructure Modernization | Phase 2 (partial) |
-| **Phase 4** | Rules & Checks Optimization | Phases 1–3 |
+| Phase | Title | Depends On | Status |
+|---|---|---|---|
+| **Phase 0** | Monorepo Scaffolding (PNPM + Turborepo) | None | ✅ Complete |
+| **Phase 1** | Type System Modernization | Phase 0 | ✅ Complete |
+| **Phase 2** | Build System Modernization | Phase 1 (partial) | ✅ Complete |
+| **Phase 3** | Test Infrastructure Modernization | Phase 2 (partial) | ✅ Complete (Sprint 5c, 2026-04-27) |
+| **Phase 4** | Rules & Checks Optimization | Phases 1–3 | ⏳ Not started |
 
 ## Target Monorepo Structure
 

@@ -1,10 +1,15 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   axe
 } from '@helpers/check-helpers';
+import hasTextContentEvaluate from '@checks/generic/has-text-content-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const buttonHasVisibleTextEvaluateESM = getCheckEvaluateESM(
+  hasTextContentEvaluate
+);
 describe('button-has-visible-text', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -20,17 +25,17 @@ describe('button-has-visible-text', () => {
   it('should return false if button element is empty', () => {
     const checkArgs = checkSetup('<button></button>', 'button');
 
-    expect(
-      getCheckEvaluate('button-has-visible-text').apply(checkContext, checkArgs)
-    ).toBe(false);
+    expect(buttonHasVisibleTextEvaluateESM.apply(checkContext, checkArgs)).toBe(
+      false
+    );
   });
 
   it('should return true if a button element has text', () => {
     const checkArgs = checkSetup('<button>Name</button>', 'button');
 
-    expect(
-      getCheckEvaluate('button-has-visible-text').apply(checkContext, checkArgs)
-    ).toBe(true);
+    expect(buttonHasVisibleTextEvaluateESM.apply(checkContext, checkArgs)).toBe(
+      true
+    );
   });
 
   it('should return true if ARIA button has text', () => {
@@ -39,17 +44,17 @@ describe('button-has-visible-text', () => {
       '[role=button]'
     );
 
-    expect(
-      getCheckEvaluate('button-has-visible-text').apply(checkContext, checkArgs)
-    ).toBe(true);
+    expect(buttonHasVisibleTextEvaluateESM.apply(checkContext, checkArgs)).toBe(
+      true
+    );
   });
 
   it('should return false if ARIA button has no text', () => {
     const checkArgs = checkSetup('<div role="button"></div>', '[role=button]');
 
-    expect(
-      getCheckEvaluate('button-has-visible-text').apply(checkContext, checkArgs)
-    ).toBe(false);
+    expect(buttonHasVisibleTextEvaluateESM.apply(checkContext, checkArgs)).toBe(
+      false
+    );
   });
 
   describe('SerialVirtualNode', () => {
@@ -58,9 +63,7 @@ describe('button-has-visible-text', () => {
         nodeName: 'button'
       });
 
-      expect(
-        getCheckEvaluate('button-has-visible-text')(null, {}, node)
-      ).toBeUndefined();
+      expect(buttonHasVisibleTextEvaluateESM(null, {}, node)).toBeUndefined();
     });
 
     it('should return false if button element is empty', () => {
@@ -69,9 +72,7 @@ describe('button-has-visible-text', () => {
       });
       node.children = [];
 
-      expect(getCheckEvaluate('button-has-visible-text')(null, {}, node)).toBe(
-        false
-      );
+      expect(buttonHasVisibleTextEvaluateESM(null, {}, node)).toBe(false);
     });
 
     it('should return true if a button element has text', () => {
@@ -85,9 +86,7 @@ describe('button-has-visible-text', () => {
       });
       node.children = [child];
 
-      expect(getCheckEvaluate('button-has-visible-text')(null, {}, node)).toBe(
-        true
-      );
+      expect(buttonHasVisibleTextEvaluateESM(null, {}, node)).toBe(true);
     });
   });
 });

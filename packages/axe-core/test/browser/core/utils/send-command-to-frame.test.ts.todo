@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.captureError (testUtils helper not exposed under Vitest)
+// FIXME(phase-3-sprint-4b): codemod blocker — helper not exposed (will not be re-exposed): captureError
 describe('axe.utils.sendCommandToFrame', () => {
   const fixture = document.getElementById('fixture');
   let params;

@@ -1,11 +1,16 @@
-import { queryFixture, getCheckEvaluate } from '@helpers/check-helpers';
+import { queryFixture, getCheckEvaluateESM } from '@helpers/check-helpers';
+import matchesDefinitionEvaluate from '@checks/generic/matches-definition-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const roleNoneEvaluateESM = getCheckEvaluateESM(matchesDefinitionEvaluate, {
+  matcher: { attributes: { role: 'none' } }
+});
 describe('role-none', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  const checkEvaluate = getCheckEvaluate('role-none');
+  const checkEvaluate = roleNoneEvaluateESM;
 
   afterEach(() => {
     fixture.innerHTML = '';

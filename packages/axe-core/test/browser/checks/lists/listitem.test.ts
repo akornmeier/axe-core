@@ -2,14 +2,17 @@ import {
   createMockCheckContext,
   checkSetup,
   fixtureSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import listitemEvaluate from '@checks/lists/listitem-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const listitemEvaluateESM = getCheckEvaluateESM(listitemEvaluate);
 describe('listitem', () => {
   const checkContext = createMockCheckContext();
-  const checkEvaluate = getCheckEvaluate('listitem');
+  const checkEvaluate = listitemEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

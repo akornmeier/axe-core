@@ -1,15 +1,18 @@
 import {
   createMockCheckContext,
   queryFixture,
-  getCheckEvaluateESM,
-  checks
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import metaViewportScaleEvaluate from '@checks/mobile/meta-viewport-scale-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
 
 const metaViewportEvaluateESM = getCheckEvaluateESM(metaViewportScaleEvaluate, {
   scaleMinimum: 2
 });
+const audit = createSyntheticAudit(['meta-viewport']);
+
 describe('meta-viewport', () => {
   const checkContext = createMockCheckContext();
 
@@ -152,7 +155,12 @@ describe('meta-viewport', () => {
       );
 
       expect(
-        checks['meta-viewport'].evaluate.call(checkContext, null, null, vNode)
+        audit.checks['meta-viewport'].evaluate.call(
+          checkContext,
+          null,
+          null,
+          vNode
+        )
       ).toBe(true);
     });
   });

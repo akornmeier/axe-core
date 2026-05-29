@@ -1,17 +1,22 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   axe
 } from '@helpers/check-helpers';
+import autocompleteAppropriateEvaluate from '@checks/forms/autocomplete-appropriate-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const autocompleteAppropriateEvaluateESM = getCheckEvaluateESM(
+  autocompleteAppropriateEvaluate
+);
 describe('autocomplete-appropriate', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
   const checkContext = createMockCheckContext();
-  const evaluate = getCheckEvaluate('autocomplete-appropriate');
+  const evaluate = autocompleteAppropriateEvaluateESM;
 
   beforeEach(() => {
     axe._tree = undefined;

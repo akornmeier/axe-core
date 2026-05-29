@@ -2,13 +2,16 @@ import {
   createMockCheckContext,
   checkSetup,
   shadowCheckSetup,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['target-size']);
+
 describe('target-size tests', () => {
   const checkContext = createMockCheckContext();
-  const check = checks['target-size'];
+  const check = audit.checks['target-size'];
   let fixture: HTMLElement;
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;

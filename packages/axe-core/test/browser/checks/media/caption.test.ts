@@ -1,5 +1,9 @@
-import { checkSetup, shadowSupport, checks } from '@helpers/check-helpers';
+import { checkSetup, shadowSupport } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['caption']);
+
 describe('caption', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -11,7 +15,9 @@ describe('caption', () => {
 
   it('should return undefined if there is no track element', () => {
     const checkArgs = checkSetup('<audio></audio>', 'audio');
-    expect(checks.caption.evaluate.apply(null, checkArgs)).toBeUndefined();
+    expect(
+      audit.checks['caption'].evaluate.apply(null, checkArgs)
+    ).toBeUndefined();
   });
 
   it('should return undefined if there is no kind=captions attribute', () => {
@@ -19,7 +25,9 @@ describe('caption', () => {
       '<audio><track kind=descriptions></audio>',
       'audio'
     );
-    expect(checks.caption.evaluate.apply(null, checkArgs)).toBeUndefined();
+    expect(
+      audit.checks['caption'].evaluate.apply(null, checkArgs)
+    ).toBeUndefined();
   });
 
   it('should pass if there is a kind=captions attribute', () => {
@@ -27,7 +35,7 @@ describe('caption', () => {
       '<audio><track kind=captions></audio>',
       'audio'
     );
-    expect(checks.caption.evaluate.apply(null, checkArgs)).toBe(false);
+    expect(audit.checks['caption'].evaluate.apply(null, checkArgs)).toBe(false);
   });
 
   (shadowSupport.v1 ? it : it.skip)(
@@ -39,7 +47,9 @@ describe('caption', () => {
       shadow.innerHTML = '<audio><slot></slot></audio>';
 
       const checkArgs = checkSetup(node, {}, 'audio');
-      expect(checks.caption.evaluate.apply(null, checkArgs)).toBe(false);
+      expect(audit.checks['caption'].evaluate.apply(null, checkArgs)).toBe(
+        false
+      );
     }
   );
 });

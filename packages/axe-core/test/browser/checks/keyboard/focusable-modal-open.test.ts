@@ -1,10 +1,13 @@
 import {
   createMockCheckContext,
   checkSetup,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
+const audit = createSyntheticAudit(['focusable-modal-open']);
+
 describe('focusable-modal-open', () => {
   let check;
   let fixture: HTMLElement;
@@ -13,7 +16,7 @@ describe('focusable-modal-open', () => {
   });
   const checkContext = createMockCheckContext();
   beforeAll(() => {
-    check = checks['focusable-modal-open'];
+    check = audit.checks['focusable-modal-open'];
   });
 
   afterEach(() => {

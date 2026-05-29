@@ -1,5 +1,12 @@
-import { getCheckEvaluate, flatTreeSetup, axe } from '@helpers/check-helpers';
+import {
+  getCheckEvaluateESM,
+  flatTreeSetup,
+  axe
+} from '@helpers/check-helpers';
+import titleOnlyEvaluate from '@checks/label/title-only-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const titleOnlyEvaluateESM = getCheckEvaluateESM(titleOnlyEvaluate);
 describe('title-only', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -20,19 +27,11 @@ describe('title-only', () => {
     flatTreeSetup(fixture);
 
     expect(
-      getCheckEvaluate('title-only')(
-        node,
-        undefined,
-        axe.utils.getNodeFromTree(node)
-      )
+      titleOnlyEvaluateESM(node, undefined, axe.utils.getNodeFromTree(node))
     ).toBe(true);
     node.setAttribute('aria-label', 'woop');
     expect(
-      getCheckEvaluate('title-only')(
-        node,
-        undefined,
-        axe.utils.getNodeFromTree(node)
-      )
+      titleOnlyEvaluateESM(node, undefined, axe.utils.getNodeFromTree(node))
     ).toBe(false);
   });
 
@@ -50,19 +49,11 @@ describe('title-only', () => {
     flatTreeSetup(fixture);
 
     expect(
-      getCheckEvaluate('title-only')(
-        node,
-        undefined,
-        axe.utils.getNodeFromTree(node)
-      )
+      titleOnlyEvaluateESM(node, undefined, axe.utils.getNodeFromTree(node))
     ).toBe(true);
     node.setAttribute('aria-label', 'woop');
     expect(
-      getCheckEvaluate('title-only')(
-        node,
-        undefined,
-        axe.utils.getNodeFromTree(node)
-      )
+      titleOnlyEvaluateESM(node, undefined, axe.utils.getNodeFromTree(node))
     ).toBe(false);
   });
 });

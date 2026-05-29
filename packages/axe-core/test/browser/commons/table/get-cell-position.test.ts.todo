@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.flatTreeSetup (testUtils helper not exposed under Vitest)
+// FIXME(phase-3-sprint-4b): codemod blocker — unresolved axe.testUtils.* (Path-B helper migration); post-codemod failure: TypeError: Cannot set properties of null (setting 'innerHTML')
 describe('table.getCellPosition', function () {
   var fixture = document.getElementById('fixture');
 

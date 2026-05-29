@@ -1,12 +1,17 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate
+  getCheckEvaluateESM
 } from '@helpers/check-helpers';
+import targetOffsetEvaluate from '@checks/mobile/target-offset-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const targetOffsetEvaluateESM = getCheckEvaluateESM(targetOffsetEvaluate, {
+  minOffset: 24
+});
 describe('target-offset tests', () => {
   const checkContext = createMockCheckContext();
-  const checkEvaluate = getCheckEvaluate('target-offset');
+  const checkEvaluate = targetOffsetEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

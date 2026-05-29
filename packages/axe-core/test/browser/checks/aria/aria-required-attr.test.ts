@@ -2,13 +2,18 @@ import {
   createMockCheckContext,
   checkSetup,
   queryFixture,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   axe
 } from '@helpers/check-helpers';
+import ariaRequiredAttrEvaluate from '@checks/aria/aria-required-attr-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const ariaRequiredAttrEvaluateESM = getCheckEvaluateESM(
+  ariaRequiredAttrEvaluate
+);
 describe('aria-required-attr', () => {
   const checkContext = createMockCheckContext();
-  const requiredAttrCheck = getCheckEvaluate('aria-required-attr');
+  const requiredAttrCheck = ariaRequiredAttrEvaluateESM;
 
   afterEach(() => {
     checkContext.reset();

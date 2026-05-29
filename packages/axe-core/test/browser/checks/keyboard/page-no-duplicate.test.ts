@@ -3,10 +3,13 @@ import {
   checkSetup,
   fixtureSetup,
   shadowSupport,
-  checks,
   axe
 } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+const audit = createSyntheticAudit(['page-no-duplicate-main']);
+
 describe('page-no-duplicate', () => {
   let fixture: HTMLElement;
   beforeEach(() => {
@@ -15,7 +18,7 @@ describe('page-no-duplicate', () => {
   const checkContext = new createMockCheckContext();
   const shadowSupported = shadowSupport.v1;
 
-  const check = checks['page-no-duplicate-main'];
+  const check = audit.checks['page-no-duplicate-main'];
 
   afterEach(() => {
     checkContext.reset();

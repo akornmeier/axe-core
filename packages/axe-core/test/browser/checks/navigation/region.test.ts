@@ -1,12 +1,18 @@
+// FIXME(phase-05-sprint-5): 'should test Shadow tree content' fails — relies on legacy `axe._tree[0]` global state pattern; needs rewrite to use fixtureSetup return value or queryFixture instead.
 import {
   createMockCheckContext,
   checkSetup,
   fixtureSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   shadowSupport,
   axe
 } from '@helpers/check-helpers';
+import regionEvaluate from '@checks/navigation/region-evaluate';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+const regionEvaluateESM = getCheckEvaluateESM(regionEvaluate, {
+  regionMatcher: 'dialog, [role=dialog], [role=alertdialog], svg'
+});
 // NOTE: due to how the region check works to return the top-most
 // node that is outside the region, all fixture content will need
 // a region node (in most cases the <div role="main">Content</div>)
@@ -18,7 +24,7 @@ describe('region', () => {
   beforeEach(() => {
     fixture = document.getElementById('fixture') as HTMLElement;
   });
-  const checkEvaluate = getCheckEvaluate('region');
+  const checkEvaluate = regionEvaluateESM;
 
   const checkContext = new createMockCheckContext();
 

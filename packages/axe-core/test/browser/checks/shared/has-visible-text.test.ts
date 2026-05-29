@@ -1,10 +1,13 @@
 import {
   createMockCheckContext,
   checkSetup,
-  getCheckEvaluate,
+  getCheckEvaluateESM,
   axe
 } from '@helpers/check-helpers';
+import hasTextContentEvaluate from '@checks/generic/has-text-content-evaluate';
 import { describe, it, expect, afterEach } from 'vitest';
+
+const hasVisibleTextEvaluateESM = getCheckEvaluateESM(hasTextContentEvaluate);
 describe('has-visible-text', () => {
   const checkContext = createMockCheckContext();
 
@@ -14,25 +17,25 @@ describe('has-visible-text', () => {
 
   it('should return false if there is no visible text', () => {
     const params = checkSetup('<p id="target"></p>');
-    expect(
-      getCheckEvaluate('has-visible-text').apply(checkContext, params as any)
-    ).toBe(false);
+    expect(hasVisibleTextEvaluateESM.apply(checkContext, params as any)).toBe(
+      false
+    );
   });
 
   it('should return false if there is text, but its hidden', () => {
     const params = checkSetup(
       '<p id="target"><span style="display:none">hello!</span></p>'
     );
-    expect(
-      getCheckEvaluate('has-visible-text').apply(checkContext, params as any)
-    ).toBe(false);
+    expect(hasVisibleTextEvaluateESM.apply(checkContext, params as any)).toBe(
+      false
+    );
   });
 
   it('should return true if there is visible text', () => {
     const params = checkSetup('<p id="target">hello!</p>');
-    expect(
-      getCheckEvaluate('has-visible-text').apply(checkContext, params as any)
-    ).toBe(true);
+    expect(hasVisibleTextEvaluateESM.apply(checkContext, params as any)).toBe(
+      true
+    );
   });
 
   describe('SerialVirtualNode', () => {
@@ -41,7 +44,7 @@ describe('has-visible-text', () => {
         nodeName: 'article'
       });
 
-      expect(getCheckEvaluate('has-visible-text')(null, {}, node)).toBe(false);
+      expect(hasVisibleTextEvaluateESM(null, {}, node)).toBe(false);
     });
 
     it('should return incomplete if no other properties are set', () => {
@@ -49,9 +52,7 @@ describe('has-visible-text', () => {
         nodeName: 'button'
       });
 
-      expect(
-        getCheckEvaluate('has-visible-text')(null, {}, node)
-      ).toBeUndefined();
+      expect(hasVisibleTextEvaluateESM(null, {}, node)).toBeUndefined();
     });
 
     it('should return false if there is no visible text', () => {
@@ -60,7 +61,7 @@ describe('has-visible-text', () => {
       });
       node.children = [];
 
-      expect(getCheckEvaluate('has-visible-text')(null, {}, node)).toBe(false);
+      expect(hasVisibleTextEvaluateESM(null, {}, node)).toBe(false);
     });
 
     it('should return true if there is visible text', () => {
@@ -74,7 +75,7 @@ describe('has-visible-text', () => {
       });
       node.children = [child];
 
-      expect(getCheckEvaluate('has-visible-text')(null, {}, node)).toBe(true);
+      expect(hasVisibleTextEvaluateESM(null, {}, node)).toBe(true);
     });
   });
 });

@@ -1,4 +1,4 @@
-// FIXME(phase-3-sprint-4b): codemod blocker — axe._tree (resolved); uses axe.testUtils.flatTreeSetup (testUtils helper not exposed under Vitest)
+// FIXME(phase-05-sprint-5b): chai+testUtils chain failed: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
 describe('color-contrast-matches', function () {
   const fixture = document.getElementById('fixture');
   const shadowSupport =

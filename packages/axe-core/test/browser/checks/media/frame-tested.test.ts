@@ -1,13 +1,17 @@
-import { getCheckEvaluateESM, checks } from '@helpers/check-helpers';
+import { getCheckEvaluateESM } from '@helpers/check-helpers';
+import { createSyntheticAudit } from '@helpers/synthetic-audit';
+
 import frameTestedEvaluate from '@checks/media/frame-tested-evaluate';
 import { describe, it, expect } from 'vitest';
 
 const frameTestedEvaluateESM = getCheckEvaluateESM(frameTestedEvaluate, {
   isViolation: false
 });
+const audit = createSyntheticAudit(['frame-tested']);
+
 describe('frame-tested', () => {
   const checkEvaluate = frameTestedEvaluateESM;
-  const frameTestedAfter = checks['frame-tested'].after;
+  const frameTestedAfter = audit.checks['frame-tested'].after;
 
   describe('evaluate', () => {
     it('returns undefined', () => {
