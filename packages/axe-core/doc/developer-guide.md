@@ -31,64 +31,30 @@ Axe 3.0 supports open Shadow DOM: see our virtual DOM APIs and test utilities fo
 
 ### Environment Pre-requisites
 
-1. You must have Node.js version 24 or higher installed.
-   If you have [nvm](https://github.com/nvm-sh/nvm) installed, simply do `nvm use` in the root of this repository.
-1. Install npm development dependencies. In the root folder of your axe-core repository, run `npm install`
+Use the repository's Node and PNPM versions. From the workspace root, run
+`pnpm install --frozen-lockfile`, then `pnpm build` and `pnpm typecheck`.
 
 ### Building axe.js
 
-To build axe.js, simply run `npm run build` in the root folder of the axe-core repository. axe.js and axe.min.js are placed into the root folder.
+The current Vite build writes artifacts to `packages/axe-core/dist/`.
+This migrated source is not a certified replacement for canonical axe-core.
 
 ## Watching for Changes
 
-You can watch for changes and automatically build axe and run relevant tests using `npm run develop`. Once run, any changes to files inside the [lib directory](../lib) will rebuild axe. After axe is built, it will try to run the relevant tests for the files changed. If you change a file inside the [test directory](../test) it will run the tests for the file changed.
-
-Changes to files in the [full integration test directory](../test/integration/full) will not run the tests. This is because these tests require the browser to navigate to the page directly, which is something Mocha / Karma does not support.
-
-**Note:** We are still working on knowing which tests are relevant to the changed file so this may not correctly run tests every time. In these cases you should run the tests manually. If you encounter a test that does not run when a relevant file is changed, please [open an issue](https://github.com/dequelabs/axe-core/issues).
+Use `pnpm --filter axe-core test:vitest:watch` for source tests. Artifact-consuming
+tests still require a fresh build.
 
 ### Running Tests
 
-To run all tests from the command line you can run `npm test`, which will run all unit and integration tests using headless Chrome. Having axe built and up-to-date is required in order to run tests. If you update files inside the [lib directory](../lib) you will need to rebuild axe before running tests.
+`pnpm --filter axe-core test` runs the existing Vitest projects. Select
+`test:vitest:unit`, `test:vitest:browser` or `test:vitest:integration` for a smaller run.
+Browser setup and coverage limits are in [CONTRIBUTING.md](../CONTRIBUTING.md#developing-and-testing).
 
-You can scope which set of tests to run through various npm scripts:
-
-- `npm run test:unit:core` - Run only [core tests](../test/core/)
-- `npm run test:unit:commons` - Run only [commons tests](../test/commons/)
-- `npm run test:unit:checks` - Run only [check tests](../test/checks/)
-- `npm run test:unit:rule-matches` - Run only [rule matches](../test/rule-matches/)
-- `npm run test:unit:integration` - Run only [rule integration tests](../test/integration/rules/)
-- `npm run test:unit:virtual-rules` - Run only [virtual rule tests](../test/integration/virtual-rules)
-- `npm run test:unit:api` - Run only [api tests](../test/integration/api)
-
-There are also a set of tests that are not considered unit tests that you can run through various npm scripts:
-
-- `npm run test:act` - Run the [act tests](../test/act-mapping)
-- `npm run test:apg` - Run the [aria-practices tests](../test/aria-practices)
-- `npm run test:examples` - Run the [example tests](../doc/examples)
-- `npm run test:locales` - Run the [local tests](../test/test-locales.js)
-- `npm run test:node` - Run the [node tests](../test/node)
-- `npm run test:tsc` - Run the [typescript tests](../typeings/axe-core)
-
-Additionally, you can [watch for changes](#watching-for-changes) to files and automatically run the relevant tests.
-
-If you need to debug a test in a non-headless browser, you can run `npm run test:debug` which will run the Karma tests in non-headless Chrome. You can either use that browser's debugger or attach an external debugger on port 9765; [a VS Code launch profile](../.vscode/launch.json) is provided. You can also navigate to the newly opened page using any supported browser.
-
-You can scope which set of tests to debug by passing the `testDirs` argument. Supported values are:
-
-- `core`
-- `commons`
-- `checks`
-- `rule-matches`
-- `integration`
-- `virtual-rules`
-- `api`
-
-Example:
-
-- `npm run test:debug -- testDirs=core`
-
-Lastly, you can run the [full integration tests](../test/integration/full) by starting a local server by running `npm start`. Once started, you can open any supported browser and navigate to any test in the full integration tests directory.
+Canonical axe-core owns its legacy runners and examples. Do not reinstall that
+stack here to make historical commands pass. See the
+[reference boundary](../../../specs/axe-core-reference.md).
+The API and architecture material below describes inherited axe-core behavior,
+not an approved Propellr SDK contract.
 
 ### API Reference
 

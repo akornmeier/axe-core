@@ -929,7 +929,7 @@ The top-level document or shadow DOM document fragment
 
 ## Section 3: Example Reference
 
-This package contains examples for [jasmine](examples/jasmine), [mocha](examples/mocha), [qunit](examples/qunit), and [generating HTML from the violations array](examples/html-handlebars.md). Each of these examples is in the [doc/examples](examples) folder. In each folder, there is a README.md file which contains specific information about each example.
+Legacy integration examples are maintained in [canonical axe-core](https://github.com/dequelabs/axe-core/tree/4d306cbb7c456849c6f964444a6a7174d2be502a/doc/examples), not this Propellr workspace. Follow each example's upstream README in the separate reference checkout.
 
 See [axe-webdriverjs](https://github.com/dequelabs/axe-webdriverjs#axe-webdriverjs) for selenium webdriver JavaScript examples.
 

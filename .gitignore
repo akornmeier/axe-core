@@ -36,3 +36,6 @@ packages/axe-core/doc/rule-descriptions.*.md
 
 # stub package dist
 packages/*/dist/
+
+# Build caches must not suppress fresh declaration emission
+*.tsbuildinfo

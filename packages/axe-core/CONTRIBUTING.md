@@ -71,7 +71,7 @@ We expect all code to be 100% covered by tests. We don't have or want code cover
 
 Tests should be added to the `test` directory using the same file path and name of the source file the test is for. For example, the source file `lib/commons/text/sanitize.js` should have a test file at `test/commons/text/sanitize.js`.
 
-Axe uses Karma / Mocha / Chai as its testing framework.
+Propellr uses the existing Vitest projects. Canonical axe-core testing stays in a separate checkout.
 
 ### Documentation and Comments
 
@@ -145,98 +145,35 @@ pnpm build
 
 ## Developing and testing
 
-In order to run axe tests, `axe.js` must be built using `pnpm build`. To run the unit tests:
+From the repository root:
 
 ```console
-pnpm test
+pnpm build
+pnpm typecheck
+pnpm --filter axe-core test
 ```
 
-To continually watch changes to the axe source files and re-build on changes, use:
+Existing projects can run separately:
 
 ```console
-pnpm run develop
+pnpm --filter axe-core test:vitest:unit
+pnpm --filter axe-core test:vitest:browser
+pnpm --filter axe-core test:vitest:integration
+pnpm --filter axe-core test:vitest:watch
 ```
 
-This will also rerun any tests that have been changed, and any changes to the axe source files will trigger a rerun of that files tests.
-
-To run axe integration tests:
+Provision test browsers when needed:
 
 ```console
-pnpm run test:integration
+pnpm --filter axe-core exec playwright install chromium firefox
 ```
 
-Lastly, there are a few other tests that get run during the continuous integration process:
-
-```console
-# run the tests from `doc/examples/*` using the current local build of `axe.js`
-pnpm run test:examples
-
-# run the tests from `test/node`
-pnpm run test:node
-```
-
-### Running and debugging specific unit tests
-
-If you want to run a specific set of unit tests instead of all the unit tests, you can use one of the following commands:
-
-```console
-# run just the tests from `test/core`
-pnpm run test:unit:core
-
-# run just the tests from `test/commons`
-pnpm run test:unit:commons
-
-# run just the tests from `test/rule-matches`
-pnpm run test:unit:rule-matches
-
-# run just the tests from `test/checks`
-pnpm run test:unit:checks
-
-# run just the tests from `test/integration/rules`
-pnpm run test:unit:integration
-
-# run just the tests from `test/integration/api`
-pnpm run test:unit:api
-
-# run just the tests from `test/integration/virtual-rules`
-pnpm run test:unit:virtual-rules
-```
-
-If you need to debug the unit tests in a browser, you can run:
-
-```console
-pnpm run test:debug
-```
-
-This will start the Karma server and open up the Chrome browser. Click the `Debug` button to start debugging the tests. You can either use that browser's debugger or attach an external debugger on port 9765; [a VS Code launch profile](./.vscode/launch.json) is provided. You can also navigate to the listed URL in your browser of choice to debug tests using that browser.
-
-Because the amount of tests is so large, it's recommended to debug only a specific set of unit tests rather than the whole test suite. You can use the `testDirs` argument when using the debug command and pass a specific test directory. The test directory names are the same as those used for `test:unit:*`:
-
-```console
-# accepts a single directory or a comma-separated list of directories
-pnpm run test:debug -- testDirs=core,commons
-```
-
-### Test infrastructure (Phase 3 work in progress)
-
-We are introducing [Vitest 4](https://vitest.dev/) and [Playwright](https://playwright.dev/) alongside the existing Karma/Mocha/Chai stack as part of a strangler-fig migration. Both runners coexist for the duration of Phase 3 — the Karma scripts above (`pnpm test:unit`, `pnpm test:integration:*`) remain the source of truth for test correctness until Sprint 4, when the legacy stack is removed.
-
-The new dev-dependency entry points are:
-
-- `vitest` — the new test runner (unit + browser)
-- `@vitest/browser-playwright` — Playwright provider for Vitest browser mode
-- `@vitest/coverage-v8` — V8-based coverage reporter
-- `playwright` — browser automation library (drives Chromium/Firefox/WebKit)
-
-After `pnpm install`, contributors should run the following one-time setup to download the Playwright browser binaries used by the new browser-mode test suites:
-
-```console
-pnpm --filter=axe-core exec playwright install chromium firefox
-```
-
-On macOS this populates `~/Library/Caches/ms-playwright/`. On Linux/CI runners the browsers go under `~/.cache/ms-playwright/`. No `apt-get` / `brew` system packages are required for local development on macOS; CI runner system dependencies are handled in the workflow configuration.
-
-For any test-related questions during this migration, please reference [`specs/phase-03-test-infrastructure-modernization-plan.md`](../../specs/phase-03-test-infrastructure-modernization-plan.md).
+Karma, Mocha, Selenium and upstream example runners are not Propellr gates.
+Legacy fixtures remain as migration/reference material, not active coverage.
+See [canonical reference and scope](../../specs/axe-core-reference.md).
+Passing the existing Vitest subset does not establish complete conformance or
+consumer compatibility. The [active plan](../../specs/streamlined-modernization-plan.html)
+tracks remaining work.
 
 ## Using axe with TypeScript
 
@@ -266,44 +203,3 @@ describe('Module', () => {
   });
 });
 ```
-
-## Debugging tests that only fail on CircleCI
-
-First install an X-Windows client on your machine. XQuartz is a good one.
-
-Then follow the [instructions here to connect the X-Windows on CircleCI to XQuartz](https://circleci.com/docs/1.0/browser-debugging/#x11-forwarding-over-ssh)
-
-Start the build using the "Retry the build with SSH enabled" option in the CircleCI interface
-
-Copy the SSH command and add the -X flag to it for example
-
-```console
-ssh -X -p 64605 ubuntu@13.58.157.61
-```
-
-When you login, set up the environment and start the chrome browser
-
-```console
-export DISPLAY=localhost:10.0
-/opt/google/chrome/chrome
-```
-
-### .Xauthority does not exist
-
-Edit the ~/.Xauthority file and just save it with the following commands
-
-```console
-vi ~/.Xauthority
-:wq
-```
-
-### Starting the web server
-
-Log into a second ssh terminal (without -X) and execute the following commands
-
-```console
-cd axe-core
-grunt connect watch
-```
-
-Load your test file URL in the Chrome browser opened in XQuartz
