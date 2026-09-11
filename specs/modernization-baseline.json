@@ -1,0 +1,140 @@
+{
+  "capturedAt": "2026-09-11T14:59:58+00:00",
+  "baseCommit": "b9da71e28e3b7193632f2a57fe28a800d242a433",
+  "originalLocalCommit": "eb2ef403c4d1d12aed9e7cc711af37c1bfcc9f32",
+  "reviewedPr5Head": "c10315ab273eb846094934f42dd09c05b8918fd8",
+  "scope": "Preparation baseline only; no implementation or performance/accuracy certification.",
+  "environment": {
+    "platform": "darwin-arm64",
+    "node": "v24.20.0",
+    "pnpm": "9.15.4",
+    "typescript": "6.0.3",
+    "vitest": "4.1.5",
+    "playwright": "1.59.1"
+  },
+  "fileDiscovery": {
+    "command": "pnpm --filter axe-core exec vitest list --filesOnly --json",
+    "projectEntries": {
+      "unit": 61,
+      "browser (chromium)": 212,
+      "integration (chromium)": 2,
+      "integration (firefox)": 2
+    },
+    "uniqueFiles": 275,
+    "browserTodoFilesOutsideInclude": 148
+  },
+  "checks": [
+    {
+      "name": "install",
+      "command": "pnpm install --frozen-lockfile --ignore-scripts",
+      "exitCode": 0,
+      "observation": "Lifecycle scripts disabled. Warnings: git-hosted ACT/APG package build scripts ignored."
+    },
+    {
+      "name": "color-patch",
+      "command": "pnpm --filter axe-core exec patch-package",
+      "exitCode": 0,
+      "observation": "Reviewed checked-in colorjs.io@0.4.3 patch explicitly applied."
+    },
+    {
+      "name": "schemas-build",
+      "command": "pnpm --filter @axe-core/schemas build",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationSeconds": 0.72,
+      "durationNote": "Single diagnostic invocation, not a performance benchmark.",
+      "observation": "Exit 0 but no dist emitted in fresh worktree; tracked tsconfig.tsbuildinfo required forced regeneration."
+    },
+    {
+      "name": "engine-typecheck",
+      "command": "pnpm --filter axe-core exec tsc --noEmit --pretty false",
+      "exitCode": 1,
+      "timedOut": false,
+      "durationSeconds": 1.36,
+      "durationNote": "Single diagnostic invocation, not a performance benchmark.",
+      "observation": "Initial failure: schema declarations unavailable; subsequent forced schema build followed by identical typecheck command passed."
+    },
+    {
+      "name": "engine-build",
+      "command": "pnpm --filter axe-core build",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationSeconds": 2.29,
+      "durationNote": "Single diagnostic invocation, not a performance benchmark.",
+      "observation": "Four bundle formats built successfully. No tracked source/doc differences after build."
+    },
+    {
+      "name": "test-files",
+      "command": "pnpm --filter axe-core exec vitest list --filesOnly --json",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationSeconds": 0.61,
+      "durationNote": "Single diagnostic invocation, not a performance benchmark.",
+      "observation": "277 project/file entries: unit 61, browser Chromium 212, integration Chromium 2 and Firefox 2. Not executed tests."
+    },
+    {
+      "name": "unit",
+      "command": "pnpm --filter axe-core exec vitest run --project unit --maxWorkers 2",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationSeconds": 3.49,
+      "durationNote": "Single diagnostic invocation, not a performance benchmark.",
+      "observation": "Test Files 30 passed | 31 skipped (61); Tests 207 passed | 1 skipped | 60 todo (336). Preserve reporter summary; nested parked suites complicate totals."
+    },
+    {
+      "name": "browser-focused",
+      "command": "pnpm --filter axe-core exec vitest run --project browser test/browser/commons/dom/is-node.test.ts --browser.headless",
+      "exitCode": 1,
+      "timedOut": false,
+      "durationSeconds": 0.66,
+      "durationNote": "Single diagnostic invocation, not a performance benchmark.",
+      "observation": "Blocked before tests: pinned chromium_headless_shell-1217 executable absent."
+    },
+    {
+      "name": "integration-focused",
+      "command": "pnpm --filter axe-core exec vitest run --project integration test/integration/image-alt/image-alt.test.ts --browser.headless",
+      "exitCode": 1,
+      "timedOut": false,
+      "durationSeconds": 0.55,
+      "durationNote": "Single diagnostic invocation, not a performance benchmark.",
+      "observation": "Blocked before tests: pinned chromium_headless_shell-1217 executable absent. Firefox not verified."
+    },
+    {
+      "name": "lint",
+      "command": "pnpm --filter axe-core lint",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationSeconds": 0.72,
+      "durationNote": "Single diagnostic invocation, not a performance benchmark.",
+      "observation": "902 warnings, 0 errors."
+    },
+    {
+      "name": "schemas-force",
+      "command": "pnpm --filter @axe-core/schemas exec tsc -b --force",
+      "exitCode": 0,
+      "observation": "Outputs regenerated; no tracked diff. Temporary workaround, not a source fix."
+    },
+    {
+      "name": "engine-typecheck-after-force",
+      "command": "pnpm --filter axe-core exec tsc --noEmit --pretty false",
+      "exitCode": 0,
+      "observation": "Direct check passed after schema output regeneration. Generated config uses @ts-nocheck."
+    },
+    {
+      "name": "root-typecheck-discovery",
+      "command": "pnpm exec turbo run typecheck --dry=json",
+      "exitCode": 0,
+      "observation": "axe-core#typecheck command is <NONEXISTENT>; helper/schema commands exist."
+    }
+  ],
+  "notVerified": [
+    "Full browser and integration suites",
+    "Firefox and WebKit execution",
+    "Legacy ACT/APG and Node/example suites",
+    "Normal lifecycle-enabled installation",
+    "Published consumer/API parity",
+    "Full pnpm validate",
+    "Performance benchmarks",
+    "PR #5 implementation correctness"
+  ]
+}
