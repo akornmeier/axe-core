@@ -17,13 +17,14 @@ let _rng: (() => number[] | Uint8Array) | undefined;
 
 // Allow for MSIE11 msCrypto — guard for Node.js compatibility
 const _crypto =
-  (typeof window !== 'undefined'
+  typeof window !== 'undefined'
     ? window.crypto ||
       ((window as unknown as Record<string, unknown>).msCrypto as
         | Crypto
         | undefined)
-    : undefined) ||
-  (typeof globalThis !== 'undefined' ? globalThis.crypto : undefined);
+    : typeof globalThis !== 'undefined'
+      ? ((globalThis as Record<string, unknown>).crypto as Crypto | undefined)
+      : undefined;
 
 if (!_rng && _crypto && typeof _crypto.getRandomValues === 'function') {
   // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto

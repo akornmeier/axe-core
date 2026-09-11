@@ -22,7 +22,7 @@ describe('aria-practices', function () {
   this.retries(3);
 
   before(async () => {
-    const axePath = require.resolve('../../dist/axe.js');
+    const axePath = require.resolve('../../axe.js');
     axeSource = fs.readFileSync(axePath, 'utf8');
     driver = getWebdriver();
   });

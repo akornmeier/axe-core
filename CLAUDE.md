@@ -6,7 +6,7 @@ axe-core is an accessibility testing engine. The active roadmap is [The next acc
 
 **Preparation baseline:** `develop@b9da71e2` (merged PR #4). Read [repository reconciliation](specs/modernization-reconciliation.md) and [executed baseline](specs/modernization-baseline.json) before implementation. The old local Phase 3 branch diverged from the merged migration; do not replay it or treat PR #5's historical results as current verification.
 
-**Execution:** start with a bounded Phase 1 run from the preparation commit. One integrator owns plan updates. Before Phase 3, Tony must resolve the new opt-in API versus full compatibility-facade decision. No publishing, live-channel changes or customer-data use without explicit authorization.
+**Execution:** keep Phase 1 focused on the new project. Canonical axe-core lives separately at `~/code/axe-core`; see [reference boundary and PR #9 reassessment](specs/axe-core-reference.md). Do not repair or reinstall legacy runners/examples to make inherited CI green. Current Vitest coverage is partial, not proof of axe-core parity. One integrator owns plan updates. Before new core implementation, Tony must resolve the API decision. No publishing, live-channel changes or customer-data use without explicit authorization.
 
 Older PRDs below are historical architecture/migration references, not competing execution checklists. Their phase status and version targets are not evidence that checks currently pass.
 
@@ -69,7 +69,7 @@ pnpm build
 pnpm test
 pnpm lint              # oxlint
 pnpm format            # current package format:check scripts (Prettier)
-pnpm typecheck         # currently omits a real axe-core typecheck task
+pnpm typecheck         # source checks, not packed-consumer certification
 pnpm validate          # incomplete baseline gate; see reconciliation report
 
 # Package-specific commands (from packages/axe-core/)
@@ -100,7 +100,7 @@ pnpm exec tsc --noEmit
 - `packages/axe-core/lib/standards/` — ARIA specs, HTML element data
 - `packages/axe-core/locales/` — Translation JSON files
 - `packages/build-tools/src/` — Vite plugins and generation helpers
-- `packages/axe-core/test/` — Mixed Vitest and legacy Karma/Mocha suites; inventory before removing tests
+- `packages/axe-core/test/` — Active Vitest projects plus retained legacy fixture/case material; legacy runners are not installed or run
 - `packages/axe-core/vite.config.ts` — Current bundle build
 - `packages/axe-core/vitest.workspace.ts` — Active Vitest project definitions, not a documentation stub
 - `packages/axe-core/axe.d.ts` — Hand-written type definitions (to be auto-generated)

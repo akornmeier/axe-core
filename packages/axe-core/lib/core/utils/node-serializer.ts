@@ -98,11 +98,13 @@ function cloneLimitedDqElement(
   const spec: Record<string, unknown> = {
     nodeIndexes: dqElm.nodeIndexes,
     selector: hasSelectors ? dqElm.selector : [':root'],
-    ancestry: hasAncestry ? dqElm.ancestry : [':root'],
-    xpath: hasXpath ? dqElm.xpath : '/'
+    ancestry: hasAncestry ? dqElm.ancestry : [':root']
   };
   if (dqElm.source != null) {
     spec.source = dqElm.source;
+  }
+  if (hasXpath) {
+    spec.xpath = dqElm.xpath as unknown[];
   }
   dqElm = new DqElement(dqElm.element, runOptions, spec);
 

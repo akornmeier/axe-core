@@ -9,7 +9,14 @@ interface ForegroundColorOptions {
   textStrokeEmMin?: number;
 }
 
-type StackingContext = ReturnType<typeof getStackingContext>[number];
+interface StackingContext {
+  vNode?: any;
+  ancestor?: StackingContext;
+  opacity: number;
+  bgColor: Color;
+  blendMode?: string;
+  descendants: StackingContext[];
+}
 
 /**
  * Returns the flattened foreground color of an element, or null if it can't be determined because
@@ -75,7 +82,7 @@ export default function getForegroundColor(
     return null;
   }
 
-  const stackingContexts = getStackingContext(node);
+  const stackingContexts = getStackingContext(node) as StackingContext[];
   const context = findNodeInContexts(stackingContexts, node);
   return flattenColors(
     calculateBlendedForegroundColor(fgColor, context, stackingContexts),
@@ -141,7 +148,7 @@ function calculateBlendedForegroundColor(
       stack = stack.slice(0, stack.indexOf(context));
     }
 
-    const bgColors = stack.map(stackingContextToColor);
+    const bgColors = stack.map((ctx: any) => stackingContextToColor(ctx));
 
     if (!bgColors.length) {
       context = context.ancestor;
@@ -149,12 +156,26 @@ function calculateBlendedForegroundColor(
     }
 
     const bgColor = bgColors.reduce(
-      (backdrop, source) =>
-        flattenColors(source.color, backdrop, source.blendMode),
-      new Color(0, 0, 0, 0)
+      (backdrop: { color: Color; blendMode?: string | undefined }, source) => {
+        const result = flattenColors(
+          source.color,
+          backdrop.color instanceof Color
+            ? backdrop.color
+            : (backdrop as unknown as Color),
+          source.blendMode
+        );
+        return {
+          color: result,
+          blendMode: source.blendMode
+        } as typeof backdrop;
+      },
+      {
+        color: new Color(0, 0, 0, 0),
+        blendMode: 'normal' as string | undefined
+      }
     );
 
-    fgColor = flattenColors(fgColor, bgColor);
+    fgColor = flattenColors(fgColor, bgColor as unknown as Color);
     context = context.ancestor;
   }
 

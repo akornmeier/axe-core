@@ -43,9 +43,7 @@ describe('preload cssom integration test', function () {
     },
     styleTagWithNonExistentImport: {
       id: 'styleTagWithNonExistentImport',
-      // Fixtures use localhost. A different loopback origin exercises the
-      // failed cross-origin fetch, not an empty same-origin CSSOM import.
-      text: '@import "http://127.0.0.1:9876/non-existent-import.css";'
+      text: '@import "non-existent-import.css";'
     }
   };
   let stylesForPage;

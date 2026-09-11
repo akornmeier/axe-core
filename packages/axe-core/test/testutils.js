@@ -603,21 +603,6 @@ let commons;
       });
     });
 
-    before(function () {
-      // Mocha styles the whole body using the OS theme. Pin fixture defaults
-      // without adding DOM nodes (some tests assert exact node indexes).
-      const mochaSheet = Array.from(document.styleSheets).find(
-        sheet =>
-          sheet.href && new URL(sheet.href).pathname.endsWith('/mocha.css')
-      );
-      if (mochaSheet) {
-        mochaSheet.insertRule(
-          'body { color: #000; background-color: #fff; }',
-          mochaSheet.cssRules.length
-        );
-      }
-    });
-
     beforeEach(function () {
       // reset from axe._load overriding
       checks = originalChecks;

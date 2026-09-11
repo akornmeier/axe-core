@@ -12,7 +12,6 @@
  */
 
 import { type Plugin } from 'vite';
-import { createRequire } from 'node:module';
 import { globSync } from 'glob';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
@@ -25,7 +24,8 @@ const posixPath = path.posix;
 // doT template support
 // ---------------------------------------------------------------------------
 
-const doT = createRequire(import.meta.url)('@deque/dot');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const doT = require('@deque/dot');
 
 // Sync with lib/core/imports/index.js — prevent stripping newlines
 doT.templateSettings.strip = false;
@@ -332,14 +332,6 @@ export function generateConfig(
       return `- [${section.title}](#${makeHeaderLink(section.title)})`;
     })
     .join('\n');
-
-  // Locales and custom rule packs may use checks not referenced by built-in
-  // rules. Keep metadata for every shipped check, including deprecated ones.
-  for (const check of checks) {
-    if (check.metadata) {
-      metadata.checks[check.id] = parseMetaData(check, 'checks', locale);
-    }
-  }
 
   // Parse checks metadata first
   function parseChecksFromCollection(

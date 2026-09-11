@@ -16,7 +16,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { globSync } from 'glob';
-import { axeBundlePlugin } from './vite-plugin-axe-bundle';
 import {
   generateConfig,
   generateDefaultConfig,
@@ -55,6 +54,18 @@ async function buildLocaleBundles(): Promise<void> {
     fs.readFileSync(path.join(axeCoreRoot, 'package.json'), 'utf-8')
   );
 
+  const banner = `/*! axe v${pkg.version}
+ * Copyright (c) 2015 - ${new Date().getFullYear()} Deque Systems, Inc.
+ *
+ * Your use of this Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This entire copyright notice must appear in every copy of this file you
+ * distribute or in any file that contains substantial portions of this source
+ * code.
+ */`;
+
   console.log(
     `[build-locales] Found ${localeFiles.length} locale files to process`
   );
@@ -83,31 +94,73 @@ async function buildLocaleBundles(): Promise<void> {
         'utf-8'
       );
 
-      // Keep the locale config; the normal metadata plugin regenerates English.
-      // Both entry points share runtime bindings and legacy export behavior.
-      for (const minify of [false, true]) {
-        await viteBuild({
-          configFile: false,
-          root: axeCoreRoot,
-          logLevel: 'warn',
-          plugins: [axeBundlePlugin(pkg.version)],
-          build: {
-            lib: {
-              entry: path.resolve(axeCoreRoot, 'lib/index.ts'),
-              name: 'axe',
-              formats: ['iife'],
-              fileName: () => `axe.${localeName}${minify ? '.min' : ''}.js`
-            },
-            outDir: path.join(axeCoreRoot, 'dist'),
-            sourcemap: true,
-            target: 'es2022',
-            minify: minify ? 'esbuild' : false,
-            emptyOutDir: false
+      // Build UMD (non-minified) — configFile: false to avoid
+      // re-running the metadata plugin which would overwrite our locale config
+      await viteBuild({
+        configFile: false,
+        root: axeCoreRoot,
+        logLevel: 'warn',
+        build: {
+          lib: {
+            entry: path.resolve(axeCoreRoot, 'lib/index.ts'),
+            name: 'axe',
+            formats: ['umd'],
+            fileName: () => `axe.${localeName}.js`
           },
-          define: {
-            __AXE_VERSION__: JSON.stringify(pkg.version)
-          }
-        });
+          outDir: path.join(axeCoreRoot, 'dist'),
+          sourcemap: true,
+          target: 'es2022',
+          minify: false,
+          emptyOutDir: false
+        },
+        define: {
+          __AXE_VERSION__: JSON.stringify(pkg.version)
+        }
+      });
+
+      // Prepend banner to the generated file
+      const umdPath = path.join(axeCoreRoot, 'dist', `axe.${localeName}.js`);
+      if (fs.existsSync(umdPath)) {
+        const content = fs.readFileSync(umdPath, 'utf-8');
+        if (!content.startsWith('/*!')) {
+          fs.writeFileSync(umdPath, banner + '\n' + content);
+        }
+      }
+
+      // Build UMD (minified)
+      await viteBuild({
+        configFile: false,
+        root: axeCoreRoot,
+        logLevel: 'warn',
+        build: {
+          lib: {
+            entry: path.resolve(axeCoreRoot, 'lib/index.ts'),
+            name: 'axe',
+            formats: ['umd'],
+            fileName: () => `axe.${localeName}.min.js`
+          },
+          outDir: path.join(axeCoreRoot, 'dist'),
+          sourcemap: true,
+          target: 'es2022',
+          minify: 'esbuild',
+          emptyOutDir: false
+        },
+        define: {
+          __AXE_VERSION__: JSON.stringify(pkg.version)
+        }
+      });
+
+      // Prepend banner to the minified file
+      const minPath = path.join(
+        axeCoreRoot,
+        'dist',
+        `axe.${localeName}.min.js`
+      );
+      if (fs.existsSync(minPath)) {
+        const content = fs.readFileSync(minPath, 'utf-8');
+        if (!content.startsWith('/*!')) {
+          fs.writeFileSync(minPath, banner + '\n' + content);
+        }
       }
 
       console.log(
@@ -217,7 +270,7 @@ interface MiscJson {
 }
 
 function readJsonFiles<T>(pattern: string, cwd: string): T[] {
-  const files = globSync(pattern, { cwd, posix: true }).sort();
+  const files = globSync(pattern, { cwd, posix: true });
   return files.map(f => {
     const content = fs.readFileSync(path.join(cwd, f), 'utf-8');
     return JSON.parse(content) as T;
@@ -238,7 +291,6 @@ async function main(): Promise<void> {
   try {
     const prettier = await import('prettier');
     formatted = await prettier.format(templateContent, {
-      ...(await prettier.resolveConfig(templatePath)),
       filepath: templatePath
     });
   } catch {

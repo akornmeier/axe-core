@@ -10,9 +10,9 @@ interface StylesheetOptions {
 interface StylesheetResult {
   sheet: CSSStyleSheet | null;
   isCrossOrigin: boolean;
-  shadowId: string | undefined;
-  root: unknown;
-  priority: unknown;
+  shadowId?: string;
+  root?: unknown;
+  priority?: unknown;
 }
 
 function getStyleSheetFactory(
@@ -43,13 +43,20 @@ function getStyleSheetFactory(
       style.appendChild(dynamicDoc.createTextNode(data as string));
     }
     dynamicDoc.head.appendChild(style);
-    return {
+    const result: StylesheetResult = {
       sheet: style.sheet,
-      isCrossOrigin,
-      shadowId,
-      root,
-      priority
+      isCrossOrigin
     };
+    if (shadowId !== undefined) {
+      result.shadowId = shadowId;
+    }
+    if (root !== undefined) {
+      result.root = root;
+    }
+    if (priority !== undefined) {
+      result.priority = priority;
+    }
+    return result;
   };
 }
 

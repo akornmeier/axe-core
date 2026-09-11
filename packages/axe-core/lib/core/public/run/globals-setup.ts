@@ -1,8 +1,10 @@
 import cache from '../../base/cache';
 
 export function setupGlobals(context: unknown): void {
-  // The bundle intro creates private window/document bindings. In Node,
-  // infer the DOM from the supplied context without changing host globals.
+  // if window or document are not defined and context was passed in
+  // we can use it to configure them
+  // NOTE: because our polyfills run first, the global window object
+  // always exists but may not have things we expect
   const hasWindow = window && 'Node' in window && 'NodeList' in window;
   const hasDoc = !!document;
   if (hasWindow && hasDoc) {
@@ -17,25 +19,24 @@ export function setupGlobals(context: unknown): void {
 
   if (!hasDoc) {
     cache.set('globalDocumentSet', true);
-    document = (context as Node).ownerDocument!;
+    (globalThis as Record<string, unknown>).document = (
+      context as Node
+    ).ownerDocument;
   }
 
   if (!hasWindow) {
     cache.set('globalWindowSet', true);
-    window = document.defaultView!;
+    (globalThis as Record<string, unknown>).window = document.defaultView;
   }
 }
 
 export function resetGlobals(): void {
   if (cache.get('globalDocumentSet')) {
     cache.set('globalDocumentSet', false);
-    // These bindings are private to the bundle, not host globals.
-    // @ts-expect-error - document is absent between Node runs
-    document = undefined;
+    (globalThis as Record<string, unknown>).document = null;
   }
   if (cache.get('globalWindowSet')) {
     cache.set('globalWindowSet', false);
-    // @ts-expect-error - no DOM window exists between Node runs
-    window = {};
+    (globalThis as Record<string, unknown>).window = null;
   }
 }
