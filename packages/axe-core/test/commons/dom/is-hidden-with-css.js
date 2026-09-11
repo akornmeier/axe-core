@@ -20,8 +20,8 @@ describe('dom.isHiddenWithCSS', function () {
 
   function makeShadowTree(node, mainProps, targetProps) {
     const root = node.attachShadow({ mode: 'open' });
-    const node = createContentSlotted(mainProps, targetProps);
-    root.appendChild(node);
+    const content = createContentSlotted(mainProps, targetProps);
+    root.appendChild(content);
   }
 
   afterEach(function () {

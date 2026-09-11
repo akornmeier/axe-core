@@ -29,11 +29,11 @@ describe('unsupportedrole', function () {
   });
 
   it('should return false if applied to a supported role', function () {
-    const params = checkSetup('<div id="target" role="alert">Contents</div>');
+    let params = checkSetup('<div id="target" role="alert">Contents</div>');
     assert.isFalse(check.evaluate.apply(checkContext, params));
     assert.isNull(checkContext._data);
 
-    const params = checkSetup('<button id="target">Contents</button>');
+    params = checkSetup('<button id="target">Contents</button>');
     assert.isFalse(check.evaluate.apply(checkContext, params));
     assert.isNull(checkContext._data);
   });

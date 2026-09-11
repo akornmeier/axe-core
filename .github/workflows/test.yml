@@ -79,7 +79,7 @@ jobs:
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: axe-core
-          path: packages/axe-core/dist/axe.js
+          path: packages/axe-core/dist/
           retention-days: 1
 
   test_chrome:
@@ -243,6 +243,9 @@ jobs:
       - *restore-axe-build
       - name: Run jsdom Tests
         run: pnpm run test:jsdom
+        working-directory: packages/axe-core
+      - name: Test bundle formats
+        run: pnpm run test:bundle
         working-directory: packages/axe-core
 
   build_api_docs:

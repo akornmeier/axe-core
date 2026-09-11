@@ -6,8 +6,8 @@
  * core/index.ts, outro.stub) with a proper ES module that Vite can
  * process into UMD, ESM, and CJS outputs automatically.
  *
- * IMPORTANT: The Vite config's `axeGlobalPlugin` injects `var axe = {};`
- * at the top of each output chunk (via `renderChunk`).  Many source files
+ * IMPORTANT: Vite's output intro declares bundle-local axe, window and
+ * document bindings. Many source files
  * reference `axe` as an ambient global (the legacy Grunt build made this
  * available via concatenation).  This entry point populates the pre-existing
  * object and re-exports it.
@@ -67,7 +67,8 @@ import defaultConfig from './core/generated/default-config';
 // Build the axe object -- a proper local variable that rolldown can export
 // ---------------------------------------------------------------------------
 
-const axeExport: Record<string, any> = {
+declare let axe: Record<string, unknown>;
+const axeExport: Record<string, unknown> = Object.assign(axe, {
   // Version -- replaced at build time by Vite's `define` option
   version: __AXE_VERSION__,
 
@@ -112,15 +113,7 @@ const axeExport: Record<string, any> = {
 
   // Exposed internals (for testing only -- will be removed)
   _thisWillBeDeletedDoNotUse
-};
-
-// Copy all properties to the global `axe` object so that modules that
-// reference `axe.utils`, `axe._memoizedFns`, etc. at runtime see the
-// populated object.  The `var axe = {};` is injected by axeGlobalPlugin.
-declare let axe: Record<string, any>;
-if (typeof axe !== 'undefined') {
-  Object.assign(axe, axeExport);
-}
+});
 
 // ---------------------------------------------------------------------------
 // Register built-in reporters
@@ -150,4 +143,5 @@ load(defaultConfig);
 // Export
 // ---------------------------------------------------------------------------
 
+// Export the same object that modules mutate (including _audit and run state).
 export default axeExport;

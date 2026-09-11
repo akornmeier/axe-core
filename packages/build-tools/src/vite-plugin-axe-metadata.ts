@@ -333,6 +333,14 @@ export function generateConfig(
     })
     .join('\n');
 
+  // Locales and custom rule packs may use checks not referenced by built-in
+  // rules. Keep metadata for every shipped check, including deprecated ones.
+  for (const check of checks) {
+    if (check.metadata) {
+      metadata.checks[check.id] = parseMetaData(check, 'checks', locale);
+    }
+  }
+
   // Parse checks metadata first
   function parseChecksFromCollection(
     checkRefs: (string | { id: string; options?: unknown })[]

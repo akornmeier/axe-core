@@ -40,14 +40,14 @@ describe('axe.utils.mergeResults', () => {
     assert.lengthOf(result, 1);
     assert.lengthOf(result[0].nodes, 1);
 
-    const node = result[0].nodes[0].node;
-    assert.deepEqual(node.selector, ['#target', '#foo']);
-    assert.deepEqual(node.xpath, ["//iframe[@id='target']", 'html/#foo']);
-    assert.deepEqual(node.ancestry, [
+    const mergedNode = result[0].nodes[0].node;
+    assert.deepEqual(mergedNode.selector, ['#target', '#foo']);
+    assert.deepEqual(mergedNode.xpath, ["//iframe[@id='target']", 'html/#foo']);
+    assert.deepEqual(mergedNode.ancestry, [
       'html > body > div:nth-child(1) > iframe',
       'html > div'
     ]);
-    assert.deepEqual(node.nodeIndexes, [1, 123]);
+    assert.deepEqual(mergedNode.nodeIndexes, [1, 123]);
   });
 
   it('merges frame specs', () => {
@@ -75,14 +75,14 @@ describe('axe.utils.mergeResults', () => {
     assert.lengthOf(result, 1);
     assert.lengthOf(result[0].nodes, 1);
 
-    const node = result[0].nodes[0].node;
-    assert.deepEqual(node.selector, ['#target', '#foo']);
-    assert.deepEqual(node.xpath, ["//iframe[@id='target']", 'html/#foo']);
-    assert.deepEqual(node.ancestry, [
+    const mergedNode = result[0].nodes[0].node;
+    assert.deepEqual(mergedNode.selector, ['#target', '#foo']);
+    assert.deepEqual(mergedNode.xpath, ["//iframe[@id='target']", 'html/#foo']);
+    assert.deepEqual(mergedNode.ancestry, [
       'html > body > div:nth-child(1) > iframe',
       'html > div'
     ]);
-    assert.deepEqual(node.nodeIndexes, [1, 123]);
+    assert.deepEqual(mergedNode.nodeIndexes, [1, 123]);
   });
 
   it('sorts results from iframes into their correct DOM position', () => {

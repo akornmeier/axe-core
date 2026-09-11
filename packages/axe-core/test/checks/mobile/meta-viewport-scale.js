@@ -232,7 +232,7 @@ describe('meta-viewport', function () {
     });
 
     it('should return true if maximum-scale >= options.scaleMinimum', function () {
-      const vNode = queryFixture(
+      let vNode = queryFixture(
         '<meta id="target" name="viewport" content="foo=bar, maximum-scale=5, cats=dogs">'
       );
 
@@ -242,7 +242,7 @@ describe('meta-viewport', function () {
           .call(checkContext, null, null, vNode)
       );
 
-      const vNode = queryFixture(
+      vNode = queryFixture(
         '<meta id="target" name="viewport" content="foo=bar, maximum-scale=2, cats=dogs">'
       );
 

@@ -19,24 +19,25 @@ export function setupGlobals(context: unknown): void {
 
   if (!hasDoc) {
     cache.set('globalDocumentSet', true);
-    (globalThis as Record<string, unknown>).document = (
-      context as Node
-    ).ownerDocument;
+    document = (context as Node).ownerDocument!;
   }
 
   if (!hasWindow) {
     cache.set('globalWindowSet', true);
-    (globalThis as Record<string, unknown>).window = document.defaultView;
+    window = document.defaultView!;
   }
 }
 
 export function resetGlobals(): void {
   if (cache.get('globalDocumentSet')) {
     cache.set('globalDocumentSet', false);
-    (globalThis as Record<string, unknown>).document = null;
+    // These bindings are private to the bundle, not host globals.
+    // @ts-expect-error - document is absent between Node runs
+    document = undefined;
   }
   if (cache.get('globalWindowSet')) {
     cache.set('globalWindowSet', false);
-    (globalThis as Record<string, unknown>).window = null;
+    // @ts-expect-error - no DOM window exists between Node runs
+    window = {};
   }
 }

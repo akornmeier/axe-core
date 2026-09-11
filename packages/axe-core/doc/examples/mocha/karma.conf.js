@@ -1,10 +1,15 @@
+const { dirname, join } = require('path');
+
 module.exports = function (config) {
   config.set({
     basePath: '',
 
     frameworks: ['mocha', 'chai'],
 
-    files: ['test/**/*.js', 'node_modules/axe-core/axe.js'],
+    files: [
+      'test/**/*.js',
+      join(dirname(require.resolve('axe-core')), 'axe.js')
+    ],
 
     exclude: [],
 

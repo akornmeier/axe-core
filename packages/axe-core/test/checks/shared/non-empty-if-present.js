@@ -54,21 +54,21 @@ describe('non-empty-if-present', function () {
   });
 
   it('should return false if the element is not a submit or reset input', function () {
-    const vNode = queryFixture('<input id="target" type="text" />');
+    let vNode = queryFixture('<input id="target" type="text" />');
     assert.isFalse(
       axe.testUtils
         .getCheckEvaluate('non-empty-if-present')
         .call(checkContext, null, {}, vNode)
     );
 
-    const vNode = queryFixture('<input id="target" type="button" />');
+    vNode = queryFixture('<input id="target" type="button" />');
     assert.isFalse(
       axe.testUtils
         .getCheckEvaluate('non-empty-if-present')
         .call(checkContext, null, {}, vNode)
     );
 
-    const vNode = queryFixture('<button id="target" type="submit"></button');
+    vNode = queryFixture('<button id="target" type="submit"></button');
     assert.isFalse(
       axe.testUtils
         .getCheckEvaluate('non-empty-if-present')

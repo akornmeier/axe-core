@@ -44,11 +44,11 @@ describe('deprecatedrole', function () {
   });
 
   it('returns false if applied to a non-deprecated role', function () {
-    const params = checkSetup('<div id="target" role="button">Contents</div>');
+    let params = checkSetup('<div id="target" role="button">Contents</div>');
     assert.isFalse(checkEvaluate.apply(checkContext, params));
     assert.isNull(checkContext._data);
 
-    const params = checkSetup('<button id="target">Contents</button>');
+    params = checkSetup('<button id="target">Contents</button>');
     assert.isFalse(checkEvaluate.apply(checkContext, params));
     assert.isNull(checkContext._data);
   });

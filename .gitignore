@@ -28,7 +28,8 @@ packages/axe-core/lib/core/base/metadata-function-map.js
 packages/axe-core/doc/api/*
 packages/axe-core/doc/examples/*/package-lock.json
 
-# ts generated file
+# ts generated files
+*.tsbuildinfo
 packages/axe-core/typings/axe-core/axe-core-tests.js
 
 # doc
