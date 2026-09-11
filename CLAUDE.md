@@ -2,11 +2,15 @@
 
 ## Project Overview
 
-axe-core is the most widely adopted accessibility testing engine on the web. We are modernizing the build, test, and type infrastructure across four phased workstreams. See `specs/PRD-00-axe-core-modernization-overview.md` for the full master plan.
+axe-core is an accessibility testing engine. The active roadmap is [The next accessibility engine](specs/streamlined-modernization-plan.html): reliable tooling, configurable enterprise rule packs, an agent-facing rule SDK and measured execution improvements.
 
-**Current branch:** `chore/modernize-phase-00` (Phase 0 — Monorepo Scaffolding)
+**Preparation baseline:** `develop@b9da71e2` (merged PR #4). Read [repository reconciliation](specs/modernization-reconciliation.md) and [executed baseline](specs/modernization-baseline.json) before implementation. The old local Phase 3 branch diverged from the merged migration; do not replay it or treat PR #5's historical results as current verification.
 
-## Target Stack
+**Execution:** start with a bounded Phase 1 run from the preparation commit. One integrator owns plan updates. Before Phase 3, Tony must resolve the new opt-in API versus full compatibility-facade decision. No publishing, live-channel changes or customer-data use without explicit authorization.
+
+Older PRDs below are historical architecture/migration references, not competing execution checklists. Their phase status and version targets are not evidence that checks currently pass.
+
+## Historical Target Stack
 
 | Layer | Current (Legacy) | Target (Modern) |
 |---|---|---|
@@ -19,7 +23,7 @@ axe-core is the most widely adopted accessibility testing engine on the web. We 
 | Unit Tests | Mocha + Chai + Sinon | Vitest 4 |
 | Browser Tests | Karma + launchers | Vitest Browser Mode + Playwright |
 
-## Phase Order & Dependencies
+## Historical Phase Order & Dependencies
 
 | Phase | Title | Depends On |
 |---|---|---|
@@ -64,14 +68,20 @@ pnpm install
 pnpm build
 pnpm test
 pnpm lint              # oxlint
-pnpm format            # oxfmt --check
-pnpm typecheck
-pnpm validate          # all of the above
+pnpm format            # current package format:check scripts (Prettier)
+pnpm typecheck         # currently omits a real axe-core typecheck task
+pnpm validate          # incomplete baseline gate; see reconciliation report
 
 # Package-specific commands (from packages/axe-core/)
-pnpm run eslint        # ESLint
+pnpm run lint          # Oxlint
 pnpm run fmt:check     # Prettier format check
-pnpm run build         # Grunt build
+pnpm run build         # Vite build
+pnpm run test:vitest:unit
+pnpm run test:vitest:browser
+pnpm run test:vitest:integration
+
+# Direct compiler check after generating schema declarations
+pnpm exec tsc --noEmit
 ```
 
 ## Architecture Terminology
@@ -89,14 +99,17 @@ pnpm run build         # Grunt build
 - `packages/axe-core/lib/commons/` — Shared utilities (DOM, text, color, math)
 - `packages/axe-core/lib/standards/` — ARIA specs, HTML element data
 - `packages/axe-core/locales/` — Translation JSON files
-- `packages/axe-core/build/` — Current Grunt build tasks (to be replaced by Vite plugins)
-- `packages/axe-core/test/` — All test suites (Karma/Mocha — to be replaced by Vitest)
-- `packages/axe-core/Gruntfile.js` — Current build orchestration (to be replaced)
+- `packages/build-tools/src/` — Vite plugins and generation helpers
+- `packages/axe-core/test/` — Mixed Vitest and legacy Karma/Mocha suites; inventory before removing tests
+- `packages/axe-core/vite.config.ts` — Current bundle build
+- `packages/axe-core/vitest.workspace.ts` — Active Vitest project definitions, not a documentation stub
 - `packages/axe-core/axe.d.ts` — Hand-written type definitions (to be auto-generated)
 
 ## Specs
 
-All PRD documents live in `specs/`:
+Active execution and evidence live in `specs/streamlined-modernization-plan.html`, `specs/modernization-reconciliation.md` and `specs/modernization-baseline.json`.
+
+Historical PRD documents live in `specs/`:
 
 - `PRD-00-axe-core-modernization-overview.md` — Master plan
 - `PRD-01-type-system-modernization.md` — Phase 1 (planned)

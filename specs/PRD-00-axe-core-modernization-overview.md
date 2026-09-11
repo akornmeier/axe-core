@@ -1,5 +1,7 @@
 # axe-core Platform Modernization — Master Plan
 
+> Historical roadmap. Active execution is governed by [The next accessibility engine](streamlined-modernization-plan.html), with [reconciled repository state](modernization-reconciliation.md). Preserve this PRD as context; its original statuses, estimates and constraints are not current verification or a parallel execution queue.
+
 **Version:** 2.0
 **Date:** February 16, 2026
 **Status:** Draft — For Internal Review

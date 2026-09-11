@@ -1,5 +1,7 @@
 # Plan: Phase 3 — Test Infrastructure Modernization (Karma/Mocha → Vitest 4 + Playwright)
 
+> Historical migration plan. Use [The next accessibility engine](streamlined-modernization-plan.html) for new execution and [repository reconciliation](modernization-reconciliation.md) for the current baseline and PR #5 reuse map. Tasks below retain their historical state; they are not a second active queue.
+
 ## Task Description
 
 Replace axe-core's three-system legacy test stack (Mocha + Chai + Sinon for Node, Karma for browser, `http-server` + HTML fixtures for integration) with a single unified test framework: **Vitest 4** with **Browser Mode powered by Playwright**. This work implements `specs/PRD-03-test-infrastructure-modernization.md` (PRD v2.0, Feb 16 2026) on top of the now-completed Phase 0 (PNPM monorepo), Phase 1 (TypeScript strict + Zod schemas), and Phase 2 (Vite + Rolldown build pipeline).
