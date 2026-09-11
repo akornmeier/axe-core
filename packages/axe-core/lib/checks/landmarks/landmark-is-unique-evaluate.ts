@@ -8,9 +8,11 @@ function landmarkIsUniqueEvaluate(
   virtualNode: any
 ): boolean {
   const role = getRole(node);
-  let accessibleText = accessibleTextVirtual(virtualNode);
-  accessibleText = accessibleText ? accessibleText.toLowerCase() : '';
-  this.data({ role: role, accessibleText: accessibleText });
+  const accessibleText = accessibleTextVirtual(virtualNode);
+  this.data({
+    role,
+    accessibleText: accessibleText ? accessibleText.toLowerCase() : null
+  });
   this.relatedNodes([node]);
 
   return true;

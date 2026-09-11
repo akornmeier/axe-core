@@ -58,21 +58,15 @@ export default function finishRun(
 }
 
 function setFrameSpec(partialResults: PartialResultItem[]): void {
-  const frameStack: Array<Record<string, unknown>[]> = [];
+  const frameStack: Record<string, unknown>[] = [];
   for (const partialResult of partialResults) {
     const frameSpec = frameStack.shift();
     if (!partialResult) {
       continue;
     }
 
-    partialResult.frameSpec =
-      frameSpec?.[0] !== undefined
-        ? (frameSpec as unknown as Record<string, unknown>)
-        : null;
-    const frameSpecs = getMergedFrameSpecs(partialResult);
-    frameStack.unshift(
-      ...(frameSpecs as unknown as Array<Record<string, unknown>[]>)
-    );
+    partialResult.frameSpec = frameSpec ?? null;
+    frameStack.unshift(...getMergedFrameSpecs(partialResult));
   }
 }
 

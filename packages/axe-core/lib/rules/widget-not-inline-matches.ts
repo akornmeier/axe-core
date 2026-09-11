@@ -32,8 +32,9 @@ function isNotAreaElement(vNode: AbstractVirtualNode): boolean {
 }
 
 const hasWidgetAncestorInTabOrder = memoize(
-  function hasWidgetAncestorInTabOrderMemoized(...args: unknown[]): boolean {
-    const vNode = args[0] as AbstractVirtualNode;
+  function hasWidgetAncestorInTabOrderMemoized(
+    vNode: AbstractVirtualNode
+  ): boolean {
     if (!vNode?.parent) {
       return false;
     }

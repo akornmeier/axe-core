@@ -15,7 +15,7 @@ function isHiddenWithCSS(
   el: unknown,
   descendentVisibilityValue?: string
 ): boolean {
-  const { vNode, domNode }: { vNode: any; domNode: Node | null } =
+  const { vNode, domNode }: { vNode: any; domNode: Node | undefined } =
     nodeLookup(el);
 
   if (!vNode) {

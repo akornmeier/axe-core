@@ -203,14 +203,8 @@ function findPseudoElement(
   const rect = vNode.boundingClientRect;
   const minimumSize = rect.width * rect.height * pseudoSizeThreshold;
   do {
-    const beforeSize = getPseudoElementArea(
-      vNode.actualNode,
-      ':before'
-    ) as number;
-    const afterSize = getPseudoElementArea(
-      vNode.actualNode,
-      ':after'
-    ) as number;
+    const beforeSize = getPseudoElementArea(vNode.actualNode, ':before');
+    const afterSize = getPseudoElementArea(vNode.actualNode, ':after');
     if (beforeSize + afterSize > minimumSize) {
       return vNode; // Combined area of before and after exceeds the minimum size
     }
@@ -218,9 +212,9 @@ function findPseudoElement(
 }
 
 const getPseudoElementArea = memoize(function getPseudoElementArea(
-  ...args: unknown[]
+  node: HTMLElement,
+  pseudo: string
 ): number {
-  const [node, pseudo] = args as [HTMLElement, string];
   const style = window.getComputedStyle(node, pseudo);
   const matchPseudoStyle = (prop: string, value: string) =>
     style.getPropertyValue(prop) === value;

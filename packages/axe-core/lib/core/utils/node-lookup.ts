@@ -3,13 +3,12 @@ import getNodeFromTree from './get-node-from-tree';
 
 export default function nodeLookup(node: unknown): {
   vNode: unknown;
-  domNode: Node | null;
+  domNode: Node | undefined;
 } {
   if (node instanceof AbstractVirtualNode) {
     return {
       vNode: node,
-      domNode:
-        (node as AbstractVirtualNode & { actualNode?: Node }).actualNode ?? null
+      domNode: (node as AbstractVirtualNode & { actualNode?: Node }).actualNode
     };
   }
 

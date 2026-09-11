@@ -1,10 +1,8 @@
 import cache from '../../base/cache';
 
 export function setupGlobals(context: unknown): void {
-  // if window or document are not defined and context was passed in
-  // we can use it to configure them
-  // NOTE: because our polyfills run first, the global window object
-  // always exists but may not have things we expect
+  // The bundle intro creates private window/document bindings. In Node,
+  // infer the DOM from the supplied context without changing host globals.
   const hasWindow = window && 'Node' in window && 'NodeList' in window;
   const hasDoc = !!document;
   if (hasWindow && hasDoc) {

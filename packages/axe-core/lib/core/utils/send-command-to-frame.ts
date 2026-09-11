@@ -31,7 +31,8 @@ export default function sendCommandToFrame(
   }
 
   // give the frame .5s to respond to 'axe.ping', else log failed response
-  let timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
+  let timeout: ReturnType<typeof setTimeout>;
+  timeout = setTimeout(() => {
     // This double timeout is important for allowing iframes to respond
     // DO NOT REMOVE
     timeout = setTimeout(() => {

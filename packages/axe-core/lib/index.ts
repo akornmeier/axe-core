@@ -132,6 +132,7 @@ addReporter('v2', v2Reporter, true); // v2 is the default reporter
 // The map is injected via a setter to break the circular dependency between
 // check.ts -> metadata-function-map.ts -> checks/*.ts -> commons/* -> core/*
 setMetadataFunctionMap(metadataFunctionMap);
+_thisWillBeDeletedDoNotUse.base.metadataFunctionMap = metadataFunctionMap;
 
 // ---------------------------------------------------------------------------
 // Load default configuration (rules, checks, metadata)

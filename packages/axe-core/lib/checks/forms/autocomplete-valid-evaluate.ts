@@ -4,9 +4,9 @@ function autocompleteValidEvaluate(
   _node: HTMLElement,
   options: any,
   virtualNode: any
-): boolean {
+): boolean | undefined {
   const autocomplete = virtualNode.attr('autocomplete') || '';
-  return isValidAutocomplete(autocomplete, options) ?? false;
+  return isValidAutocomplete(autocomplete, options);
 }
 
 export default autocompleteValidEvaluate;
