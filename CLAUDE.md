@@ -4,7 +4,7 @@
 
 Propellr is the working name for a web-quality platform evolving from axe-core. The active roadmap is [Propellr: the next accessibility engine](specs/streamlined-modernization-plan.html): reliable tooling, configurable enterprise rule packs, an agent-facing rule SDK and measured execution improvements.
 
-**Repository:** `akornmeier/propellr`. Protected `main` is the only trunk; use short-lived branches and squash-merged PRs. Existing migration branches are historical/reuse sources, not parallel trunks. Existing package names remain unchanged; `@propellr/engine` is proposed, not registered or published.
+**Repository:** `asbury-labs/propellr`. Protected `main` is the only trunk; use short-lived branches and squash-merged PRs. Existing migration branches are historical/reuse sources, not parallel trunks. Existing package names remain unchanged; `@propellr/engine` is proposed, not registered or published.
 
 **Preparation baseline:** `develop@b9da71e2` (merged PR #4). Read [repository reconciliation](specs/modernization-reconciliation.md) and [executed baseline](specs/modernization-baseline.json) before implementation. The old local Phase 3 branch diverged from the merged migration; do not replay it or treat PR #5's historical results as current verification.
 
