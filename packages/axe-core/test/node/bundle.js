@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { JSDOM } = require('jsdom');
+const sinon = require('sinon');
 
 const html = name =>
   `<!doctype html><html lang="en"><title>Bundle test</title><body><main><button>${name}</button></main></body></html>`;
@@ -10,6 +11,7 @@ const options = { runOnly: ['button-name'] };
 for (const file of ['axe.js', 'axe.min.js', 'axe.cjs', 'axe.mjs']) {
   describe(`bundle ${file}`, () => {
     let axe;
+    let cryptoCalls;
     const hostGlobals = () =>
       ['window', 'document', 'axe'].map(key =>
         Object.getOwnPropertyDescriptor(globalThis, key)
@@ -18,13 +20,23 @@ for (const file of ['axe.js', 'axe.min.js', 'axe.cjs', 'axe.mjs']) {
 
     before(async () => {
       const filePath = path.resolve(__dirname, '../../dist', file);
-      axe = file.endsWith('.mjs')
-        ? (await import(pathToFileURL(filePath).href)).default
-        : require(filePath);
+      const cryptoSpy = sinon.spy(globalThis.crypto, 'getRandomValues');
+      try {
+        axe = file.endsWith('.mjs')
+          ? (await import(pathToFileURL(filePath).href)).default
+          : require(filePath);
+      } finally {
+        cryptoCalls = cryptoSpy.callCount;
+        cryptoSpy.restore();
+      }
     });
 
     afterEach(() => {
       assert.deepEqual(hostGlobals(), originalGlobals);
+    });
+
+    it('uses host crypto during initialization without a DOM', () => {
+      assert.ok(cryptoCalls > 0);
     });
 
     it('exports live audit state and runs against successive documents', async () => {

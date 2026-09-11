@@ -1,3 +1,5 @@
+const { dirname, join } = require('path');
+
 module.exports = function (grunt) {
   'use strict';
 
@@ -7,6 +9,10 @@ module.exports = function (grunt) {
     qunit: {
       all: ['test/**/*.html'],
       options: {
+        inject: [
+          require.resolve('grunt-contrib-qunit/chrome/bridge.js'),
+          join(dirname(require.resolve('axe-core')), 'axe.min.js')
+        ],
         puppeteer: {
           args: ['--disable-web-security', '--allow-file-access-from-files']
         },

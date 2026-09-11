@@ -218,7 +218,9 @@ jobs:
       - *install-deps
       - *restore-axe-build
       - name: Run Locale Tests
-        run: pnpm run test:locales
+        run: |
+          pnpm run test:locales
+          pnpm run test:locale-bundles
         working-directory: packages/axe-core
 
   test_virtual_rules:

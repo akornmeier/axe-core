@@ -229,12 +229,12 @@
 <p><strong>Turn accessibility expertise into executable enterprise policy.</strong> Modern tooling is the foundation. The opportunity is a faster, configurable engine where humans and AI agents can author trustworthy rules without learning axe's internals.</p>
 <details class="meta"><summary>Metadata</summary><dl>
 <dt>created</dt><dd>2026-09-11T14:07:41Z</dd>
-<dt>modified</dt><dd>2026-09-11T14:07:41Z; 2026-09-11T14:20:14Z; 2026-09-11T15:02:34Z</dd>
-<dt>commits</dt><dd>eb2ef403c4d1d12aed9e7cc711af37c1bfcc9f32; b9da71e28e3b7193632f2a57fe28a800d242a433; c10315ab273eb846094934f42dd09c05b8918fd8</dd>
-<dt>agent name</dt><dd>pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra</dd>
-<dt>session id</dt><dd>01a090bd-8100-73bd-8d08-58611da5e584; 01a090bd-8100-73bd-8d08-58611da5e584; 01a090bd-8100-73bd-8d08-58611da5e584</dd>
+<dt>modified</dt><dd>2026-09-11T14:07:41Z; 2026-09-11T14:20:14Z; 2026-09-11T15:02:34Z; 2026-09-11T18:10:01Z</dd>
+<dt>commits</dt><dd>eb2ef403c4d1d12aed9e7cc711af37c1bfcc9f32; b9da71e28e3b7193632f2a57fe28a800d242a433; c10315ab273eb846094934f42dd09c05b8918fd8; 01d13af736a0054f0aa7474bbd982b24de3ed807</dd>
+<dt>agent name</dt><dd>pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra</dd>
+<dt>session id</dt><dd>01a090bd-8100-73bd-8d08-58611da5e584; 01a090bd-8100-73bd-8d08-58611da5e584; 01a090bd-8100-73bd-8d08-58611da5e584; 01a09168-fae8-701c-91a3-cf1504ae78a9</dd>
 <dt>back refs</dt><dd><a href="PRD-00-axe-core-modernization-overview.md">Master PRD</a>; <a href="PRD-01-type-system-modernization.md">Types PRD</a>; <a href="PRD-02-build-system-modernization.md">Build PRD</a>; <a href="PRD-03-test-infrastructure-modernization.md">Tests PRD</a>; <a href="PRD-04-rules-checks-optimization.md">Rules PRD</a>; <a href="plan-phase-03-test-infrastructure-modernization.md">Phase 3 plan</a>; <a href="phase-03-test-infrastructure-modernization-plan.md">Merged Phase 3 history</a>; <a href="modernization-reconciliation.md">Repository and PR #5 reconciliation</a></dd>
-<dt>forward refs</dt><dd>None. Proposed successor; implementation not started. September 11 reconciliation: <a href="modernization-baseline.json">fresh baseline</a>; <a href="https://github.com/akornmeier/axe-core/issues/6">optional Kernel/Stagehand investigation #6</a>.</dd>
+<dt>forward refs</dt><dd>None. Proposed successor; implementation not started. September 11 reconciliation: <a href="modernization-baseline.json">fresh baseline</a>; <a href="https://github.com/akornmeier/axe-core/issues/6">optional Kernel/Stagehand investigation #6</a>. Implementation update: <a href="https://github.com/asbury-labs/propellr/pull/9">PR #9, bounded baseline repair</a>, in progress; preparation evidence above remains historical.</dd>
 </dl></details>
 <nav aria-label="Plan sections"><a href="#platform">Platform vision</a><a href="#problem">Evidence</a><a href="#recommendations">Recommendations</a><a href="#toolchain">Toolchain</a><a href="#phases">Execution</a><a href="#validation">Validation</a></nav>
 </header>
@@ -410,8 +410,10 @@
 <section id="phases"><h2>Implementation Phases</h2>
 <p>Start Phase 1 on a dedicated implementation branch from the preparation commit, not the preserved old local branch. One integrator owns plan updates. Integrate slices in order; stop after each bounded run for evidence review. Resolve the API checkpoint before Phase 3. Slice 4's requirement discovery and disposable prototype can start after focused Phase 1 gates; shipping needs the chosen core boundary. No implementation task below has been executed by the preparation pass. Markers: <code>[]</code> idle, <code>[wip]</code> active, <code>[x]</code> verified, <code>[f]</code> blocked.</p>
 
-<div class="phase"><h3><code class="status">[]</code> 1. Restore trustworthy gates on current versions</h3>
+<div class="phase"><h3><code class="status">[wip]</code> 1. Restore trustworthy gates on current versions</h3>
 <p>First priority. No dependency upgrades and no rule rewrites. Preserve the last known-good reference artifact separately from the working build; do not bless current broken output as the semantic baseline.</p>
+<p><strong>Bounded run, PR #9:</strong> repair fresh schema emission, existing test wiring and reproduced migration regressions without dropping coverage. Runtime bindings, initialized exports, injectable source and locale bundles overlap slice 3's artifact work because they blocked usable test artifacts. This is not the new engine architecture or approval of a compatibility facade. Retain Karma/WebDriver until replacements are verified; no upgrades, publishing or PR #5 adoption in this run.</p>
+<p><strong>Evidence:</strong> CI at <code>01d13af7</code> passed all executed jobs, including ACT, APG, Chrome/Firefox and the Vitest pilot; two branch-conditioned jobs were skipped. Local checks passed 8,003 legacy Chromium tests and 626 full-document tests across 134 pages, with existing skips retained. Subsequent review repairs passed 12 bundle tests, two localized-bundle tests, engine/build-tools typechecks and QUnit against both local and published layouts. Those follow-ups still need fresh CI/review. Full inventory, parked-suite review, runner migration, root validation and packed-consumer gates remain open. Phase 1 is not complete.</p>
 <h4>1.1 Make checks real</h4><ul class="checklist">
 <li><code class="status">[]</code>Inventory discovered files, cases and fixture IDs across unit, browser, integration, ACT/APG and consumer-type suites. Compare deleted legacy tests in history by behavior, not file count; record justified exclusions. Fail on missing fixtures, unknown rule IDs and empty expected suites.</li>
 <li><code class="status">[]</code>Add a real no-emit engine check and dedicated consumer-type fixtures. Fix fresh schema output generation and tracked build-cache dependence; retest from no dist. Audit generated <code>@ts-nocheck</code> rather than treating an extension/exit code as type safety. Do not reapply the already-fixed UUID change.</li>
@@ -561,5 +563,8 @@
 </details>
 <details><summary>2026-09-11T15:02:34Z · Reconcile remote history and refresh execution baseline</summary>
 <p>Fetched current develop at b9da71e2 into a separate preparation worktree; preserved the divergent local branch and original plan. Reviewed PR #5 at c10315ab, mapped reusable migration work, excluded coverage artifacts from adoption and documented a public-API decision gate before Phase 3. Added executed baseline evidence, corrected obsolete paths/blockers, preserved the original audit as history and routed execution from the preparation branch. No implementation tasks marked complete.</p>
+</details>
+<details><summary>2026-09-11T18:10:01Z · Bound the first implementation slice</summary>
+<p>Recorded PR #9 as partial Phase 1 work and made its artifact-contract overlap with Phase 3 explicit. Captured executed evidence separately from pending follow-up CI/review. No phase or checklist task marked complete; API decision gate and remaining modernization work stay unchanged. Tony requested continued execution with minimal scope.</p>
 </details></section>
 </main></body></html>

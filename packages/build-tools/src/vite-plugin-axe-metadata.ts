@@ -12,6 +12,7 @@
  */
 
 import { type Plugin } from 'vite';
+import { createRequire } from 'node:module';
 import { globSync } from 'glob';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
@@ -24,8 +25,7 @@ const posixPath = path.posix;
 // doT template support
 // ---------------------------------------------------------------------------
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const doT = require('@deque/dot');
+const doT = createRequire(import.meta.url)('@deque/dot');
 
 // Sync with lib/core/imports/index.js — prevent stripping newlines
 doT.templateSettings.strip = false;

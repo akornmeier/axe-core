@@ -112,6 +112,7 @@
     "test:act": "mocha --fail-zero test/act-rules/*.spec.js",
     "test:apg": "start-server-and-test 9876 integration:apg",
     "test:locales": "mocha test/test-locales.js",
+    "test:locale-bundles": "pnpm run build:locales && mocha test/node/locale-bundles.js",
     "test:virtual-rules": "mocha test/test-virtual-rules.js",
     "test:rule-help-version": "mocha test/test-rule-help-version.js",
     "test:node": "node test/node/node.js",
