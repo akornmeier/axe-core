@@ -4,14 +4,12 @@ on:
   pull_request:
   push:
     branches:
-      - master
-      - develop
+      - main
       - release-*
 
 # We want to group to the workflow for each branch.
 # Non-push events will be cancelled if a new one is started.
-# Push events will run sequentially. This helps ensure that
-# the `next` tag isn't out of sync.
+# Push events will run sequentially.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -258,7 +256,7 @@ jobs:
   test_rule_help_version:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    if: ${{ github.ref_name == 'master' }}
+    if: ${{ github.ref_name == 'main' }}
     steps:
       - *checkout
       - *install-deps
@@ -270,8 +268,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     needs: build
-    # Run on master and RC branches along with PRs targeting those branches.
-    if: ${{ github.ref_name == 'master' || startsWith(github.ref_name, 'release-') || github.event.pull_request.base.ref == 'master' || startsWith(github.event.pull_request.base.ref, 'release-') }}
+    # Run on main and RC branches along with PRs targeting those branches.
+    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release-') || github.event.pull_request.base.ref == 'main' || startsWith(github.event.pull_request.base.ref, 'release-') }}
     steps:
       - *checkout
       - *install-deps

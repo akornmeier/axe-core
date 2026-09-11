@@ -257,71 +257,35 @@ BREAKING CHANGE: remove rules: th-has-headers, checkboxgroup, radiogroup
 
 ## Submitting a pull request
 
-We want to keep our commit log clean by avoiding merge messages in branches. Before submitting a pull request, make sure your branch is up to date with the develop branch by either:
-
-- Pulling from develop before creating your branch
-- Doing a rebase from origin/develop (will require a force push **on your branch**)
-
-To rebase from origin/develop if we've pushed changes since you created your branch:
+Create a short-lived branch from the latest `origin/main`. Before opening a pull request, rebase your branch onto `main`:
 
 ```sh
 git checkout your-branch
-git fetch
-git rebase origin/develop
-git push origin head -f
+git fetch origin
+git rebase origin/main
+git push --force-with-lease origin HEAD
 ```
+
+Use `--force-with-lease` only on your own feature branch when rebasing rewrites commits already pushed. Open a non-draft pull request against `main` and follow the [commit policy](#git-commits) for its title.
 
 ## Merging a pull request
 
-If a pull request has many commits (especially if they don't follow our [commit policy](#git-commits)), you'll want to squash them into one clean commit.
+`main` is protected. All changes go through pull requests with resolved review conversations. Never push changes directly to `main`, force-push it, or delete it.
 
-In the GitHub UI, you can use the new [Squash and Merge](https://github.com/blog/2141-squash-your-commits) feature to make this easy. If there are merge conflicts preventing this, either ask the committer to rebase from develop following the [PR submission steps above](#submitting-a-pull-request), or use the manual method below.
-
-To apply a pull request manually, make sure your local develop branch is up to date. Then, create a new branch for that pull request.
-
-Create a temporary, local branch:
-
-```sh
-git checkout -b temp-feature-branch
-```
-
-Run the following commands to apply all commits from that pull request on top of your branch's local history:
-
-```console
-curl -L https://github.com/dequelabs/axe-core/pull/205.patch | git am -3
-```
-
-If the merge succeeds, use `git diff origin/develop` to review all the changes that will happen post-merge.
+Use GitHub's **Squash and merge** after checks and review are complete. If the branch conflicts with `main`, ask its author to rebase using the steps above. The pull request title becomes the squash commit message.
 
 ## Squashing everything into one commit
 
-Before merging a pull request with many commits into develop, make sure there is only one commit representing the changes in the pull request, so the git log stays lean. We particularly want to avoid merge messages and vague commits that don't follow our commit policy (like `Merged develop into featurebranch` or `fixed some stuff`).
-
-You can use git's interactive rebase to manipulate, merge, and rename commits in your local history. If these steps are followed, a force push shouldn't be necessary.
-
-**Do not force push to develop or master under any circumstances.**
-
-To interactively rebase all of your commits on top of the latest in develop, run:
+GitHub squashes commits when merging; local squashing is optional. To tidy your own feature branch before review:
 
 ```sh
-git rebase --interactive origin/develop
+git fetch origin
+git rebase --interactive origin/main
+git diff origin/main...HEAD
+git push --force-with-lease origin HEAD
 ```
 
-This brings up an interactive dialog in your text editor. Follow the instructions to squash all of your commits into the top one. Rename the top one.
-
-Once this is done, run `git log` and you will see only one commit after develop, representing everything from the pull request.
-
-Finally, pull from develop with `rebase` to put all of our local commits on top of the latest remote.
-
-```sh
-git pull --rebase origin develop
-```
-
-You can then push the latest code to develop (note that force push isn't needed if these steps are followed):
-
-```console
-git push origin develop
-```
+Keep the pull request open for review after rewriting its history. Do not bypass the protected-branch workflow with a manual merge or direct trunk push.
 
 ## Writing Integration Tests
 

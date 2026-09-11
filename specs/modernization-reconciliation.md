@@ -1,6 +1,8 @@
 # Modernization reconciliation
 
-Captured September 11, 2026. Preparation only; no engine, test or CI implementation changes.
+Captured September 11, 2026. Preparation only; no engine, test or CI implementation changes in the preparation commit.
+
+**Subsequent repository transition:** PR #7 merged as `3a9d1ff0`. The repository was renamed to Propellr, then transferred to [asbury-labs/propellr](https://github.com/asbury-labs/propellr); `develop` was renamed to protected `main` without rewriting history. New execution branches start from latest `main`. The branch names and measurements below remain the original preparation record, not current routing instructions. Package names are unchanged.
 
 ## Authoritative starting point
 

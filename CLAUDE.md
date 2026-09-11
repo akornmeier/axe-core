@@ -1,12 +1,14 @@
-# axe-core Modernization — Claude Code Guide
+# Propellr — Coding Guide
 
 ## Project Overview
 
-axe-core is an accessibility testing engine. The active roadmap is [The next accessibility engine](specs/streamlined-modernization-plan.html): reliable tooling, configurable enterprise rule packs, an agent-facing rule SDK and measured execution improvements.
+Propellr is the working name for a web-quality platform evolving from axe-core. The active roadmap is [Propellr: the next accessibility engine](specs/streamlined-modernization-plan.html): reliable tooling, configurable enterprise rule packs, an agent-facing rule SDK and measured execution improvements.
+
+**Repository:** `asbury-labs/propellr`. Protected `main` is the only trunk; use short-lived branches and squash-merged PRs. Existing migration branches are historical/reuse sources, not parallel trunks. Existing package names remain unchanged; `@propellr/engine` is proposed, not registered or published.
 
 **Preparation baseline:** `develop@b9da71e2` (merged PR #4). Read [repository reconciliation](specs/modernization-reconciliation.md) and [executed baseline](specs/modernization-baseline.json) before implementation. The old local Phase 3 branch diverged from the merged migration; do not replay it or treat PR #5's historical results as current verification.
 
-**Execution:** start with a bounded Phase 1 run from the preparation commit. One integrator owns plan updates. Before Phase 3, Tony must resolve the new opt-in API versus full compatibility-facade decision. No publishing, live-channel changes or customer-data use without explicit authorization.
+**Execution:** start with a bounded Phase 1 run from latest `main`, which includes the preparation plan from PR #7. One integrator owns plan updates. Before Phase 3, Tony must resolve the new opt-in API versus full compatibility-facade decision. No publishing, live-channel changes or customer-data use without explicit authorization. Inherited deploy/release/generated-file workflows still target old branches; do not redirect or dispatch them as part of the rename. Reliable required CI checks remain Phase 1 work; branch protection is not evidence of green tests.
 
 Older PRDs below are historical architecture/migration references, not competing execution checklists. Their phase status and version targets are not evidence that checks currently pass.
 
