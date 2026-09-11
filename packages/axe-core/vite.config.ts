@@ -45,17 +45,41 @@ function sourcePlugin(): Plugin {
   let browserSource: string;
   return {
     name: 'axe-source',
+    outputOptions(options) {
+      const classicScript = options.format === 'iife';
+      options.intro = [
+        'var axe = {};',
+        classicScript
+          ? 'var window = axeWindow;'
+          : 'var window = globalThis.window || {};',
+        'var document = window.document;'
+      ].join('\n');
+      options.banner = banner;
+      if (classicScript) {
+        // The legacy API publishes to AMD, CommonJS and the supplied window
+        // independently. Standard UMD wrappers choose only one destination.
+        options.banner += '\n(function axeSource(axeWindow) {';
+        options.footer = `
+if (typeof define === "function" && define.amd) {
+  define("axe-core", [], function () { return axe; });
+}
+if (typeof module === "object" && module.exports) {
+  axe.source = ${JSON.stringify(banner)} + "\\n(" + axeSource.toString() + ")(typeof window === 'object' ? window : this);";
+  module.exports = axe;
+}
+if (typeof axeWindow.getComputedStyle === "function") {
+  axeWindow.axe = axe;
+}
+})(typeof window === "object" ? window : this || {});`;
+      }
+      return options;
+    },
     generateBundle(options, bundle) {
       for (const chunk of Object.values(bundle)) {
         if (chunk.type !== 'chunk') {
           continue;
         }
-        if (options.format === 'umd') {
-          // Self-serialization avoids embedding a second copy in the browser
-          // bundle, matching the legacy axeFunction/source contract.
-          chunk.code = `(function axeSource() {${chunk.code}\nif (typeof module === "object" && module.exports) {
-module.exports.source = ${JSON.stringify(banner)} + "\\n(" + axeSource.toString() + ")();";
-}\n})();\n`;
+        if (options.format === 'iife') {
           browserSource = banner + '\n' + chunk.code;
         } else {
           if (!browserSource) {
@@ -96,7 +120,7 @@ export default defineConfig(({ mode }) => {
       lib: {
         entry: resolve(__dirname, 'lib/index.ts'),
         name: 'axe',
-        formats: isMinify ? ['umd'] : ['umd', 'es', 'cjs'],
+        formats: isMinify ? ['iife'] : ['iife', 'es', 'cjs'],
         fileName: format => {
           if (isMinify) {
             return 'axe.min.js';
@@ -108,17 +132,6 @@ export default defineConfig(({ mode }) => {
             return 'axe.cjs';
           }
           return 'axe.js';
-        }
-      },
-      rollupOptions: {
-        output: {
-          // Legacy modules share these bindings. Keep them inside each bundle's
-          // scope, not on Node's globalThis or outside the UMD factory.
-          intro: [
-            'var axe = {};',
-            'var window = globalThis.window || {};',
-            'var document = window.document;'
-          ].join('\n')
         }
       },
       outDir: 'dist',
