@@ -1,6 +1,8 @@
 # Modernization reconciliation
 
-Captured September 11, 2026. Preparation only; no engine, test or CI implementation changes.
+Captured September 11, 2026. Preparation only; no engine, test or CI implementation changes in the preparation commit.
+
+**Subsequent repository transition:** PR #7 merged as `3a9d1ff0`. The repository is now [akornmeier/propellr](https://github.com/akornmeier/propellr); `develop` was renamed to protected `main` without rewriting history. New execution branches start from latest `main`. The branch names and measurements below remain the original preparation record, not current routing instructions. Package names are unchanged.
 
 ## Authoritative starting point
 

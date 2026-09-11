@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plan: The next accessibility engine</title>
+<title>Plan: Propellr, the next accessibility engine</title>
 <style>
 
   :root {
@@ -225,15 +225,15 @@
 </head>
 <body><main>
 <header>
-<h1>The next accessibility engine</h1>
+<h1>Propellr: the next accessibility engine</h1>
 <p><strong>Turn accessibility expertise into executable enterprise policy.</strong> Modern tooling is the foundation. The opportunity is a faster, configurable engine where humans and AI agents can author trustworthy rules without learning axe's internals.</p>
 <details class="meta"><summary>Metadata</summary><dl>
 <dt>created</dt><dd>2026-09-11T14:07:41Z</dd>
-<dt>modified</dt><dd>2026-09-11T14:07:41Z; 2026-09-11T14:20:14Z; 2026-09-11T15:02:34Z</dd>
-<dt>commits</dt><dd>eb2ef403c4d1d12aed9e7cc711af37c1bfcc9f32; b9da71e28e3b7193632f2a57fe28a800d242a433; c10315ab273eb846094934f42dd09c05b8918fd8</dd>
-<dt>agent name</dt><dd>pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra</dd>
-<dt>session id</dt><dd>01a090bd-8100-73bd-8d08-58611da5e584; 01a090bd-8100-73bd-8d08-58611da5e584; 01a090bd-8100-73bd-8d08-58611da5e584</dd>
-<dt>back refs</dt><dd><a href="PRD-00-axe-core-modernization-overview.md">Master PRD</a>; <a href="PRD-01-type-system-modernization.md">Types PRD</a>; <a href="PRD-02-build-system-modernization.md">Build PRD</a>; <a href="PRD-03-test-infrastructure-modernization.md">Tests PRD</a>; <a href="PRD-04-rules-checks-optimization.md">Rules PRD</a>; <a href="plan-phase-03-test-infrastructure-modernization.md">Phase 3 plan</a>; <a href="phase-03-test-infrastructure-modernization-plan.md">Merged Phase 3 history</a>; <a href="modernization-reconciliation.md">Repository and PR #5 reconciliation</a></dd>
+<dt>modified</dt><dd>2026-09-11T14:07:41Z; 2026-09-11T14:20:14Z; 2026-09-11T15:02:34Z; 2026-09-11T15:42:24Z</dd>
+<dt>commits</dt><dd>eb2ef403c4d1d12aed9e7cc711af37c1bfcc9f32; b9da71e28e3b7193632f2a57fe28a800d242a433; c10315ab273eb846094934f42dd09c05b8918fd8; 3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf</dd>
+<dt>agent name</dt><dd>pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra</dd>
+<dt>session id</dt><dd>01a090bd-8100-73bd-8d08-58611da5e584; 01a090bd-8100-73bd-8d08-58611da5e584; 01a090bd-8100-73bd-8d08-58611da5e584; 01a090bd-8100-73bd-8d08-58611da5e584</dd>
+<dt>back refs</dt><dd><a href="PRD-00-axe-core-modernization-overview.md">Master PRD</a>; <a href="PRD-01-type-system-modernization.md">Types PRD</a>; <a href="PRD-02-build-system-modernization.md">Build PRD</a>; <a href="PRD-03-test-infrastructure-modernization.md">Tests PRD</a>; <a href="PRD-04-rules-checks-optimization.md">Rules PRD</a>; <a href="plan-phase-03-test-infrastructure-modernization.md">Phase 3 plan</a>; <a href="phase-03-test-infrastructure-modernization-plan.md">Merged Phase 3 history</a>; <a href="modernization-reconciliation.md">Repository and PR #5 reconciliation</a>; <a href="../README.md">Propellr repository and trunk policy</a></dd>
 <dt>forward refs</dt><dd>None. Proposed successor; implementation not started. September 11 reconciliation: <a href="modernization-baseline.json">fresh baseline</a>; <a href="https://github.com/akornmeier/axe-core/issues/6">optional Kernel/Stagehand investigation #6</a>.</dd>
 </dl></details>
 <nav aria-label="Plan sections"><a href="#platform">Platform vision</a><a href="#problem">Evidence</a><a href="#recommendations">Recommendations</a><a href="#toolchain">Toolchain</a><a href="#phases">Execution</a><a href="#validation">Validation</a></nav>
@@ -246,7 +246,8 @@
 </section>
 
 <section id="problem"><h2>Problem: establish the real baseline before building</h2>
-<p><strong>Current execution base:</strong> <code>develop@b9da71e2</code>, preserved on preparation branch <code>chore/reconcile-modernization</code>. The original local Phase 3 branch was a divergent migration, not the merged PR #4 head. Its three unique commits remain backed up; none were cherry-picked. See the <a href="modernization-reconciliation.md">reconciliation report</a> for provenance and reusable PR #5 work.</p>
+<p><strong>Current trunk:</strong> <code>main</code> in <a href="https://github.com/akornmeier/propellr">akornmeier/propellr</a>. PR #7 merged the preparation plan at <code>3a9d1ff0</code>; <code>develop</code> was then renamed without rewriting history. Start short-lived implementation branches from latest main and squash-merge through PRs. Existing migration branches remain historical/reuse sources. The fresh baseline below was measured at <code>b9da71e2</code>, not rerun after branding. See the <a href="modernization-reconciliation.md">reconciliation report</a> for provenance and reusable PR #5 work.</p>
+<p><strong>Naming boundary:</strong> Propellr is the approved working name. Existing axe-core package names, APIs and licenses remain unchanged; <code>@propellr/engine</code> is proposed, not registered or published. Repository renaming does not resolve the Phase 3 API decision. Publishing workflows remain on their inherited branch targets, not main, pending a separate release-policy decision.</p>
 <div class="table-scroll"><table><thead><tr><th>Fresh check</th><th>Observed result</th><th>Phase 1 implication</th></tr></thead><tbody>
 <tr><td>Installation and schema output</td><td>Frozen install with lifecycle scripts disabled passed; checked-in color patch applied explicitly. Normal schemas build exited 0 without emitting dist because a build-info cache is tracked.</td><td>Fix clean-checkout generation; review required lifecycle steps and remove stale-output dependence. Git-hosted ACT/APG preparation remains unverified.</td></tr>
 <tr><td>Direct engine compiler</td><td>Failed initially on missing schema declarations; passed after <code>tsc -b --force</code> in schemas. The earlier UUID/18-error blocker no longer reproduces. Generated config still uses <code>@ts-nocheck</code>.</td><td>Wire an actual engine <code>typecheck</code> script, validate generation and retain strictness. Root Turbo dry-run still shows its engine command as nonexistent.</td></tr>
@@ -408,7 +409,7 @@
 </section>
 
 <section id="phases"><h2>Implementation Phases</h2>
-<p>Start Phase 1 on a dedicated implementation branch from the preparation commit, not the preserved old local branch. One integrator owns plan updates. Integrate slices in order; stop after each bounded run for evidence review. Resolve the API checkpoint before Phase 3. Slice 4's requirement discovery and disposable prototype can start after focused Phase 1 gates; shipping needs the chosen core boundary. No implementation task below has been executed by the preparation pass. Markers: <code>[]</code> idle, <code>[wip]</code> active, <code>[x]</code> verified, <code>[f]</code> blocked.</p>
+<p>Start Phase 1 on a short-lived implementation branch from latest protected <code>main</code>, which includes the preparation plan, not the preserved old local branch. Main requires PRs and resolved review conversations, blocks direct/force pushes and deletion, and uses squash merges. No second approver is required; reliable required CI checks are still Phase 1 work, not an implied green baseline. One integrator owns plan updates. Integrate slices in order; stop after each bounded run for evidence review. Resolve the API checkpoint before Phase 3. Slice 4's requirement discovery and disposable prototype can start after focused Phase 1 gates; shipping needs the chosen core boundary. No implementation task below has been executed by the preparation pass. Markers: <code>[]</code> idle, <code>[wip]</code> active, <code>[x]</code> verified, <code>[f]</code> blocked.</p>
 
 <div class="phase"><h3><code class="status">[]</code> 1. Restore trustworthy gates on current versions</h3>
 <p>First priority. No dependency upgrades and no rule rewrites. Preserve the last known-good reference artifact separately from the working build; do not bless current broken output as the semantic baseline.</p>
@@ -561,5 +562,8 @@
 </details>
 <details><summary>2026-09-11T15:02:34Z · Reconcile remote history and refresh execution baseline</summary>
 <p>Fetched current develop at b9da71e2 into a separate preparation worktree; preserved the divergent local branch and original plan. Reviewed PR #5 at c10315ab, mapped reusable migration work, excluded coverage artifacts from adoption and documented a public-API decision gate before Phase 3. Added executed baseline evidence, corrected obsolete paths/blockers, preserved the original audit as history and routed execution from the preparation branch. No implementation tasks marked complete.</p>
+</details>
+<details><summary>2026-09-11T15:42:24Z · Adopt Propellr and a main-only trunk</summary>
+<p>Tony selected Propellr as the working name. Renamed the GitHub repository to akornmeier/propellr and develop to main at the unchanged PR #7 merge commit. Added main protection and squash-only merging; preserved the existing migration branches and retargeted open PR #5. Updated current execution routing and naming while retaining historical audit metadata. Follow-up source changes route test/formatter CI to main and remove obsolete master/develop branch-sync automation. Deploy/release/generated-file workflows were not retargeted or dispatched. Package names and all implementation task states remain unchanged.</p>
 </details></section>
 </main></body></html>
