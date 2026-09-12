@@ -1,14 +1,17 @@
 # Propellr: initial typed public contract
 
-**Phase 1 update:** This document and its linked prototype are historical design
+**Phase 2 update:** This document and its linked prototype are historical design
 inputs. Current [public types](../src/contracts.ts) infer command inputs from
-[runtime schemas](../src/validation.ts); [host admission](../src/host/requests.ts)
-and [runtime tests](../test/contracts/requests.test.ts) now exist. Wire identities
-require distinct prefixes; envelopes and limits are documented in [README](../README.md).
-Outputs remain typed, not runtime-validated. No daemon or browser executor exists.
+[runtime schemas](../src/validation.ts). [Host admission](../src/host/requests.ts),
+[local daemon](../src/host/daemon.ts), [SDK](../src/host/client.ts), Playwright adapter
+and trusted dialog playbook now exist. Session document IDs, checkpoint observations
+and interrupted checkpoint retention extend the initial types. Wire identities,
+envelopes and limits are documented in [README](../README.md) and
+[local host protocol](local-host-protocol.md). SDK validates envelopes, not full output
+schemas. Scans remain unavailable. See [phase 2 evidence](local-host-validation.md).
 
-**Types-only prototype for review. No daemon, transport, browser adapter or SDK
-implementation exists.** The [architecture boundaries](propellr-architecture-boundaries.md)
+**Historical prototype status at capture: types only; no daemon, transport,
+browser adapter or SDK implementation existed.** The [architecture boundaries](propellr-architecture-boundaries.md)
 and [acceptance contract](propellr-acceptance-contract.md) supply the requirements.
 
 - [Contract types](propellr-contracts.ts)

@@ -10,7 +10,9 @@
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
     "test:contracts": "vitest run --project contracts",
-    "validate": "pnpm build && pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:contracts"
+    "test:host": "pnpm build && vitest run --project host",
+    "test:playbooks": "vitest run --project playbooks",
+    "validate": "pnpm build && pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:contracts && pnpm test:host && pnpm test:playbooks"
   },
   "dependencies": {
     "playwright": "1.63.0",

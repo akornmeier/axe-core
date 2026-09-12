@@ -349,21 +349,26 @@
             <dt>modified</dt>
             <dd>
               2026-09-11T20:27:25Z; 2026-09-12T13:35:14Z; 2026-09-12T14:06:24Z;
-              2026-09-12T14:13:33Z; 2026-09-12T14:23:45Z
+              2026-09-12T14:13:33Z; 2026-09-12T14:23:45Z; 2026-09-12T15:40:45Z
             </dd>
             <dt>commits</dt>
             <dd>
               46df83acde9421908d9b962d39d70b2da203426e (planning context, not greenfield
               implementation); 46df83acde9421908d9b962d39d70b2da203426e (phase 1 branch base;
               implementation staged, uncommitted); 44bfb559df534285dff1ce20ff6b0815ac04ec03 (phase 1
-              implementation rebased onto main@3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf)
+              implementation rebased onto main@3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf);
+              519f0c0bb04d38edfc68597b07dec56fae1b0a86 (phase 2 branch base; implementation
+              uncommitted)
             </dd>
             <dt>agent name</dt>
-            <dd>pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra (single agent)</dd>
+            <dd>
+              pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra (single agent); pi / gpt-6-astra
+              (phase 2, single agent)
+            </dd>
             <dt>session id</dt>
             <dd>
               01a09168-fae8-701c-91a3-cf1504ae78a9; 01a09168-fae8-701c-91a3-cf1504ae78a9;
-              01a095e0-cd7f-701c-91a3-cf37ea4a0cb5
+              01a095e0-cd7f-701c-91a3-cf37ea4a0cb5; 01a0962e-071f-7681-98bc-26b90fd97297
             </dd>
             <dt>back refs</dt>
             <dd>
@@ -378,7 +383,9 @@
               None. Workspace not created; execution awaits approval. Phase 1:
               ~/code/propellr-greenfield on feat/greenfield-foundation; evidence:
               specs/foundation-validation.md in that worktree.;
-              <a href="https://github.com/asbury-labs/propellr/pull/10">PR #10</a>
+              <a href="https://github.com/asbury-labs/propellr/pull/10">PR #10</a>;
+              <a href="local-host-validation.md">Phase 2 evidence</a>;
+              <a href="local-host-protocol.md">Local host protocol</a>
             </dd>
           </dl>
         </details>
@@ -394,10 +401,12 @@
       <section id="problem">
         <h2>Boundary</h2>
         <p>
-          The inherited workspace and its prior green CI do not prove the new design. Phase 1 now
-          passes TypeScript 7.0.2 source/type checks and 62 runtime request/admission tests in the
-          greenfield worktree. Dependency-declaration exceptions are recorded below. Transport/host
-          execution security, browser behavior, rule fidelity and performance remain unverified.
+          The inherited workspace and its prior green CI do not prove the new design. Phases 1 and 2
+          now pass TypeScript 7.0.2 source/type checks, 62 contract tests, 13 local host tests and 9
+          playbook tests. Actual dialog interactions ran in Chromium, Firefox and WebKit on macOS.
+          Dependency-declaration exceptions and single-user host limits are recorded in the
+          evidence. Browser analysis, rule fidelity, production isolation and performance remain
+          unverified.
         </p>
       </section>
       <section id="solution">
@@ -553,8 +562,8 @@
       <section id="phases">
         <h2>Implementation slices</h2>
         <p>
-          Phase 1 executed and validated. Stop here for review. Phases 2 and 3 remain unexecuted;
-          their script names remain deliverables, not existing commands.
+          Phases 1 and 2 executed and validated. Stop here for review. Phase 3 remains unexecuted;
+          its parity/reporting/benchmark script names remain deliverables, not existing commands.
         </p>
         <div class="phase">
           <h3><code class="status">[x]</code>1. Clean foundation and validated contracts</h3>
@@ -631,7 +640,7 @@
           </div>
         </div>
         <div class="phase">
-          <h3><code class="status">[]</code>2. Local stateful host and one playbook</h3>
+          <h3><code class="status">[x]</code>2. Local stateful host and one playbook</h3>
           <p>
             Implement the session boundary without a cloud control plane. Initial local host targets
             macOS/Linux; Windows transport and remote operation are not claimed. Until slice 3, scan
@@ -641,32 +650,32 @@
           <h4>2.1 Deliverables</h4>
           <ul class="checklist">
             <li>
-              <code class="status">[]</code>Use <code>node:net</code> local IPC in a private
+              <code class="status">[x]</code>Use <code>node:net</code> local IPC in a private
               per-user directory with restrictive permissions and bounded message sizes. SDK/CLI use
               the same seven commands. No unauthenticated TCP/HTTP listener or new RPC framework.
               Define framing, request correlation and replay limits before implementing the
               transport.
             </li>
             <li>
-              <code class="status">[]</code>Implement owned sessions and authorized borrowed targets
-              through a Playwright adapter. The host resolves target IDs; clients cannot supply
-              arbitrary browser endpoints or self-grant policy permissions. Ending a borrowed
+              <code class="status">[x]</code>Implement owned sessions and authorized borrowed
+              targets through a Playwright adapter. The host resolves target IDs; clients cannot
+              supply arbitrary browser endpoints or self-grant policy permissions. Ending a borrowed
               session detaches rather than terminating its browser.
             </li>
             <li>
-              <code class="status">[]</code>Keep session state alive across client disconnects.
+              <code class="status">[x]</code>Keep session state alive across client disconnects.
               Bound operation/event retention, make gaps explicit and coordinate conflicting page
               actions. Cancel cooperatively or with permitted host enforcement; never replay
               uncertain side effects after reconnect or loss.
             </li>
             <li>
-              <code class="status">[]</code>Add one trusted <code>dialog-open-close</code> playbook
+              <code class="status">[x]</code>Add one trusted <code>dialog-open-close</code> playbook
               against a controlled local fixture. Declare origin/action permissions, inputs,
               prerequisites and scan checkpoints. Record actual checkpoint state and failures; no
               arbitrary agent-authored execution, real login credentials or business submissions.
             </li>
             <li>
-              <code class="status">[]</code>Keep secrets, audit/redaction and access decisions at
+              <code class="status">[x]</code>Keep secrets, audit/redaction and access decisions at
               the host boundary. This first single-user local host is not production multi-tenant
               isolation, durable crash recovery or an enterprise identity suite.
             </li>
@@ -674,18 +683,18 @@
           <h4>2.2 Testing Strategy</h4>
           <ul class="checklist">
             <li>
-              <code class="status">[]</code
+              <code class="status">[x]</code
               ><code>pnpm exec playwright install chromium firefox webkit</code>: provision pinned
               test browser revisions in the new environment before host/browser tests; use
               --with-deps on supported CI Linux
             </li>
             <li>
-              <code class="status">[]</code><code>pnpm test:host</code>: real local IPC reconnect,
+              <code class="status">[x]</code><code>pnpm test:host</code>: real local IPC reconnect,
               request conflicts, replay gaps, authorization denial, cancellation and
               borrowed-browser ownership
             </li>
             <li>
-              <code class="status">[]</code><code>pnpm test:playbooks</code>: actual browser
+              <code class="status">[x]</code><code>pnpm test:playbooks</code>: actual browser
               interaction, blocked prerequisites, checkpoint correlation and explicit cleanup
               failures; no manufactured scan success
             </li>
@@ -846,6 +855,36 @@
       </section>
       <section id="amendments">
         <h2>Amendments</h2>
+        <details open>
+          <summary>2026-09-12T15:40:45Z: Phase 2 executed, stop boundary reached</summary>
+          <p>
+            Tony authorized only the next phase and one agent. Implemented private Unix IPC,
+            same-command SDK/CLI, bounded request replay and event retention, host-owned access,
+            owned/borrowed Playwright sessions and dialog-open-close@1. Client disconnect does not
+            replay or end work. Cancellation, lost browser state, stale documents, replay gaps and
+            incomplete cleanup remain explicit. No remote listener or arbitrary playbook loading.
+          </p>
+          <p>
+            Provisioned pinned Chromium, Firefox and WebKit in this worktree's ignored browser
+            cache. Frozen install, build, four strict type scopes, lint, required Oxfmt, 62 contract
+            tests, 13 real IPC/host tests and 9 real browser playbook tests passed under Node 26.8.2
+            and PNPM 12.4.1 on macOS 26.6.2 arm64. Repaired and retested request handshake
+            validation, cancellation timing and loss/end state preservation. CI browser setup
+            updated, not run.
+          </p>
+          <p>
+            Playwright declarations reference DOM names from Node APIs; host/build now use a
+            documented dependency-only skipLibCheck exception. Own host source remains DOM-free and
+            strict. Scan requests fail with scan-unavailable; observed playbook checkpoints remain
+            blocked and journey coverage partial. No scan, parity, reporting or benchmark success.
+          </p>
+          <p>
+            Full evidence: <a href="local-host-validation.md">local-host-validation.md</a>. Phase 2
+            [x]; phase 3 []; no unresolved [f] task. Work remains uncommitted on
+            feat/local-session-host. Other worktrees, user edits, canonical axe-core and global
+            tools preserved. No staging, push, merge, PR action, publishing or live-channel work.
+          </p>
+        </details>
         <details open>
           <summary>2026-09-12T14:23:45Z: Linux CI passed; review repair</summary>
           <p>

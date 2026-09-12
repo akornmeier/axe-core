@@ -6,7 +6,7 @@ import type { CommandInputs, CommandName, Request } from "../validation.js";
 export const REQUEST_LIMITS = { bytes: 65_536, depth: 32 } as const;
 
 // Count containers before parsing or recursive schema evaluation. Quoted braces do not count.
-function withinDepthLimit(text: string): boolean {
+export function withinDepthLimit(text: string): boolean {
   let depth = 0;
   let quoted = false;
   let escaped = false;
