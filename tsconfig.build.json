@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.host.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/contracts.ts", "src/validation.ts", "src/host/**/*.ts"]
+}

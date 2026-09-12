@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "types": ["node"] },
+  "include": ["src/host/**/*.ts", "test/types/host.typecheck.ts"]
+}

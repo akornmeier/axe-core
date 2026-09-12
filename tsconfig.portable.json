@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "skipLibCheck": true },
+  "include": [
+    "src/contracts.ts",
+    "src/validation.ts",
+    "test/types/contracts.typecheck.ts",
+    "test/types/portable.typecheck.ts"
+  ]
+}

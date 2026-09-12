@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plan: Propellr greenfield foundation</title>
+    <style>
+      /* ===== VISUAL IDENTITY =====
+     Source of truth for this page AND every image embedded in it. Inline SVG
+     resolves var() against this page, so diagrams reference these roles
+     (never hardcoded hex) and the identity stays synced.
+
+     The structure is fixed — --bg, --paper-2, --ink, --muted, --soft, --rule,
+     --accent and --accent-tint must all exist, because an undeclared custom
+     property renders as no fill and fails silently. The values are a starting
+     point: re-tune the hues per plan to suit its subject. */
+      :root {
+        --bg: #000000;
+        --paper-2: #000000;
+        --ink: #ffffff;
+        --muted: #cccccc;
+        --soft: #bbbbbb;
+        --rule: rgba(255, 255, 255, 0.18);
+        --rule-solid: #333333;
+        --accent: #8cceff;
+        --accent-tint: rgba(140, 206, 255, 0.06);
+
+        --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        --serif: ui-serif, "Iowan Old Style", Georgia, "Times New Roman", serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 4rem 1.5rem 6rem;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      main {
+        max-width: 60rem;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-family: var(--serif);
+        font-size: 2.5rem;
+        font-weight: 400;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+        margin: 0 0 1rem;
+      }
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: -0.005em;
+        margin: 3.5rem 0 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--rule);
+      }
+      h3 {
+        font-size: 1.0625rem;
+        font-weight: 600;
+        margin: 2rem 0 0.5rem;
+      }
+      h4 {
+        font-family: var(--mono);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 1.5rem 0 0.5rem;
+      }
+      p {
+        margin: 0 0 1rem;
+        max-width: 46rem;
+      }
+      a {
+        color: var(--accent);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 2px;
+      }
+
+      code {
+        font-family: var(--mono);
+        font-size: 0.85em;
+        background: rgba(27, 26, 24, 0.05);
+        border-radius: 4px;
+        padding: 0.1em 0.35em;
+      }
+      pre {
+        background: var(--paper-2);
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        padding: 1rem 1.25rem;
+        overflow-x: auto;
+        font-size: 0.8125rem;
+        line-height: 1.6;
+      }
+      pre code {
+        background: none;
+        padding: 0;
+        font-size: inherit;
+      }
+
+      /* --- header + metadata --- */
+      header {
+        margin-bottom: 2.5rem;
+      }
+      details.meta {
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        background: var(--paper-2);
+        padding: 0.625rem 1rem;
+        font-size: 0.8125rem;
+      }
+      details.meta summary {
+        cursor: pointer;
+        font-family: var(--mono);
+        font-size: 0.6875rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      details.meta dl {
+        display: grid;
+        grid-template-columns: 8rem 1fr;
+        gap: 0.25rem 1rem;
+        margin: 0.875rem 0 0.25rem;
+      }
+      details.meta dt {
+        font-family: var(--mono);
+        font-size: 0.6875rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--soft);
+        padding-top: 0.15rem;
+      }
+      details.meta dd {
+        margin: 0;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        word-break: break-word;
+      }
+
+      /* --- figures --- */
+      figure {
+        margin: 2rem auto;
+        padding: 0;
+        text-align: center;
+      }
+      figure svg,
+      figure img {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+      }
+      figcaption {
+        margin-top: 0.875rem;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        line-height: 1.5;
+        color: var(--soft);
+        max-width: 40rem;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* --- tables (the Notes canvas invites them) --- */
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.875rem;
+        margin: 0 0 1rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: top;
+      }
+      th {
+        font-family: var(--mono);
+        font-size: 0.6875rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--soft);
+        font-weight: 500;
+      }
+      td code {
+        white-space: nowrap;
+      }
+
+      /* --- relevant files --- */
+      .files ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1rem;
+      }
+      .files li {
+        padding: 0.375rem 0;
+        border-bottom: 1px solid var(--rule);
+        font-size: 0.9375rem;
+      }
+      .tag {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 0.625rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border-radius: 2px;
+        padding: 0.1rem 0.35rem;
+        margin-right: 0.4rem;
+        border: 1px solid;
+      }
+      .tag.existing {
+        color: var(--muted);
+        border-color: var(--rule-solid);
+      }
+      .tag.new {
+        color: var(--accent);
+        border-color: var(--accent);
+        background: var(--accent-tint);
+      }
+
+      /* --- phases --- */
+      .phase {
+        background: var(--paper-2);
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        padding: 1.25rem 1.5rem 1.5rem;
+        margin: 1.5rem 0;
+      }
+      .phase h3 {
+        margin-top: 0.25rem;
+      }
+      ul.checklist {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1rem;
+      }
+      ul.checklist li {
+        padding: 0.25rem 0;
+        font-size: 0.9375rem;
+        line-height: 1.55;
+      }
+      code.status {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--soft);
+        background: none;
+        padding: 0;
+        margin-right: 0.4rem;
+      }
+      .loop {
+        border-left: 2px solid var(--accent);
+        background: var(--accent-tint);
+        border-radius: 0 4px 4px 0;
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+      .loop strong {
+        color: var(--ink);
+      }
+
+      /* --- questionables / notes / amendments --- */
+      #questionables details,
+      #notes details,
+      #amendments details {
+        border-bottom: 1px solid var(--rule);
+        padding: 0.625rem 0;
+      }
+      #questionables summary,
+      #notes summary,
+      #amendments summary {
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9375rem;
+      }
+      .qa-answer,
+      #amendments details p {
+        margin: 0.5rem 0 0;
+        color: var(--muted);
+        font-size: 0.9375rem;
+      }
+
+      h1 {
+        font-family: var(--sans);
+        font-weight: 650;
+      }
+      .phase,
+      details.meta,
+      pre {
+        border-radius: 0;
+        background: none;
+      }
+      .phase {
+        border: 0;
+        border-top: 1px solid var(--rule);
+        padding: 1.25rem 0;
+      }
+      code {
+        background: none;
+        border-radius: 0;
+      }
+      .table-scroll {
+        overflow-x: auto;
+      }
+      @media (max-width: 640px) {
+        body {
+          padding: 2rem 1rem;
+        }
+        h1 {
+          font-size: 2rem;
+        }
+        details.meta dl {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Propellr: greenfield foundation</h1>
+        <p>
+          One private project. One local session host. One playbook. A small, honest cross-browser
+          parity proof.
+        </p>
+        <details class="meta">
+          <summary>Metadata</summary>
+          <dl>
+            <dt>created</dt>
+            <dd>2026-09-11T20:27:25Z</dd>
+            <dt>modified</dt>
+            <dd>2026-09-11T20:27:25Z; 2026-09-12T13:35:14Z; 2026-09-12T14:06:24Z</dd>
+            <dt>commits</dt>
+            <dd>
+              46df83acde9421908d9b962d39d70b2da203426e (planning context, not greenfield
+              implementation); 46df83acde9421908d9b962d39d70b2da203426e (phase 1 branch base;
+              implementation staged, uncommitted)
+            </dd>
+            <dt>agent name</dt>
+            <dd>pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra (single agent)</dd>
+            <dt>session id</dt>
+            <dd>
+              01a09168-fae8-701c-91a3-cf1504ae78a9; 01a09168-fae8-701c-91a3-cf1504ae78a9;
+              01a095e0-cd7f-701c-91a3-cf37ea4a0cb5
+            </dd>
+            <dt>back refs</dt>
+            <dd>
+              <a href="propellr-product-brief.md">Product brief</a>;
+              <a href="propellr-acceptance-contract.md">Acceptance contract</a>;
+              <a href="propellr-architecture-boundaries.md">Architecture proposal</a>;
+              <a href="propellr-public-contract.md">Typed contract prototype</a>;
+              <a href="axe-core-reference.md">Canonical reference</a>
+            </dd>
+            <dt>forward refs</dt>
+            <dd>
+              None. Workspace not created; execution awaits approval. Phase 1:
+              ~/code/propellr-greenfield on feat/greenfield-foundation; evidence:
+              specs/foundation-validation.md in that worktree.
+            </dd>
+          </dl>
+        </details>
+      </header>
+      <section id="purpose">
+        <h2>Purpose</h2>
+        <p>
+          Prove the greenfield session and analysis boundaries without restarting the old
+          modernization program. Full axe-core accessibility parity remains the product floor; this
+          plan establishes only a named initial slice.
+        </p>
+      </section>
+      <section id="problem">
+        <h2>Boundary</h2>
+        <p>
+          The inherited workspace and its prior green CI do not prove the new design. Phase 1 now
+          passes TypeScript 7.0.2 source/type checks and 62 runtime request/admission tests in the
+          greenfield worktree. Dependency-declaration exceptions are recorded below. Transport/host
+          execution security, browser behavior, rule fidelity and performance remain unverified.
+        </p>
+      </section>
+      <section id="solution">
+        <h2>Selected toolchain</h2>
+        <p>
+          Initial selection used read-only registry and Node release observations on September 11,
+          2026. Phase 1 installed these exact pins in the new worktree on September 12, without
+          global upgrades. Declared engine/peer ranges fit Node 26 and matching Vitest/provider 5.
+          Phase 1 verifies native tool execution and the Node test configuration; browser/provider
+          execution remains deferred.
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Pin</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="https://nodejs.org/dist/index.json">Node</a></td>
+                <td><code>26.8.2</code></td>
+                <td>Development and initial private host</td>
+              </tr>
+              <tr>
+                <td><a href="https://registry.npmjs.org/pnpm/latest">PNPM</a></td>
+                <td><code>12.4.1</code></td>
+                <td>Exact package-manager pin, no global bootstrap changes</td>
+              </tr>
+              <tr>
+                <td><a href="https://registry.npmjs.org/typescript/7.0.2">TypeScript</a></td>
+                <td><code>7.0.2</code></td>
+                <td>Strict compiler; native macOS arm64 installation verified in phase 1</td>
+              </tr>
+              <tr>
+                <td><a href="https://registry.npmjs.org/@types/node/26.5.1">@types/node</a></td>
+                <td><code>26.5.1</code></td>
+                <td>Matches Node 26; registry latest tag currently points to Node 22 types</td>
+              </tr>
+              <tr>
+                <td><a href="https://registry.npmjs.org/vite/latest">Vite</a></td>
+                <td><code>8.3.0</code></td>
+                <td>Browser entry build and test fixture serving</td>
+              </tr>
+              <tr>
+                <td><a href="https://registry.npmjs.org/vitest/latest">Vitest</a></td>
+                <td><code>5.0.0</code></td>
+                <td>One test runner, Node and browser projects</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://registry.npmjs.org/@vitest/browser-playwright/latest"
+                    >@vitest/browser-playwright</a
+                  >
+                </td>
+                <td><code>5.0.0</code></td>
+                <td>Exact match with Vitest</td>
+              </tr>
+              <tr>
+                <td><a href="https://registry.npmjs.org/playwright/latest">Playwright</a></td>
+                <td><code>1.63.0</code></td>
+                <td>Host browser adapter and pinned browser revisions</td>
+              </tr>
+              <tr>
+                <td><a href="https://registry.npmjs.org/zod/latest">Zod</a></td>
+                <td><code>4.6.2</code></td>
+                <td>Host boundary validation and input inference, not per-node evaluation</td>
+              </tr>
+              <tr>
+                <td><a href="https://registry.npmjs.org/oxlint/latest">Oxlint</a></td>
+                <td><code>1.82.0</code></td>
+                <td>Static lint, without extra type-aware plugin initially</td>
+              </tr>
+              <tr>
+                <td><a href="https://registry.npmjs.org/oxfmt/0.67.0">Oxfmt</a></td>
+                <td><code>0.67.0</code></td>
+                <td>Sole formatter and required formatting gate, approved by Tony</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          <strong>Node policy:</strong> 26.8.2 is Current, not LTS. Node 24.21.0 is the observed LTS
+          alternative. The initial private host targets 26; no Node 24/20 support or global
+          environment change is implied. Review release/migration notes before installation and do
+          not silently fall back if the proposed combination fails.
+        </p>
+        <p>
+          <strong>Keep it lean:</strong> Playwright and Zod are host runtime dependencies; browser
+          analysis must not import them. Build/test/static tools are development dependencies. PNPM
+          is a package-manager pin. Tony selected Oxfmt 0.67.0 as the sole formatter and required
+          formatting gate on September 12, 2026. No Prettier dependency, fallback or advisory-only
+          period in the greenfield project. Existing migration-checkout tooling remains unchanged.
+          No Turbo, Vite+, Karma, Mocha, Selenium, jsdom, legacy examples or upstream build plugins.
+        </p>
+      </section>
+      <section id="files" class="files">
+        <h2>Workspace layout</h2>
+        <h3>Existing inputs</h3>
+        <ul>
+          <li>
+            <code>specs/propellr-*.md</code>, contract prototype and compile-only examples:
+            requirements and proposed boundary, not implementation to copy blindly.
+          </li>
+          <li>
+            <code>~/code/axe-core</code>: independent canonical source, unchanged; never a workspace
+            dependency.
+          </li>
+        </ul>
+        <h3>Planned files in the new worktree</h3>
+        <ul>
+          <li>
+            <code>package.json</code>, <code>pnpm-lock.yaml</code>, <code>.node-version</code>:
+            private root project and exact tools; no packages directory or second task graph.
+          </li>
+          <li>
+            <code>tsconfig*.json</code>, <code>vite.config.ts</code>, <code>vitest.config.ts</code>:
+            explicit portable/browser/host scopes and one runner.
+          </li>
+          <li>
+            <code>src/contracts.ts</code>, <code>src/validation.ts</code>: public contract and
+            validated input boundaries.
+          </li>
+          <li>
+            <code>src/host/</code>: session ownership, local IPC, client/CLI, Playwright adapter and
+            trusted playbook registration.
+          </li>
+          <li>
+            <code>src/browser/</code>: DOM reader, scan epochs, shared facts and the three selected
+            rule implementations.
+          </li>
+          <li>
+            <code>src/reporting/</code>: raw-to-grouped reporting and the small gate policy,
+            separate from verdicts.
+          </li>
+          <li>
+            <code>test/fixtures/</code>, <code>test/contracts/</code>, <code>test/host/</code>,
+            <code>test/parity/</code>, <code>test/reporting/</code>: focused executable cases, not
+            the inherited harness.
+          </li>
+          <li>
+            <code>reference.json</code>, <code>bench/</code>: canonical version/integrity and
+            reproducible slice measurements; no copied upstream package tree.
+          </li>
+          <li>
+            <code>README.md</code>, project guidance, licenses/provenance and one CI validation
+            workflow: no release/deploy automation.
+          </li>
+        </ul>
+      </section>
+      <section id="phases">
+        <h2>Implementation slices</h2>
+        <p>
+          Phase 1 executed and validated. Stop here for review. Phases 2 and 3 remain unexecuted;
+          their script names remain deliverables, not existing commands.
+        </p>
+        <div class="phase">
+          <h3><code class="status">[x]</code>1. Clean foundation and validated contracts</h3>
+          <p>
+            Create a separate worktree only after approval of this plan. No source or dependency
+            migration from the inherited workspace.
+          </p>
+          <h4>1.1 Deliverables</h4>
+          <ul class="checklist">
+            <li>
+              <code class="status">[x]</code>Use <code>~/code/propellr-greenfield</code>, a new
+              short-lived branch in the existing Propellr repository. Preserve current worktrees,
+              user edits/deletions and PR history. Do not force-update main or create another remote
+              repository.
+            </li>
+            <li>
+              <code class="status">[x]</code>Populate one private ESM project at the root. Retain
+              approved product/acceptance/contracts, provenance and required licenses. Do not copy
+              old package manifests, lockfiles, build plugins, test runners or release automation.
+              Reconcile overlapping PRs before any merge.
+            </li>
+            <li>
+              <code class="status">[x]</code>Pin the table above in the new project only. Use
+              project-scoped PNPM execution, not bundled Corepack or a global upgrade. Review
+              install scripts and native binaries before allowing execution; generate a new
+              lockfile, then verify a frozen install.
+            </li>
+            <li>
+              <code class="status">[x]</code>Separate portable, browser and host TypeScript scopes.
+              Initially build real contracts/runtime validation; add host and browser entry builds
+              when their implementations exist, never conditional no-op targets. Use TypeScript for
+              host output and Vite for the browser entry, with Node/browser Vitest projects under
+              one runner as their implementations exist. Phase 1 runs the Node contract project;
+              browser project/entry builds are deferred rather than empty targets. No ambient DOM
+              types in host code or Node imports in browser analysis.
+            </li>
+            <li>
+              <code class="status">[x]</code>Adopt and pressure-test the contract prototype.
+              Validate untrusted inputs at the host boundary and infer types from schemas where
+              possible; do not maintain unrelated duplicate schemas or put validation in per-node
+              hot loops. Retain negative type examples.
+            </li>
+            <li>
+              <code class="status">[x]</code>Provide actual scripts for build, typecheck, lint,
+              format and format:check, and contract tests. Wire <code>format</code> to
+              <code>oxfmt .</code> and <code>format:check</code> to <code>oxfmt --check .</code>;
+              require the latter in CI. No placeholder checks, Turbo, monorepo scaffolding,
+              dashboard or publishing setup.
+            </li>
+          </ul>
+          <h4>1.2 Testing Strategy</h4>
+          <ul class="checklist">
+            <li>
+              <code class="status">[x]</code
+              ><code>npm exec --yes --package=pnpm@12.4.1 -- pnpm install --frozen-lockfile</code>:
+              fresh verification after the initial lockfile has been generated and reviewed; run
+              under the selected Node
+            </li>
+            <li>
+              <code class="status">[x]</code
+              ><code>pnpm typecheck &amp;&amp; pnpm test:contracts</code>: strict positive/negative
+              types and real input-decoder tests; invalid protocol, IDs, JSON and permissions are
+              rejected
+            </li>
+            <li>
+              <code class="status">[x]</code
+              ><code>pnpm build &amp;&amp; pnpm lint &amp;&amp; pnpm format:check</code>: real
+              build/static tasks under the selected toolchain, not prior TypeScript 6 results
+            </li>
+          </ul>
+          <div class="loop">
+            <strong>Checkpoint:</strong> stop and review evidence before the next slice. A blocked
+            check remains blocked; do not replace it with a no-op.
+          </div>
+        </div>
+        <div class="phase">
+          <h3><code class="status">[]</code>2. Local stateful host and one playbook</h3>
+          <p>
+            Implement the session boundary without a cloud control plane. Initial local host targets
+            macOS/Linux; Windows transport and remote operation are not claimed. Until slice 3, scan
+            checkpoints return explicit unavailable/blocked diagnostics, never fake successful scan
+            results.
+          </p>
+          <h4>2.1 Deliverables</h4>
+          <ul class="checklist">
+            <li>
+              <code class="status">[]</code>Use <code>node:net</code> local IPC in a private
+              per-user directory with restrictive permissions and bounded message sizes. SDK/CLI use
+              the same seven commands. No unauthenticated TCP/HTTP listener or new RPC framework.
+              Define framing, request correlation and replay limits before implementing the
+              transport.
+            </li>
+            <li>
+              <code class="status">[]</code>Implement owned sessions and authorized borrowed targets
+              through a Playwright adapter. The host resolves target IDs; clients cannot supply
+              arbitrary browser endpoints or self-grant policy permissions. Ending a borrowed
+              session detaches rather than terminating its browser.
+            </li>
+            <li>
+              <code class="status">[]</code>Keep session state alive across client disconnects.
+              Bound operation/event retention, make gaps explicit and coordinate conflicting page
+              actions. Cancel cooperatively or with permitted host enforcement; never replay
+              uncertain side effects after reconnect or loss.
+            </li>
+            <li>
+              <code class="status">[]</code>Add one trusted <code>dialog-open-close</code> playbook
+              against a controlled local fixture. Declare origin/action permissions, inputs,
+              prerequisites and scan checkpoints. Record actual checkpoint state and failures; no
+              arbitrary agent-authored execution, real login credentials or business submissions.
+            </li>
+            <li>
+              <code class="status">[]</code>Keep secrets, audit/redaction and access decisions at
+              the host boundary. This first single-user local host is not production multi-tenant
+              isolation, durable crash recovery or an enterprise identity suite.
+            </li>
+          </ul>
+          <h4>2.2 Testing Strategy</h4>
+          <ul class="checklist">
+            <li>
+              <code class="status">[]</code
+              ><code>pnpm exec playwright install chromium firefox webkit</code>: provision pinned
+              test browser revisions in the new environment before host/browser tests; use
+              --with-deps on supported CI Linux
+            </li>
+            <li>
+              <code class="status">[]</code><code>pnpm test:host</code>: real local IPC reconnect,
+              request conflicts, replay gaps, authorization denial, cancellation and
+              borrowed-browser ownership
+            </li>
+            <li>
+              <code class="status">[]</code><code>pnpm test:playbooks</code>: actual browser
+              interaction, blocked prerequisites, checkpoint correlation and explicit cleanup
+              failures; no manufactured scan success
+            </li>
+          </ul>
+          <div class="loop">
+            <strong>Checkpoint:</strong> stop and review evidence before the next slice. A blocked
+            check remains blocked; do not replace it with a no-op.
+          </div>
+        </div>
+        <div class="phase">
+          <h3><code class="status">[]</code>3. Small cross-browser parity and reporting proof</h3>
+          <p>
+            A technical slice toward complete axe-core coverage, not a three-rule replacement
+            product. Finish with evidence review rather than automatically expanding the platform.
+          </p>
+          <h4>3.1 Deliverables</h4>
+          <ul class="checklist">
+            <li>
+              <code class="status">[]</code>Implement
+              <code>button-name</code> (naming/relationships),
+              <code>target-size</code> (layout/geometry) and
+              <code>landmark-one-main</code> (document-level main presence). Their definitions exist
+              at the pinned canonical tag. <code>target-size</code> is opt-in there: explicitly
+              select equivalent rules/options in both engines. Do not reinterpret main presence as
+              duplicate-main detection.
+            </li>
+            <li>
+              <code class="status">[]</code>Reuse selected proven logic with attribution; do not
+              load canonical axe-core as the Propellr implementation or port its runtime shell.
+              Independently review positive, negative, boundary and incomplete expectations. Account
+              for unimplemented branches and rules; default full-catalog requests cannot silently
+              become three-rule scans.
+            </li>
+            <li>
+              <code class="status">[]</code>Cover ordinary DOM, naming relationships, geometry
+              boundaries, document scope, open shadow roots, same-origin frames and an explicitly
+              denied frame. Run the selected slice in Chromium, Firefox and WebKit. Report
+              unavailable scope rather than fake complete results.
+            </li>
+            <li>
+              <code class="status">[]</code>Use an independently obtained, integrity-pinned
+              published axe-core 4.13.0 browser artifact in an external reference cache. Never add
+              axe-core or its tooling to Propellr dependencies. Keep source provenance pinned too.
+              Run both engines in separate equivalent contexts, retaining raw outputs and mismatch
+              classifications.
+            </li>
+            <li>
+              <code class="status">[]</code>Connect playbook checkpoints to scans. Start realtime
+              requests with an explicit full-scan fallback; invalidate changed documents/epochs. Do
+              not claim an incremental speedup before an incremental algorithm exists.
+            </li>
+            <li>
+              <code class="status">[]</code>Emit raw occurrences and conservative issue groups with
+              explicit current-scan counts. Prove repeated-scan continuity, no merging of unrelated
+              targets, and no false resolution after a partial/narrower scan. Apply a small declared
+              gate policy with incomplete status visible. General cross-site matching, databases and
+              vendor adapters stay outside this slice.
+            </li>
+            <li>
+              <code class="status">[]</code>Collect reproducible exploratory timings and memory
+              observations only for equivalent selected coverage. Include session, browser load,
+              scan and reporting costs separately and end to end. Do not publish a headline speedup
+              or full-parity claim from this slice.
+            </li>
+          </ul>
+          <h4>3.2 Testing Strategy</h4>
+          <ul class="checklist">
+            <li>
+              <code class="status">[]</code
+              ><code>pnpm test:playbooks &amp;&amp; pnpm test:parity</code>: real scan checkpoints,
+              non-empty selected-rule inventory and comparisons in all three engines, with raw
+              findings before grouping
+            </li>
+            <li>
+              <code class="status">[]</code><code>pnpm test:reporting</code>: group
+              membership/counts, continuity, partial-coverage resolution safety and auditable gate
+              decisions
+            </li>
+            <li>
+              <code class="status">[]</code><code>pnpm bench:slice</code>: recorded exploratory
+              samples for this slice only; sampling rules and environmental conditions fixed before
+              collecting measurements
+            </li>
+          </ul>
+          <div class="loop">
+            <strong>Checkpoint:</strong> stop and review evidence before the next slice. A blocked
+            check remains blocked; do not replace it with a no-op.
+          </div>
+        </div>
+      </section>
+      <section id="validation">
+        <h2>Final validation</h2>
+        <p>
+          All commands below run in the new worktree under Node 26.8.2. Bare <code>pnpm</code> means
+          the pinned 12.4.1 executable; use
+          <code>npm exec --yes --package=pnpm@12.4.1 -- pnpm ...</code> where needed. Do not upgrade
+          the current checkout's global tools. Initial CI can use supported Ubuntu 24.04 with
+          Playwright system dependencies; browser/host versions and environment belong in every
+          result.
+        </p>
+        <ul class="checklist">
+          <li>
+            <code class="status">[x]</code><code>pnpm install --frozen-lockfile</code> in a fresh
+            disposable index checkout of the new project with reviewed lifecycle behavior; scripts
+            disabled by project configuration.
+          </li>
+          <li>
+            <code class="status">[x]</code
+            ><code
+              >pnpm build &amp;&amp; pnpm typecheck &amp;&amp; pnpm lint &amp;&amp; pnpm
+              format:check</code
+            >
+            under pinned Node/PNPM.
+          </li>
+          <li>
+            <code class="status">[]</code
+            ><code
+              >pnpm test:contracts &amp;&amp; pnpm test:host &amp;&amp; pnpm test:playbooks
+              &amp;&amp; pnpm test:parity &amp;&amp; pnpm test:reporting</code
+            >: real cases, no empty/no-op suites.
+          </li>
+          <li>
+            <code class="status">[]</code><code>pnpm bench:slice</code>: retained raw samples and
+            correctness results, not a benchmark-derived release gate yet.
+          </li>
+          <li>
+            <code class="status">[x]</code><code>git diff --check</code> and
+            <code>git diff --cached --check</code>; verify no old dependency graph, release channel,
+            user edits or canonical source were modified.
+          </li>
+        </ul>
+        <div class="loop">
+          <strong>Exit:</strong> a usable local session and measured, explicitly scoped proof. Full
+          catalog parity, generalized incremental execution, untrusted code hosting, durable
+          recovery, remote/multi-tenant service and enterprise adapters are not complete.
+        </div>
+      </section>
+      <section id="notes">
+        <h2>Evidence and limits</h2>
+        <p>
+          The canonical rule JSON files were read at v4.13.0; the three IDs and target-size opt-in
+          status are verified. No rules were executed. The published
+          <a href="https://registry.npmjs.org/axe-core/4.13.0">axe-core 4.13.0 artifact</a> has no
+          runtime dependencies; record and verify its tarball integrity from the reference document
+          before use. Obtain it outside this workspace without upstream development tooling.
+        </p>
+        <p>
+          No installation, workspace creation, browser provisioning, runtime test or benchmark
+          occurred while preparing this plan. Existing workspace versions remain Node 24.20.0 / PNPM
+          9.15.4. Current user deletions of old specs remain untouched. Do not treat PR #8 or #9 as
+          the new project's foundation or merge them as part of this planning step.
+        </p>
+        <p>
+          Runtime input schemas, local IPC framing/limits, fixture expectations and benchmark trial
+          counts must be specified before their respective implementation/tests. No arbitrary cloud
+          budget, speedup target or rule-completion deadline is introduced here.
+        </p>
+      </section>
+      <section id="amendments">
+        <h2>Amendments</h2>
+        <details open>
+          <summary>2026-09-12T14:06:24Z: Phase 1 executed, stop boundary reached</summary>
+          <p>
+            Tony authorized one phase and one agent. Created ~/code/propellr-greenfield on
+            feat/greenfield-foundation from 46df83ac, rebuilding only that worktree's root without
+            inherited tooling. Implementation is staged and uncommitted. Existing worktrees,
+            preparation edits/deletions, global Node 24.20.0 / PNPM 9.15.4 and canonical axe-core
+            remain unchanged. No PR actions, publishing or live-channel work.
+          </p>
+          <p>
+            Isolated Node 26.8.2 archive checksum verified; exact PNPM 12.4.1 and tool pins
+            installed. Lifecycle scripts remain disabled. New lockfile and native/install behavior
+            reviewed; frozen installs passed in the worktree and a fresh git checkout-index export.
+            Build, four source/type scopes, lint with warnings denied, required Oxfmt 0.67.0
+            formatting and 62 contract tests passed in both. Emitted ESM decoder/admission
+            assertions passed. CI validation workflow written, not dispatched.
+          </p>
+          <p>
+            Runtime schemas infer all seven command inputs. Decoder bounds UTF-8 input at 65,536
+            bytes and nesting at 32 containers. Admission checks host-owned
+            command/session/operation/document/policy/playbook/secret grants; it is not transport
+            authentication or live origin/action enforcement. Negative contract and environment
+            examples retained. Output runtime validation and playbook-specific input schemas remain
+            later work.
+          </p>
+          <p>
+            Pinned dependency declarations require documented skipLibCheck exceptions only for
+            portable and test/tool scopes: Zod references ambient URL; Vitest/Vite declarations
+            reference browser types, a missing @vitest/expect entry and an
+            exactOptionalPropertyTypes-incompatible resolved config. Own source remains strict;
+            host/browser dependency declarations are fully checked. No version fallback, fake DOM
+            globals or extra dependency workaround. Vitest root-option placement and a
+            formatter-moved negative directive were repaired and the same checks rerun.
+          </p>
+          <p>
+            Browser Vite entry builds and browser Vitest projects wait for real implementations, not
+            empty success targets. Only test:contracts applies from the combined global test line
+            above; its 62 cases passed. Host/playbook/parity/reporting tests and benchmarks remain
+            unexecuted. No browser provisioning or browser/a11y/parity/performance claim. Full
+            evidence: specs/foundation-validation.md in the new worktree. Phase 1 [x]; phases 2 and
+            3 []; no unresolved [f] task.
+          </p>
+        </details>
+        <details>
+          <summary>2026-09-12T13:35:14Z: Oxfmt selected for formatting</summary>
+          <p>
+            Tony requested Oxfmt. Replace the proposed Prettier pin with Oxfmt 0.67.0 as the sole
+            greenfield formatter and required CI formatting gate. Specify write/check scripts;
+            remove the fallback and advisory-only policy for this project. No installation or
+            existing-workspace tooling change. Implementation remains unexecuted.
+          </p>
+        </details>
+      </section>
+    </main>
+  </body>
+</html>
