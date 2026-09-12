@@ -5,7 +5,8 @@ Phase 1 only, September 12, 2026. One agent: pi / gpt-6-astra, session
 
 Worktree: `/Users/tk/Code/propellr-greenfield`, branch
 `feat/greenfield-foundation`, base
-`46df83acde9421908d9b962d39d70b2da203426e`. Implementation is staged and uncommitted.
+`46df83acde9421908d9b962d39d70b2da203426e`. The initial validation checkpoint used
+staged, uncommitted implementation. Subsequent PR delivery is recorded below.
 
 ## Environment and installation review
 
@@ -97,5 +98,20 @@ No browser binaries installed; no browser/UI/a11y pass claimed. No local IPC,
 session persistence, playbook execution, parity, reporting/deduplication or
 benchmarks run. `test:host`, `test:playbooks`, `test:parity`, `test:reporting` and
 `bench:slice` are not yet scripts, rather than empty successes. CI workflow is
-written but not dispatched or verified on Linux. No commits, pushes, PR actions,
-merges, publishing, production access or customer data.
+written but not dispatched or verified on Linux. The initial phase-1 run made no commits, pushes, PR actions,
+merges, publishing, production access or customer-data use.
+
+## PR delivery
+
+Tony subsequently authorized push, a ready PR, CI/review monitoring and merge.
+Implementation commit `44bfb559df534285dff1ce20ff6b0815ac04ec03` rebases only
+phase 1 onto latest `main@3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf`.
+The rebased tree is byte-identical to the validated implementation tree; prior
+preparation repair commits are not included as PR ancestors.
+
+Reviewed overlap with PRs #8 and #9. Their inherited CI routing, package-graph
+cleanup and contributor guidance are superseded by this private root and its
+single main-routed validation workflow. Neither old PR needs to merge first;
+merging either afterward would reintroduce obsolete tooling. Both remain open,
+with branch history and existing worktrees preserved. No release/deploy workflow
+survives in the new root. Phase 2 and publishing remain outside this delivery.

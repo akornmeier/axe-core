@@ -347,12 +347,15 @@
             <dt>created</dt>
             <dd>2026-09-11T20:27:25Z</dd>
             <dt>modified</dt>
-            <dd>2026-09-11T20:27:25Z; 2026-09-12T13:35:14Z; 2026-09-12T14:06:24Z</dd>
+            <dd>
+              2026-09-11T20:27:25Z; 2026-09-12T13:35:14Z; 2026-09-12T14:06:24Z; 2026-09-12T14:13:33Z
+            </dd>
             <dt>commits</dt>
             <dd>
               46df83acde9421908d9b962d39d70b2da203426e (planning context, not greenfield
               implementation); 46df83acde9421908d9b962d39d70b2da203426e (phase 1 branch base;
-              implementation staged, uncommitted)
+              implementation staged, uncommitted); 44bfb559df534285dff1ce20ff6b0815ac04ec03 (phase 1
+              implementation rebased onto main@3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf)
             </dd>
             <dt>agent name</dt>
             <dd>pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra (single agent)</dd>
@@ -841,6 +844,22 @@
       </section>
       <section id="amendments">
         <h2>Amendments</h2>
+        <details open>
+          <summary>2026-09-12T14:13:33Z: PR delivery authorized</summary>
+          <p>
+            Tony requested push, ready PR, monitoring until clean and merge. Phase 1 is committed at
+            44bfb559 after rebasing only its implementation commit onto latest main. The validated
+            root tree is unchanged by rebase; preparation repair commits are not carried into the
+            PR.
+          </p>
+          <p>
+            PRs #8 and #9 overlap inherited workflow routing, package-graph cleanup and contributor
+            guidance. This greenfield root supersedes those changes: one main-routed validation
+            workflow replaces inherited automation; the old package graph is absent. Their branch
+            tips and existing worktrees remain preserved. Neither overlapping PR is merged or closed
+            by this delivery. Phase 2 remains unexecuted; no publishing is authorized.
+          </p>
+        </details>
         <details open>
           <summary>2026-09-12T14:06:24Z: Phase 1 executed, stop boundary reached</summary>
           <p>

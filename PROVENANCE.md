@@ -1,8 +1,10 @@
 # Provenance and licenses
 
 This worktree uses branch `feat/greenfield-foundation` in the existing Propellr
-repository, based on preparation commit
-`46df83acde9421908d9b962d39d70b2da203426e`. Git history and other worktrees remain
+repository. Development began at preparation commit
+`46df83acde9421908d9b962d39d70b2da203426e`; PR delivery rebases only the greenfield
+implementation onto `main@3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf`, without
+carrying preparation repair commits into the PR. Git history and other worktrees remain
 intact. Its root tree is intentionally rebuilt without inherited package graphs,
 build plugins, tests or release automation.
 
