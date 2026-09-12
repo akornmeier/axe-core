@@ -73,6 +73,7 @@ export async function startLocalServer(options: LocalServerOptions) {
     sockets.add(socket);
     socket.on("error", () => {});
     let ledger: Map<string, LedgerEntry> | undefined;
+    let handshakeRejected = false;
     let subscription: AsyncIterator<EventDelivery> | undefined;
     let subscriptionReserved = false;
     let inFlight = 0;
@@ -86,6 +87,7 @@ export async function startLocalServer(options: LocalServerOptions) {
     const reply = (requestId: string, value: HostReply) =>
       sendFrame(socket, { kind: "reply", requestId, reply: value });
     receiveFrames(socket, FRAME_LIMIT, (value) => {
+      if (handshakeRejected) return;
       if (!ledger) {
         const hello = helloSchema.safeParse(value);
         if (!hello.success) {
@@ -101,12 +103,13 @@ export async function startLocalServer(options: LocalServerOptions) {
         }
         clearTimeout(helloTimer);
         if (!ledger) {
+          handshakeRejected = true;
           sendFrame(socket, {
             kind: "hello",
             ok: false,
             code: hello.data.lease ? "lease-lost" : "lease-limit",
           });
-          socket.end();
+          socket.end(() => socket.destroy());
         } else sendFrame(socket, { kind: "hello", ok: true, lease });
         return;
       }

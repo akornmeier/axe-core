@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { once } from "node:events";
 import { chmod, lstat, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { createConnection } from "node:net";
@@ -8,9 +9,10 @@ import { encodeFrame, FRAME_LIMIT, receiveFrames, RESPONSE_LIMIT } from "../../s
 import { startLocalServer, verifyPrivateDirectory } from "../../src/host/server.js";
 import { BoundedStream } from "../../src/host/stream.js";
 import { meta, withHost } from "../support/host.js";
+import { sessionIdSchema } from "../../src/validation.js";
 
-async function rawConnection(path: string) {
-  const socket = createConnection(path);
+async function rawConnection(path: string, allowHalfOpen = false) {
+  const socket = createConnection({ path, allowHalfOpen });
   socket.on("error", () => {});
   const messages = new BoundedStream<unknown>();
   receiveFrames(socket, RESPONSE_LIMIT, (message) => messages.push(message));
@@ -110,6 +112,76 @@ describe("bounded transport", () => {
       }
       const next = await reconnect(client.lease);
       expect(await next.subscribe(input)).toMatchObject(expected.reply);
+    });
+  });
+
+  test("rejected handshake is terminal even when more frames arrive before the peer closes", async () => {
+    await withHost(
+      async ({ server, reconnect }) => {
+        const { socket, messages } = await rawConnection(server.path, true);
+        try {
+          const ended = once(socket, "end");
+          socket.write(
+            Buffer.concat([
+              encodeFrame({ kind: "hello", lease: randomUUID() }),
+              encodeFrame({ kind: "hello" }),
+              encodeFrame({
+                kind: "request",
+                request: { command: "inspect", input: { ...meta(), sessionId: "session_unknown" } },
+              }),
+            ]),
+          );
+          expect((await messages.next()).value).toMatchObject({
+            kind: "hello",
+            ok: false,
+            code: "lease-lost",
+          });
+          await ended;
+          expect(server.host.audit).toEqual([]);
+          // The rejected socket cannot consume the only remaining lease via its second hello.
+          const next = await reconnect();
+          expect(next.lease).toBeTruthy();
+        } finally {
+          socket.destroy();
+        }
+      },
+      {},
+      { maxLeases: 2 },
+    );
+  });
+
+  test("in-flight overflow bounds reply waiters without losing replay history", async () => {
+    await withHost(async ({ client, server, reconnect }) => {
+      const { socket, messages } = await rawConnection(server.path);
+      const inputs = Array.from({ length: 8 }, () => ({
+        ...meta(),
+        sessionId: "session_unknown" as const,
+      }));
+      const first = inputs[0];
+      if (!first) throw new Error("Expected request");
+      try {
+        socket.write(encodeFrame({ kind: "hello", lease: client.lease }));
+        expect((await messages.next()).value).toMatchObject({ ok: true });
+        const closed = once(socket, "close");
+        socket.write(
+          Buffer.concat(
+            [...inputs, first].map((input) =>
+              encodeFrame({ kind: "request", request: { command: "inspect", input } }),
+            ),
+          ),
+        );
+        await closed;
+        expect(server.host.audit).toHaveLength(8);
+      } finally {
+        socket.destroy();
+      }
+      const next = await reconnect(client.lease);
+      const reply = await next.inspect({
+        ...first,
+        sessionId: sessionIdSchema.parse(first.sessionId),
+      });
+      expect(reply).toMatchObject({ ok: false, diagnostic: { code: "permission-denied" } });
+      expect(server.host.audit).toHaveLength(8); // Cached reply, not another admission/execution.
     });
   });
 

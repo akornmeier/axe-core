@@ -295,7 +295,10 @@ describe("local session host over real Unix IPC", () => {
           expect(await page.locator("#dialog").isVisible()).toBe(false);
           expect(
             await next.inspect({ ...meta(), sessionId: other.id, operationId: operation.id }),
-          ).toMatchObject({ ok: false, diagnostic: { code: "operation-not-retained" } });
+          ).toMatchObject({ ok: false, diagnostic: { code: "permission-denied" } });
+          expect(
+            await next.cancel({ ...meta(), sessionId: other.id, operationId: operation.id }),
+          ).toMatchObject({ ok: false, diagnostic: { code: "permission-denied" } });
           expect(
             await next.runPlaybook({ ...playbookInput(other), bindings: input.bindings }),
           ).toMatchObject({ ok: false, diagnostic: { code: "permission-denied" } });

@@ -33,10 +33,16 @@ deliveries (64 events plus one replay gap). Limits are host configurable downwar
 lease ledgers are not reclaimed in this first bounded host. Capacity exhaustion
 is explicit; restart requires ending sessions, not invisible history eviction.
 Slow consumers disconnect rather than grow queues. Partial frames time out.
+Every request frame, including a replay attempt, counts against the per-connection
+in-flight cap. Overflow closes the connection without deleting the lease ledger or
+ending operations: reconnect with the same lease to inspect or replay admitted IDs.
+Duplicate flooding cannot create unbounded reply waiters. Rejected handshakes are
+terminal; later frames cannot allocate a replacement lease on that connection.
 
 Cursors contain session ID and monotonic sequence. Cross-session/future cursors
 are rejected. Replaying before retention produces a gap then retained events.
-Evicted operation inspection returns `operation-not-retained`, not empty success.
+Unknown/evicted operation inspection returns `operation-not-retained`, not empty
+success. A retained operation belonging to another session is `permission-denied`.
 Conflicting session actions are rejected. Browser/page loss marks active operations
 lost with uncertain side effects; no action replay or live crash recovery.
 

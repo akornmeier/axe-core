@@ -149,6 +149,13 @@ export class SessionHost {
       return decoded;
     }
     const request = decoded.value;
+    const requestedOperationId =
+      "operationId" in request.input ? request.input.operationId : undefined;
+    const missingOperationId =
+      requestedOperationId &&
+      ![...this.sessions.values()].some(({ operations }) => operations.has(requestedOperationId))
+        ? requestedOperationId
+        : undefined;
     const admitted = admitRequest(text, {
       commands: this.commands,
       policies: [this.policy],
@@ -156,12 +163,13 @@ export class SessionHost {
       attachedTargets: [...this.borrowed.keys()],
       sessions: [...this.sessions.values()].map(({ session, operations }) => ({
         id: session.id,
-        // Missing operation IDs are handled session-locally as retention diagnostics.
+        // Unknown/evicted IDs get retention diagnostics; known foreign IDs stay unauthorized.
         operations: [
           ...operations.keys(),
-          ...((request.command === "cancel" || request.command === "inspect") &&
-          request.input.operationId
-            ? [request.input.operationId]
+          ...(missingOperationId &&
+          request.command !== "open" &&
+          request.input.sessionId === session.id
+            ? [missingOperationId]
             : []),
         ],
         documents: session.documents,

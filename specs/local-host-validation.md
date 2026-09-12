@@ -134,6 +134,22 @@ is claimed. Full `pnpm validate` then passed: build, all type scopes, lint,
 Oxfmt, 62 contract tests, 15 host tests and 11 playbook tests. Latest-head CI and
 bot review are recorded on the PR rather than asserted in advance here.
 
+### Second review pass
+
+Repair head `ae38766a` passed Ubuntu validation with all 88 tests. Further verified
+findings tightened the retained-operation ownership check and made rejected
+handshakes terminal. Known foreign operation IDs now fail admission for both
+inspect and cancel; genuinely unknown/evicted IDs retain their explicit diagnostic.
+A half-open peer cannot submit another hello after rejection or consume a lease.
+
+The suggested in-flight-cap exemption for duplicates was rejected: every duplicate
+currently creates a pending reply waiter, so bypassing the cap would remove that
+memory bound. A real IPC saturation test verifies the intentional transport failure
+preserves the lease ledger; reconnect returns the original reply without another
+admission/execution. The cap's scope is now explicit in the protocol. Full local
+`pnpm validate` passed: static checks and 90 cases (62 contracts, 17 host, 11
+playbooks). Current-head CI and review dispositions remain tracked on PR #11.
+
 ## Stop boundary
 
 Phase 2 complete; phase 3 unstarted. Existing worktree tips and clean starting

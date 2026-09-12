@@ -349,7 +349,8 @@
             <dt>modified</dt>
             <dd>
               2026-09-11T20:27:25Z; 2026-09-12T13:35:14Z; 2026-09-12T14:06:24Z;
-              2026-09-12T14:13:33Z; 2026-09-12T14:23:45Z; 2026-09-12T15:40:45Z; 2026-09-12T16:17:57Z
+              2026-09-12T14:13:33Z; 2026-09-12T14:23:45Z; 2026-09-12T15:40:45Z;
+              2026-09-12T16:17:57Z; 2026-09-12T16:34:01Z
             </dd>
             <dt>commits</dt>
             <dd>
@@ -358,18 +359,20 @@
               implementation staged, uncommitted); 44bfb559df534285dff1ce20ff6b0815ac04ec03 (phase 1
               implementation rebased onto main@3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf);
               519f0c0bb04d38edfc68597b07dec56fae1b0a86 (phase 2 branch base; implementation
-              uncommitted); df9f63b50ffe099bc2a5baee96ade5b49c01ae89 (phase 2 PR #11 initial head)
+              uncommitted); df9f63b50ffe099bc2a5baee96ade5b49c01ae89 (phase 2 PR #11 initial head);
+              ae38766ad7bcd5e2b46bcead32a7d2a4a513d8d7 (first review repairs, Ubuntu CI passed)
             </dd>
             <dt>agent name</dt>
             <dd>
               pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra (single agent); pi / gpt-6-astra
-              (phase 2, single agent); pi / gpt-6-astra (PR #11, single agent)
+              (phase 2, single agent); pi / gpt-6-astra (PR #11, single agent); pi / gpt-6-astra (PR
+              #11 second review, single agent)
             </dd>
             <dt>session id</dt>
             <dd>
               01a09168-fae8-701c-91a3-cf1504ae78a9; 01a09168-fae8-701c-91a3-cf1504ae78a9;
               01a095e0-cd7f-701c-91a3-cf37ea4a0cb5; 01a0962e-071f-7681-98bc-26b90fd97297;
-              01a0962e-071f-7681-98bc-26b90fd97297
+              01a0962e-071f-7681-98bc-26b90fd97297; 01a0962e-071f-7681-98bc-26b90fd97297
             </dd>
             <dt>back refs</dt>
             <dd>
@@ -404,12 +407,13 @@
         <h2>Boundary</h2>
         <p>
           The inherited workspace and its prior green CI do not prove the new design. Phases 1 and 2
-          now pass TypeScript 7.0.2 source/type checks, 62 contract tests, 15 local host tests and
-          11 playbook tests on macOS. Initial PR #11 Ubuntu validation passed all 84 pre-review
-          cases, including Chromium, Firefox and WebKit interactions. Subsequent CI/review status is
-          tracked on PR #11. Dependency-declaration exceptions and single-user host limits are
-          recorded in the evidence. Browser analysis, rule fidelity, production isolation and
-          performance remain unverified.
+          now pass TypeScript 7.0.2 source/type checks and real contract, local IPC and
+          cross-browser playbook cases. Exact counts, environments and review repairs are recorded
+          in
+          <a href="local-host-validation.md">Phase 2 evidence</a>; latest CI/review status is
+          tracked on PR #11. Dependency-declaration exceptions and single-user host limits remain
+          explicit. Browser analysis, rule fidelity, production isolation and performance remain
+          unverified.
         </p>
       </section>
       <section id="solution">
@@ -858,6 +862,22 @@
       </section>
       <section id="amendments">
         <h2>Amendments</h2>
+        <details open>
+          <summary>2026-09-12T16:34:01Z: Second PR #11 review pass</summary>
+          <p>
+            Ubuntu validation passed all 88 cases on ae38766a. Verified second-pass findings led to
+            stronger retained-operation ownership checks and terminal handshake rejection, including
+            coalesced frames from a half-open peer. Foreign retained operation IDs now fail
+            admission; unknown or evicted IDs keep explicit retention diagnostics.
+          </p>
+          <p>
+            Retained the documented eight-frame in-flight cap, including duplicate requests, rather
+            than permit unbounded reply waiters. A real IPC saturation test verifies reconnection
+            preserves cached replies without re-execution. Focused host checks passed 17 cases; full
+            validation is rerun before pushing. Current-head CI/re-review remain tracked on PR #11.
+            No phase 3 or publishing work.
+          </p>
+        </details>
         <details open>
           <summary>2026-09-12T16:17:57Z: PR #11 delivery and review repairs</summary>
           <p>
