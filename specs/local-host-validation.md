@@ -205,6 +205,25 @@ undefined remains a delivered value. Test-owned resources are explicitly dispose
 after fault injection. Full `pnpm validate` passed static checks and 100 cases
 (62 contracts, 27 host, 11 playbooks). PR #11 tracks latest-head CI and review results.
 
+### Final bounded repair pass
+
+Tony requested wrapping up without more Copilot review loops. Head `44b44bfe`
+passed Ubuntu CI with 100 cases. The four latest concrete findings were verified
+and repaired: loss takes precedence over cancellation while end waits for an active
+operation; setup-plus-cleanup failure propagates cleanup uncertainty; active-slot
+subscription denials enter the bounded replay ledger; IPC startup admits no peers
+until permission setup succeeds and awaits full teardown on setup failure.
+
+Focused host checks passed 29 cases. Added real-browser setup/release fault injection
+and a real Unix-socket connection during injected chmod failure; strengthened the
+existing end/loss and subscription-replay cases. WebKit's happy-path case failed
+once with the test's one-second action budget; that case now uses the documented
+two-second default without changing its observation assertions. Focused playbook
+verification and a full `pnpm validate` rerun passed all 102 cases (62 contracts,
+29 host, 11 playbooks), static checks and formatting. Plan and whitespace checks
+passed. Latest-head CI and resolution of reported threads precede merge. No additional Copilot re-review is requested as
+part of this bounded wrap-up; no claim of a fresh bot approval is implied.
+
 ## Stop boundary
 
 Phase 2 complete; phase 3 unstarted. Existing worktree tips and clean starting

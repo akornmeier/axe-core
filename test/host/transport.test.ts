@@ -64,6 +64,7 @@ describe("bounded transport", () => {
     await withHost(async ({ client, server, open, reconnect }) => {
       const session = await open();
       const input = { ...meta(), sessionId: session.id, after: "session_other.0" };
+      const busyInput = { ...meta(), sessionId: session.id };
       const request = { kind: "request", request: { command: "subscribe", input } };
       const expected = {
         kind: "reply",
@@ -102,6 +103,13 @@ describe("bounded transport", () => {
         );
         socket.write(encodeFrame(request));
         expect((await messages.next()).value).toMatchObject(expected);
+        socket.write(
+          encodeFrame({ kind: "request", request: { command: "subscribe", input: busyInput } }),
+        );
+        expect((await messages.next()).value).toMatchObject({
+          kind: "reply",
+          reply: { ok: false, diagnostic: { code: "subscription-conflict" } },
+        });
         socket.write(encodeFrame(live));
         expect((await messages.next()).value).toMatchObject({
           kind: "reply",
@@ -112,6 +120,10 @@ describe("bounded transport", () => {
       }
       const next = await reconnect(client.lease);
       expect(await next.subscribe(input)).toMatchObject(expected.reply);
+      expect(await next.subscribe(busyInput)).toMatchObject({
+        ok: false,
+        diagnostic: { code: "subscription-conflict" },
+      });
     });
   });
 

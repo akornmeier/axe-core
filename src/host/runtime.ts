@@ -16,7 +16,7 @@ import type {
 import { operationIdSchema, sessionIdSchema } from "../validation.js";
 import type { CommandName, Request } from "../validation.js";
 import { admitRequest, decodeRequest } from "./requests.js";
-import { BrowserTarget, launchTarget } from "./browser.js";
+import { BrowserCleanupError, BrowserTarget, launchTarget } from "./browser.js";
 import type { browserTypes } from "./browser.js";
 import {
   dialogInputs,
@@ -311,8 +311,15 @@ export class SessionHost {
           if (page) this.borrowedInUse.delete(page);
           return denied("host-stopping", "Host stopped during browser initialization");
         }
-      } catch {
+      } catch (error) {
         if (page) this.borrowedInUse.delete(page);
+        if (error instanceof BrowserCleanupError) {
+          this.startupCleanupFailed = true;
+          return denied(
+            "cleanup-incomplete",
+            "Browser setup failed and resource cleanup could not be confirmed",
+          );
+        }
         return denied("browser-unavailable", "Browser initialization failed");
       }
       const id = sessionIdSchema.parse(`session_${randomUUID()}`);
@@ -352,7 +359,7 @@ export class SessionHost {
         this.emit(record, { type: "session", session: record.session });
       };
       target.onLoss = () => {
-        if (record.session.state !== "active") return;
+        if (record.session.state !== "active" && record.session.state !== "ending") return;
         const reason = {
           code: "browser-lost",
           message: "Browser or page lost; live recovery is unavailable",

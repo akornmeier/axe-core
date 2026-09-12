@@ -341,10 +341,17 @@ describe("local session host over real Unix IPC", () => {
           const input = playbookInput(session);
           // Direct admission queues synchronously. Inject loss before yielding to setImmediate.
           const pending = server.host.execute(JSON.stringify({ command: "runPlaybook", input }));
+          const ending = server.host.execute(
+            JSON.stringify({ command: "end", input: { ...meta(), sessionId: session.id } }),
+          );
           if (!("emit" in page) || typeof page.emit !== "function")
             throw new Error("Expected Playwright event emitter for fault injection");
           page.emit("crash", page);
           const operation = unwrap(await pending);
+          expect(unwrap(await ending)).toMatchObject({
+            state: "ended",
+            diagnostics: [{ code: "browser-lost" }],
+          });
           if (!("kind" in operation)) throw new Error("Expected operation");
           expect(server.host.audit).toContainEqual(
             expect.objectContaining({

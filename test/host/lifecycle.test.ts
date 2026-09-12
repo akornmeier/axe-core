@@ -149,6 +149,38 @@ test("failed late-start cleanup is reported by both open and shutdown", async ()
   }
 });
 
+test("setup failure plus failed browser release cannot report a clean shutdown", async () => {
+  const browser = await chromium.launch();
+  const launch = vi.spyOn(chromium, "launch").mockResolvedValueOnce(browser);
+  const setup = vi
+    .spyOn(browser, "newContext")
+    .mockRejectedValueOnce(new Error("injected setup failure"));
+  const release = vi
+    .spyOn(browser, "close")
+    .mockRejectedValueOnce(new Error("injected cleanup failure"));
+  const host = new SessionHost();
+  try {
+    expect(
+      await host.execute(
+        JSON.stringify({
+          command: "open",
+          input: {
+            ...meta(),
+            policy: LOCAL_POLICY,
+            target: { kind: "managed", browser: "chromium" },
+          },
+        }),
+      ),
+    ).toMatchObject({ ok: false, diagnostic: { code: "cleanup-incomplete" } });
+    await expect(host.close()).rejects.toThrow("cleanup-incomplete");
+  } finally {
+    launch.mockRestore();
+    setup.mockRestore();
+    release.mockRestore();
+    await browser.close();
+  }
+});
+
 test("failed session cleanup preserves browser loss and rejects host shutdown", async () => {
   const target = await browserAdapter.launchTarget("chromium");
   const host = new SessionHost({ borrowed: new Map([["fixture", target.page]]) });

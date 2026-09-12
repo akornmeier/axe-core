@@ -7,6 +7,12 @@ import { DIALOG_HTML, FIXTURE_URL } from "./fixture.js";
 
 export const browserTypes = { chromium, firefox, webkit };
 
+export class BrowserCleanupError extends Error {
+  constructor() {
+    super("cleanup-incomplete: browser setup failed and cleanup could not be confirmed");
+  }
+}
+
 // Borrowed Page registration is host-only. No endpoint comes from the wire.
 export class BrowserTarget {
   readonly pageId = pageIdSchema.parse(`page_${randomUUID()}`);
@@ -59,7 +65,11 @@ export async function launchTarget(name: keyof typeof browserTypes): Promise<Bro
     await page.goto(FIXTURE_URL);
     return new BrowserTarget(page, "owned", browser);
   } catch (error) {
-    await browser.close();
+    try {
+      await browser.close();
+    } catch {
+      throw new BrowserCleanupError();
+    }
     throw error;
   }
 }

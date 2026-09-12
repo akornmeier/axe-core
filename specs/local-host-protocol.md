@@ -11,7 +11,9 @@ borrowed Page registrations. No client endpoints, scripts or credentials.
 Before implementation: unsigned 32-bit big-endian byte length followed by UTF-8
 JSON. Request frames at most 65,536 bytes, responses at most 1,048,576 bytes;
 request nesting remains limited to 32. Invalid framing closes the connection.
-A connection starts with `{kind:"hello"}` or `{kind:"hello", lease:"..."}`.
+No connection is admitted before socket permission setup succeeds; startup failure
+awaits listener/socket/host teardown. A ready connection starts with `{kind:"hello"}`
+or `{kind:"hello", lease:"..."}`.
 Host issues an opaque, boot-local lease. Unknown leases are rejected, never recreated.
 After hello: `{kind:"request", request:{command,input}}`; replies use
 `{kind:"reply", requestId, reply}`. Subscription deliveries use
@@ -30,7 +32,8 @@ At most 32 leases per host boot; restart loses live state and invalidates leases
 A fresh lease is a new caller correlation scope, not a license to retry uncertain
 actions. SDK never automatically retries requests. Reconnect, inspect, then decide.
 Re-establishing a successful subscription requires a fresh request ID and an event
-cursor. Denied subscription requests replay their original diagnostic.
+cursor. Denied subscription requests replay their original diagnostic, including denials
+caused by an already-active subscription (subject to ledger capacity).
 
 Limits: 32 connections, 8 in-flight requests per connection, 8 retained sessions,
 32 retained operations per session, 64 events per session, 65 queued subscription
@@ -55,7 +58,8 @@ are rejected. Replaying before retention produces a gap then retained events.
 Unknown/evicted operation inspection returns `operation-not-retained`, not empty
 success. A retained operation belonging to another session is `permission-denied`.
 Conflicting session actions are rejected. Browser/page loss marks active operations
-lost with uncertain side effects; no action replay or live crash recovery.
+lost with uncertain side effects, including while end waits for cancellation/cleanup;
+no action replay or live crash recovery.
 
 ## Trusted dialog fixture contract
 

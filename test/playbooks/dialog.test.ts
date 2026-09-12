@@ -56,7 +56,7 @@ for (const engine of ["chromium", "firefox", "webkit"] as const) {
         const events = unwrap(await subscriber.subscribe({ ...meta(), sessionId: session.id }))[
           Symbol.asyncIterator
         ]();
-        const input = playbookInput(session);
+        const input = playbookInput(session, 2000);
         const operation = unwrap(await client.runPlaybook(input));
         // Repeating the accepted request cannot re-open the dialog.
         expect(unwrap(await client.runPlaybook(input)).id).toBe(operation.id);
@@ -64,7 +64,7 @@ for (const engine of ["chromium", "firefox", "webkit"] as const) {
         expect(finished, JSON.stringify(finished)).toMatchObject({
           kind: "playbook",
           state: "completed",
-          invocation: { playbook: input.playbook, inputs: { timeoutMs: 1000 } },
+          invocation: { playbook: input.playbook, inputs: { timeoutMs: 2000 } },
           result: {
             coverage: { state: "partial", gaps: [{ code: "scan-unavailable" }] },
             cleanup: "complete",
