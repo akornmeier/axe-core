@@ -4,7 +4,8 @@ import { chromium } from "playwright";
 import type { Browser } from "playwright";
 import { expect, test, vi } from "vitest";
 import { DIALOG_HTML, FIXTURE_URL } from "../../src/host/fixture.js";
-import { LOCAL_POLICY } from "../../src/host/runtime.js";
+import { LOCAL_POLICY, SessionHost } from "../../src/host/runtime.js";
+import * as browserAdapter from "../../src/host/browser.js";
 import { meta, playbookInput, terminal, unwrap, withHost } from "../support/host.js";
 
 test("ending a subscribed session completes delivery without losing the end reply", async () => {
@@ -50,43 +51,138 @@ test("available playbooks honor the runPlaybook command grant", async () => {
   );
 });
 
-test("embedded host shutdown waits for an in-flight real browser launch and release", async () => {
-  const started = Promise.withResolvers<void>();
-  const resume = Promise.withResolvers<void>();
-  const launched = Promise.withResolvers<Browser>();
-  const launch = chromium.launch.bind(chromium);
-  const spy = vi.spyOn(chromium, "launch").mockImplementation(async (options) => {
-    started.resolve();
-    await resume.promise;
-    const browser = await launch(options);
-    launched.resolve(browser);
-    return browser;
-  });
-  try {
-    await withHost(async ({ client, server }) => {
-      const pending = client.open({
-        ...meta(),
-        policy: LOCAL_POLICY,
-        target: { kind: "managed", browser: "chromium" },
-      });
-      await started.promise;
-      let closed = false;
-      const closing = server.host.close().then(() => {
-        closed = true;
-      });
-      try {
-        await yieldTurn();
-        expect(closed).toBe(false);
-      } finally {
-        resume.resolve();
-      }
-      expect(await pending).toMatchObject({ ok: false, diagnostic: { code: "host-stopping" } });
-      await closing;
-      expect((await launched.promise).isConnected()).toBe(false);
+test.each(["host", "server"] as const)(
+  "%s shutdown callers wait for an in-flight real browser launch and release",
+  async (kind) => {
+    const started = Promise.withResolvers<void>();
+    const resume = Promise.withResolvers<void>();
+    const launched = Promise.withResolvers<Browser>();
+    const launch = chromium.launch.bind(chromium);
+    const spy = vi.spyOn(chromium, "launch").mockImplementation(async (options) => {
+      started.resolve();
+      await resume.promise;
+      const browser = await launch(options);
+      launched.resolve(browser);
+      return browser;
     });
+    try {
+      await withHost(async ({ client, server }) => {
+        const pending = client
+          .open({
+            ...meta(),
+            policy: LOCAL_POLICY,
+            target: { kind: "managed", browser: "chromium" },
+          })
+          .then(
+            (reply) => ({ reply }),
+            (error: unknown) => ({ error }),
+          );
+        await started.promise;
+        const closed: string[] = [];
+        const close = () => (kind === "host" ? server.host.close() : server.close());
+        const first = close().then(() => {
+          closed.push("first");
+        });
+        const second = close().then(() => {
+          closed.push("second");
+        });
+        try {
+          await yieldTurn();
+          expect(closed).toEqual([]);
+        } finally {
+          resume.resolve();
+        }
+        const outcome = await pending;
+        if (kind === "host")
+          expect(outcome).toMatchObject({
+            reply: { ok: false, diagnostic: { code: "host-stopping" } },
+          });
+        else expect(outcome).toMatchObject({ error: expect.any(Error) });
+        await Promise.all([first, second]);
+        expect(closed).toHaveLength(2);
+        expect(server.host.audit).toContainEqual(
+          expect.objectContaining({ command: "open", decision: "host-stopping" }),
+        );
+        expect((await launched.promise).isConnected()).toBe(false);
+      });
+    } finally {
+      resume.resolve();
+      spy.mockRestore();
+    }
+  },
+);
+
+test("failed late-start cleanup is reported by both open and shutdown", async () => {
+  const target = await browserAdapter.launchTarget("chromium");
+  const ready = Promise.withResolvers<browserAdapter.BrowserTarget>();
+  const launch = vi.spyOn(browserAdapter, "launchTarget").mockReturnValueOnce(ready.promise);
+  const release = vi
+    .spyOn(target, "release")
+    .mockRejectedValueOnce(new Error("injected cleanup failure"));
+  const host = new SessionHost();
+  try {
+    const pending = host.execute(
+      JSON.stringify({
+        command: "open",
+        input: {
+          ...meta(),
+          policy: LOCAL_POLICY,
+          target: { kind: "managed", browser: "chromium" },
+        },
+      }),
+    );
+    const closing = host.close().then(
+      () => undefined,
+      (error: unknown) => error,
+    );
+    ready.resolve(target);
+    expect(await pending).toMatchObject({ ok: false, diagnostic: { code: "cleanup-incomplete" } });
+    expect(await closing).toEqual(
+      expect.objectContaining({ message: expect.stringContaining("cleanup-incomplete") }),
+    );
+    expect(target.page.isClosed()).toBe(false); // Uncertainty is reported, not an invented release.
   } finally {
-    resume.resolve();
-    spy.mockRestore();
+    ready.resolve(target);
+    launch.mockRestore();
+    release.mockRestore();
+    await target.release(); // Test owner explicitly disposes its retained fixture after fault injection.
+  }
+});
+
+test("failed session cleanup preserves browser loss and rejects host shutdown", async () => {
+  const target = await browserAdapter.launchTarget("chromium");
+  const host = new SessionHost({ borrowed: new Map([["fixture", target.page]]) });
+  const release = vi
+    .spyOn(browserAdapter.BrowserTarget.prototype, "release")
+    .mockRejectedValueOnce(new Error("injected cleanup failure"));
+  try {
+    const opened = unwrap(
+      await host.execute(
+        JSON.stringify({
+          command: "open",
+          input: {
+            ...meta(),
+            policy: LOCAL_POLICY,
+            target: { kind: "attached", targetId: "fixture" },
+          },
+        }),
+      ),
+    );
+    if (!("protocol" in opened)) throw new Error("Expected session");
+    await target.page.close();
+    const ended = unwrap(
+      await host.execute(
+        JSON.stringify({ command: "end", input: { ...meta(), sessionId: opened.id } }),
+      ),
+    );
+    expect(ended).toMatchObject({
+      state: "lost",
+      diagnostics: [{ code: "browser-lost" }, { code: "cleanup-incomplete" }],
+    });
+    await expect(host.close()).rejects.toThrow("cleanup-incomplete");
+  } finally {
+    release.mockRestore();
+    await target.release();
   }
 });
 

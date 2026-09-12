@@ -219,6 +219,16 @@ describe("bounded transport", () => {
     }
   });
 
+  test("undefined is delivered as a queued payload, not mistaken for an empty stream", async () => {
+    const stream = new BoundedStream<number | undefined>();
+    stream.push(undefined);
+    stream.push(1);
+    stream.close();
+    expect(await stream.next()).toEqual({ done: false, value: undefined });
+    expect(await stream.next()).toEqual({ done: false, value: 1 });
+    expect(await stream.next()).toEqual({ done: true, value: undefined });
+  });
+
   test("explicit stream return discards queued delivery while natural close drains it", async () => {
     const stream = new BoundedStream<number>();
     stream.push(1);

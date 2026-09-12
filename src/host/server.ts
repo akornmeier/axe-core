@@ -65,6 +65,7 @@ export async function startLocalServer(options: LocalServerOptions) {
   const sockets = new Set<Socket>();
   const pending = new Set<Promise<void>>();
   let closing = false;
+  let shutdown: Promise<void> | undefined;
   const server = createServer((socket) => {
     if (closing || sockets.size >= 32) {
       socket.destroy();
@@ -243,23 +244,29 @@ export async function startLocalServer(options: LocalServerOptions) {
   return {
     path,
     host,
-    async close(): Promise<void> {
-      if (closing) return;
+    close(): Promise<void> {
+      if (shutdown) return shutdown;
       closing = true;
-      const closed = new Promise<void>((resolve, reject) =>
-        server.close((error) => (error ? reject(error) : resolve())),
-      );
-      for (const socket of sockets) socket.destroy();
-      await Promise.all(pending);
-      await host.close();
-      await closed;
-      // Node normally removes its socket. Only remove our inode if still present.
-      try {
-        const stat = await lstat(path);
-        if (stat.ino === socketIdentity.ino && stat.dev === socketIdentity.dev) await unlink(path);
-      } catch (error) {
-        if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
-      }
+      shutdown = (async () => {
+        const closed = new Promise<void>((resolve, reject) =>
+          server.close((error) => (error ? reject(error) : resolve())),
+        );
+        for (const socket of sockets) socket.destroy();
+        // Mark the host stopping before pending opens finish; all callers await the same cleanup.
+        const hostClosed = host.close();
+        const results = await Promise.allSettled([hostClosed, Promise.all(pending), closed]);
+        // Node normally removes its socket. Only remove our inode if still present.
+        try {
+          const stat = await lstat(path);
+          if (stat.ino === socketIdentity.ino && stat.dev === socketIdentity.dev)
+            await unlink(path);
+        } catch (error) {
+          if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
+        }
+        const failure = results.find((result) => result.status === "rejected");
+        if (failure) throw failure.reason;
+      })();
+      return shutdown;
     },
   };
 }

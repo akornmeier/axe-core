@@ -187,6 +187,24 @@ can be attached after its owner navigates it to the controlled fixture. Full
 `pnpm validate` passed static checks and 96 cases (62 contracts, 23 host, 11
 playbooks). Current-head CI/review status remains tracked on PR #11.
 
+### Fifth review pass
+
+Head `82599df8` passed Ubuntu CI with all 96 cases. Verified findings tightened
+shutdown semantics: server close marks the host stopping before requests drain,
+concurrent server-close callers await the same cleanup, and failed late-start or
+session release rejects shutdown with explicit cleanup uncertainty. Existing browser
+loss diagnostics are preserved. Socket cleanup still runs when host cleanup fails;
+the daemon reports a sanitized failure on stderr. No automatic retry or forced
+resource recovery was added.
+
+The generic bounded stream now distinguishes queue occupancy from an `undefined`
+payload. Focused host verification passed 27 cases: held real launches cover both
+embedded and server shutdown; injected release failures verify uncertainty instead
+of a false successful close; prior loss diagnostics survive cleanup failure; queued
+undefined remains a delivered value. Test-owned resources are explicitly disposed
+after fault injection. Full `pnpm validate` passed static checks and 100 cases
+(62 contracts, 27 host, 11 playbooks). PR #11 tracks latest-head CI and review results.
+
 ## Stop boundary
 
 Phase 2 complete; phase 3 unstarted. Existing worktree tips and clean starting

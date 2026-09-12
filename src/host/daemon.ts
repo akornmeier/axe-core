@@ -9,6 +9,7 @@ const stop = () => {
   if (stopping) return;
   stopping = true;
   void server.close().catch(() => {
+    process.stderr.write("Host shutdown cleanup is incomplete; owned resources may remain.\n");
     process.exitCode = 1;
   });
 };

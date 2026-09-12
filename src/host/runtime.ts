@@ -88,6 +88,7 @@ export class SessionHost {
   private readonly auditEntries: AuditEntry[] = [];
   private readonly opening = new Set<Promise<void>>();
   private stopping = false;
+  private startupCleanupFailed = false;
 
   constructor(options: HostOptions = {}) {
     this.policy = { ...(options.policy ?? LOCAL_POLICY) };
@@ -298,7 +299,15 @@ export class SessionHost {
             ? await launchTarget(input.target.browser)
             : new BrowserTarget(page!, "borrowed");
         if (this.stopping) {
-          await target.release();
+          try {
+            await target.release();
+          } catch {
+            this.startupCleanupFailed = true;
+            return denied(
+              "cleanup-incomplete",
+              "Browser initialized during shutdown; resource cleanup could not be confirmed",
+            );
+          }
           if (page) this.borrowedInUse.delete(page);
           return denied("host-stopping", "Host stopped during browser initialization");
         }
@@ -567,6 +576,7 @@ export class SessionHost {
         ...record.session,
         state: "lost",
         diagnostics: [
+          ...record.session.diagnostics,
           {
             code: "cleanup-incomplete",
             message: "Session resource release could not be confirmed",
@@ -582,11 +592,20 @@ export class SessionHost {
   async close(): Promise<void> {
     this.stopping = true;
     await Promise.all(this.opening);
-    await Promise.all(
+    const sessions = await Promise.all(
       [...this.sessions.values()].map(async (record) => {
-        await this.end(record);
+        const session = await this.end(record);
         for (const stream of record.streams) stream.close();
+        return session;
       }),
     );
+    if (
+      this.startupCleanupFailed ||
+      sessions.some((session) =>
+        session.diagnostics.some((diagnostic) => diagnostic.code === "cleanup-incomplete"),
+      )
+    ) {
+      throw new Error("cleanup-incomplete: host resource release could not be confirmed");
+    }
   }
 }

@@ -35,8 +35,10 @@ export class BoundedStream<T> implements AsyncIterableIterator<T> {
 
   next(): Promise<IteratorResult<T>> {
     if (this.error) return Promise.reject(this.error);
-    const value = this.values.shift();
-    if (value !== undefined) return Promise.resolve({ done: false, value });
+    if (this.values.length > 0) {
+      // Length, not payload value, distinguishes an empty queue (T may include undefined).
+      return Promise.resolve({ done: false, value: this.values.shift() as T });
+    }
     if (this.ended) return Promise.resolve({ done: true, value: undefined });
     if (this.waiter) return Promise.reject(new Error("Concurrent stream reads are not supported"));
     return new Promise((resolve, reject) => {

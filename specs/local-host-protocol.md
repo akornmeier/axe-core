@@ -42,8 +42,13 @@ Every request frame, including a replay attempt, counts against the per-connecti
 in-flight cap. Overflow closes the connection without deleting the lease ledger or
 ending operations: reconnect with the same lease to inspect or replay admitted IDs.
 Duplicate flooding cannot create unbounded reply waiters. Host shutdown waits for
-in-flight browser initialization and its cleanup before returning. Rejected handshakes are
-terminal; later frames cannot allocate a replacement lease on that connection.
+in-flight browser initialization and its cleanup before returning. Server shutdown
+marks the host stopping before draining requests; concurrent server-close callers
+share the cleanup promise. Failed startup/session release rejects shutdown with
+`cleanup-incomplete`, preserves prior loss diagnostics, and never invents a successful
+release. The daemon reports this uncertainty on stderr; forced recovery is not provided.
+Rejected handshakes are terminal; later frames cannot allocate a replacement lease
+on that connection.
 
 Cursors contain session ID and monotonic sequence. Cross-session/future cursors
 are rejected. Replaying before retention produces a gap then retained events.
