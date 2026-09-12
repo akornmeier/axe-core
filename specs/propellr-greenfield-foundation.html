@@ -348,7 +348,8 @@
             <dd>2026-09-11T20:27:25Z</dd>
             <dt>modified</dt>
             <dd>
-              2026-09-11T20:27:25Z; 2026-09-12T13:35:14Z; 2026-09-12T14:06:24Z; 2026-09-12T14:13:33Z
+              2026-09-11T20:27:25Z; 2026-09-12T13:35:14Z; 2026-09-12T14:06:24Z;
+              2026-09-12T14:13:33Z; 2026-09-12T14:23:45Z
             </dd>
             <dt>commits</dt>
             <dd>
@@ -376,7 +377,8 @@
             <dd>
               None. Workspace not created; execution awaits approval. Phase 1:
               ~/code/propellr-greenfield on feat/greenfield-foundation; evidence:
-              specs/foundation-validation.md in that worktree.
+              specs/foundation-validation.md in that worktree.;
+              <a href="https://github.com/asbury-labs/propellr/pull/10">PR #10</a>
             </dd>
           </dl>
         </details>
@@ -844,6 +846,23 @@
       </section>
       <section id="amendments">
         <h2>Amendments</h2>
+        <details open>
+          <summary>2026-09-12T14:23:45Z: Linux CI passed; review repair</summary>
+          <p>
+            PR #10 push and pull-request validation passed on Ubuntu 24.04 at c27db6f: frozen
+            install, build, all four type scopes, lint, required Oxfmt and 62 contract tests. This
+            extends the original macOS evidence; no browser or later-phase check ran.
+          </p>
+          <p>
+            Copilot identified mutable CI action tags. Verified the source finding and pinned
+            official, GitHub-verified release commits: checkout v7.0.1 at
+            3d3c42e5aac5ba805825da76410c181273ba90b1 and setup-node v7.0.0 at
+            820762786026740c76f36085b0efc47a31fe5020. Reviewed release notes and action manifests;
+            these releases use supported Node 24 for the actions themselves while project validation
+            remains Node 26.8.2. Updated-head CI and review must pass before merge. PR status is
+            recorded on GitHub rather than treating this note as a future success claim.
+          </p>
+        </details>
         <details open>
           <summary>2026-09-12T14:13:33Z: PR delivery authorized</summary>
           <p>

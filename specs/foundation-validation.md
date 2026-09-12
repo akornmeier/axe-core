@@ -97,8 +97,9 @@ origin/action execution policy and transport authentication remain host-phase wo
 No browser binaries installed; no browser/UI/a11y pass claimed. No local IPC,
 session persistence, playbook execution, parity, reporting/deduplication or
 benchmarks run. `test:host`, `test:playbooks`, `test:parity`, `test:reporting` and
-`bench:slice` are not yet scripts, rather than empty successes. CI workflow is
-written but not dispatched or verified on Linux. The initial phase-1 run made no commits, pushes, PR actions,
+`bench:slice` are not yet scripts, rather than empty successes. At the initial
+checkpoint, CI was written but not dispatched or verified on Linux; PR CI evidence
+follows below. The initial phase-1 run made no commits, pushes, PR actions,
 merges, publishing, production access or customer-data use.
 
 ## PR delivery
@@ -115,3 +116,17 @@ single main-routed validation workflow. Neither old PR needs to merge first;
 merging either afterward would reintroduce obsolete tooling. Both remain open,
 with branch history and existing worktrees preserved. No release/deploy workflow
 survives in the new root. Phase 2 and publishing remain outside this delivery.
+
+[PR #10](https://github.com/asbury-labs/propellr/pull/10) opened ready for review.
+Its [pull-request CI run](https://github.com/asbury-labs/propellr/actions/runs/34698752602)
+and push CI passed at `c27db6f66c7f9ec173bd9f47881911805d1d9079` on Ubuntu 24.04:
+Node 26.8.2, PNPM 12.4.1, a fresh frozen install (66 Linux packages versus 67 on
+macOS due to platform dependencies), build, four type scopes, warning-free lint,
+Oxfmt and all 62 tests. No browser test was run.
+
+Copilot's first review identified mutable CI action tags. Confirmed against the
+workflow and pinned official verified release commits for checkout v7.0.1 and
+setup-node v7.0.0. Reviewed release notes and action manifests; the actions now
+use supported Node 24 internally, while project Node stays 26.8.2. Full SHAs and
+release comments are in `.github/workflows/validate.yml`. Updated-head CI/review
+results and eventual merge are tracked on the PR, not preclaimed here.
