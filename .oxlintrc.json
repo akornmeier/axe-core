@@ -1,0 +1,25 @@
+{
+  "ignorePatterns": ["specs/**", "dist/**", ".tools/**"],
+  "rules": { "typescript/no-explicit-any": "error" },
+  "overrides": [
+    {
+      "files": ["src/browser/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              "node:*",
+              "playwright",
+              "playwright/*",
+              "zod",
+              "zod/*",
+              "**/host/**",
+              "**/validation.js"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
