@@ -43,7 +43,7 @@ printf '%s\n' '{"command":"open","input":{"protocol":"propellr/0.1","requestId":
 
 CLI accepts one command envelope on stdin, returns `{lease, reply}` as JSON, and
 exits nonzero for a rejected command. Pass the returned lease as its second
-argument on later calls. Subscriptions emit JSON lines until disconnected.
+argument on later calls. Subscriptions emit JSON lines until the session ends or the client disconnects.
 Protect lease-bearing output as local session metadata. SIGINT/SIGTERM on the
 daemon ends owned sessions; client exit does not. Command acceptance is not
 operation completion or accessibility success.
@@ -81,7 +81,8 @@ inspection. Reconnect with `LocalClient.connect(socketPath, savedLease)`; never
 blindly repeat an uncertain browser action. Same lease/request ID/content returns
 the original acknowledgment, not a fresh operation snapshot. Changed content is
 rejected. Reconnect subscriptions use a fresh request ID and last event cursor.
-Breaking a subscription iterator closes that client's connection.
+Breaking an unfinished subscription iterator closes that client's connection.
+Natural completion keeps the connection usable; terminal-session replay is finite.
 
 Embedding hosts use `SessionHost` and `startLocalServer` from `src/host/`. Borrowed
 targets are host-provided `Map<string, Page>` registrations, never client-provided

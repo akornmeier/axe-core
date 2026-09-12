@@ -16,7 +16,11 @@ Host issues an opaque, boot-local lease. Unknown leases are rejected, never recr
 After hello: `{kind:"request", request:{command,input}}`; replies use
 `{kind:"reply", requestId, reply}`. Subscription deliveries use
 `{kind:"delivery", requestId, delivery}` after an accepted subscription reply.
-One subscription per connection; disconnect ends delivery, not the session.
+One active subscription per connection; disconnect ends delivery, not the session.
+After the final end/cleanup event, `{kind:"complete", requestId}` completes the
+subscription iterator without dropping other command replies. A subscription to an
+ended session replays retained events and then completes. Browser loss alone does
+not end the session's delivery; the client can still request end/cleanup.
 
 Each lease retains at most 256 request IDs with payload digests and pending/final
 replies. Same ID + same content returns the original reply, never repeats actions;
@@ -36,7 +40,8 @@ Slow consumers disconnect rather than grow queues. Partial frames time out.
 Every request frame, including a replay attempt, counts against the per-connection
 in-flight cap. Overflow closes the connection without deleting the lease ledger or
 ending operations: reconnect with the same lease to inspect or replay admitted IDs.
-Duplicate flooding cannot create unbounded reply waiters. Rejected handshakes are
+Duplicate flooding cannot create unbounded reply waiters. Host shutdown waits for
+in-flight browser initialization and its cleanup before returning. Rejected handshakes are
 terminal; later frames cannot allocate a replacement lease on that connection.
 
 Cursors contain session ID and monotonic sequence. Cross-session/future cursors

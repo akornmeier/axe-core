@@ -85,7 +85,7 @@ export class SessionHost {
   private readonly commands: readonly CommandName[];
   private readonly limits: z.infer<typeof limitsSchema>;
   private readonly auditEntries: AuditEntry[] = [];
-  private opening = 0;
+  private readonly opening = new Set<Promise<void>>();
   private stopping = false;
 
   constructor(options: HostOptions = {}) {
@@ -115,6 +115,7 @@ export class SessionHost {
 
   private permittedActions(): boolean {
     return (
+      this.commands.includes("runPlaybook") &&
       dialogManifest.permissions.origins.every((origin) => this.origins.includes(origin)) &&
       dialogManifest.permissions.actions.every((action) => this.actions.includes(action))
     );
@@ -275,93 +276,97 @@ export class SessionHost {
   }
 
   private async open(input: Commands["open"]["input"]): Promise<Reply<Session>> {
-    if (this.sessions.size + this.opening >= this.limits.sessions)
+    if (this.sessions.size + this.opening.size >= this.limits.sessions)
       return denied("session-limit", "Retained session capacity exhausted");
-    const page =
-      input.target.kind === "attached" ? this.borrowed.get(input.target.targetId) : undefined;
-    if (input.target.kind === "attached" && !page)
-      return denied("permission-denied", "Target is not authorized");
-    if (page && (page.isClosed() || this.borrowedInUse.has(page)))
-      return denied("target-unavailable", "Borrowed target is closed or already leased");
-    if (page) this.borrowedInUse.add(page);
-    this.opening++;
-    let target: BrowserTarget;
+    const opening = Promise.withResolvers<void>();
+    this.opening.add(opening.promise);
     try {
-      target =
-        input.target.kind === "managed"
-          ? await launchTarget(input.target.browser)
-          : new BrowserTarget(page!, "borrowed");
-      if (this.stopping) {
-        await target.release();
+      const page =
+        input.target.kind === "attached" ? this.borrowed.get(input.target.targetId) : undefined;
+      if (input.target.kind === "attached" && !page)
+        return denied("permission-denied", "Target is not authorized");
+      if (page && (page.isClosed() || this.borrowedInUse.has(page)))
+        return denied("target-unavailable", "Borrowed target is closed or already leased");
+      if (page) this.borrowedInUse.add(page);
+      let target: BrowserTarget;
+      try {
+        target =
+          input.target.kind === "managed"
+            ? await launchTarget(input.target.browser)
+            : new BrowserTarget(page!, "borrowed");
+        if (this.stopping) {
+          await target.release();
+          if (page) this.borrowedInUse.delete(page);
+          return denied("host-stopping", "Host stopped during browser initialization");
+        }
+      } catch {
         if (page) this.borrowedInUse.delete(page);
-        return denied("host-stopping", "Host stopped during browser initialization");
+        return denied("browser-unavailable", "Browser initialization failed");
       }
-    } catch {
-      if (page) this.borrowedInUse.delete(page);
-      return denied("browser-unavailable", "Browser initialization failed");
-    } finally {
-      this.opening--;
-    }
-    const id = sessionIdSchema.parse(`session_${randomUUID()}`);
-    const session: Session = {
-      protocol: "propellr/0.1",
-      id,
-      state: "active",
-      diagnostics: [],
-      browser: {
-        targetId:
-          input.target.kind === "attached" ? input.target.targetId : `managed-${randomUUID()}`,
-        ownership: target.ownership,
-      },
-      pages: [target.pageId],
-      documents: [{ pageId: target.pageId, documentId: target.documentId }],
-      capabilities: ["local-ipc", "dialog-open-close@1", "scan-unavailable", "bounded-replay"],
-      policy: this.policy,
-      configuration,
-    };
-    const record: RecordState = {
-      session,
-      target,
-      operations: new Map(),
-      events: [],
-      streams: new Set(),
-      sequence: 0,
-      active: undefined,
-      ending: undefined,
-    };
-    this.sessions.set(id, record);
-    target.onNavigation = () => {
-      if (record.session.state !== "active") return;
-      record.session = {
-        ...record.session,
+      const id = sessionIdSchema.parse(`session_${randomUUID()}`);
+      const session: Session = {
+        protocol: "propellr/0.1",
+        id,
+        state: "active",
+        diagnostics: [],
+        browser: {
+          targetId:
+            input.target.kind === "attached" ? input.target.targetId : `managed-${randomUUID()}`,
+          ownership: target.ownership,
+        },
+        pages: [target.pageId],
         documents: [{ pageId: target.pageId, documentId: target.documentId }],
+        capabilities: ["local-ipc", "dialog-open-close@1", "scan-unavailable", "bounded-replay"],
+        policy: this.policy,
+        configuration,
       };
-      this.emit(record, { type: "session", session: record.session });
-    };
-    target.onLoss = () => {
-      if (record.session.state !== "active") return;
-      const reason = {
-        code: "browser-lost",
-        message: "Browser or page lost; live recovery is unavailable",
+      const record: RecordState = {
+        session,
+        target,
+        operations: new Map(),
+        events: [],
+        streams: new Set(),
+        sequence: 0,
+        active: undefined,
+        ending: undefined,
       };
-      record.session = { ...record.session, state: "lost", documents: [], diagnostics: [reason] };
-      const operation = record.active && record.operations.get(record.active.id);
-      if (operation && !isTerminal(operation))
-        this.updateOperation(record, {
-          ...operation,
-          state: "lost",
-          diagnostics: [reason],
-          completedScans: [],
-          checkpoints: [...(record.active?.checkpoints ?? [])],
-          sideEffects: "uncertain",
-          cleanup: "incomplete",
-        });
-      record.active?.abort.abort();
-      this.emit(record, { type: "session", session: record.session });
-    };
-    this.emit(record, { type: "session", session });
-    if (target.page.isClosed()) target.onLoss();
-    return { ok: true, value: record.session };
+      this.sessions.set(id, record);
+      target.onNavigation = () => {
+        if (record.session.state !== "active") return;
+        record.session = {
+          ...record.session,
+          documents: [{ pageId: target.pageId, documentId: target.documentId }],
+        };
+        this.emit(record, { type: "session", session: record.session });
+      };
+      target.onLoss = () => {
+        if (record.session.state !== "active") return;
+        const reason = {
+          code: "browser-lost",
+          message: "Browser or page lost; live recovery is unavailable",
+        };
+        record.session = { ...record.session, state: "lost", documents: [], diagnostics: [reason] };
+        const operation = record.active && record.operations.get(record.active.id);
+        if (operation && !isTerminal(operation))
+          this.updateOperation(record, {
+            ...operation,
+            state: "lost",
+            diagnostics: [reason],
+            completedScans: [],
+            checkpoints: [...(record.active?.checkpoints ?? [])],
+            sideEffects: "uncertain",
+            cleanup: "incomplete",
+          });
+        record.active?.abort.abort();
+        this.emit(record, { type: "session", session: record.session });
+      };
+      this.emit(record, { type: "session", session });
+      if (target.page.isClosed()) target.onLoss();
+      return { ok: true, value: record.session };
+    } finally {
+      this.opening.delete(opening.promise);
+      opening.resolve();
+    }
   }
 
   private start(
@@ -531,7 +536,9 @@ export class SessionHost {
     for (const event of record.events)
       if (Number(event.cursor.slice(event.cursor.lastIndexOf(".") + 1)) > sequence)
         stream.push({ type: "event", event });
-    record.streams.add(stream);
+    if (record.session.state === "ended" || (record.session.state === "lost" && record.ending))
+      stream.close();
+    else record.streams.add(stream);
     return { ok: true, value: stream };
   }
 
@@ -565,11 +572,13 @@ export class SessionHost {
       };
     }
     this.emit(record, { type: "session", session: record.session });
+    for (const stream of record.streams) stream.close();
     return record.session;
   }
 
   async close(): Promise<void> {
     this.stopping = true;
+    await Promise.all(this.opening);
     await Promise.all(
       [...this.sessions.values()].map(async (record) => {
         await this.end(record);

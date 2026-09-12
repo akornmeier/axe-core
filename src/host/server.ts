@@ -203,8 +203,12 @@ export async function startLocalServer(options: LocalServerOptions) {
             try {
               for await (const delivery of events)
                 sendFrame(socket, { kind: "delivery", requestId, delivery });
+              sendFrame(socket, { kind: "complete", requestId });
             } catch {
               socket.destroy();
+            } finally {
+              subscription = undefined;
+              subscriptionReserved = false;
             }
           })();
         } else {

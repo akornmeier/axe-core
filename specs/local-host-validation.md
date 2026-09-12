@@ -150,6 +150,33 @@ admission/execution. The cap's scope is now explicit in the protocol. Full local
 `pnpm validate` passed: static checks and 90 cases (62 contracts, 17 host, 11
 playbooks). Current-head CI and review dispositions remain tracked on PR #11.
 
+### Third review pass
+
+Head `8403876d` passed Ubuntu CI with all 90 tests. Verified findings added an
+explicit subscription-complete frame after end/cleanup, finite terminal-session
+replay and command-grant-aware playbook discovery. The SDK preserves other command
+replies on natural stream completion. Embedded `SessionHost.close()` now waits for
+in-flight launches and their cleanup, not only already-registered sessions.
+
+Two findings were disproved against source and focused cases:
+
+- Pinned Playwright 1.63.0 supplies a non-null Browser for normal persistent
+  contexts (`coreBundle.js`, client browserType launchPersistentContext). A real
+  disposable-profile test verifies borrowed detach preserves its Page, then context
+  close transitions the newly attached session to lost and revokes document grants.
+  No daily-driver profile or additional adapter listener was used.
+- Admission, dispatch and operation capture have no await/event-loop gap. Document
+  identity is captured before deferred execution; `runDialog` rejects changed
+  identity. Deterministic navigation-event injection before deferred startup verifies
+  the accepted journey cannot rebind and produces no side effects. No redundant
+  authorization branch was added for the alleged nonexistent admission/start race.
+
+Focused host tests passed 22 cases, including natural stream completion on the
+same connection as end, post-end replay, denied playbook discovery and shutdown
+while a real browser launch is held in flight. Full `pnpm validate` then passed:
+static checks and 95 cases (62 contracts, 22 host, 11 playbooks). Latest-head
+CI/re-review remain tracked on PR #11.
+
 ## Stop boundary
 
 Phase 2 complete; phase 3 unstarted. Existing worktree tips and clean starting

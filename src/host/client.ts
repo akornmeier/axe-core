@@ -22,6 +22,7 @@ const serverFrame = z.union([
     requestId: z.string(),
     delivery: z.object({ type: z.enum(["event", "gap"]) }).passthrough(),
   }),
+  z.object({ kind: z.literal("complete"), requestId: z.string() }),
   z.object({ kind: z.literal("protocol-error"), diagnostic: diagnosticSchema }),
 ]);
 type Pending = {
@@ -33,7 +34,9 @@ type Pending = {
 // Validates framing/envelopes from a filesystem-trusted host. Full output schemas are deferred.
 export class LocalClient implements SessionClient {
   private readonly pending = new Map<string, Pending>();
-  private stream: { requestId: string; values: BoundedStream<EventDelivery> } | undefined;
+  private stream:
+    | { requestId: string; values: BoundedStream<EventDelivery>; completed: boolean }
+    | undefined;
   private constructor(
     private readonly socket: Socket,
     readonly lease: string,
@@ -95,9 +98,15 @@ export class LocalClient implements SessionClient {
           }
           client.pending.delete(frame.requestId);
           if (pending.command === "subscribe" && frame.reply.ok) {
-            const values = new BoundedStream<EventDelivery>(65, () => socket.destroy());
-            client.stream = { requestId: frame.requestId, values };
-            pending.resolve({ ok: true, value: values });
+            const stream = {
+              requestId: frame.requestId,
+              completed: false,
+              values: new BoundedStream<EventDelivery>(65, () => {
+                if (!stream.completed) socket.destroy();
+              }),
+            };
+            client.stream = stream;
+            pending.resolve({ ok: true, value: stream.values });
           } else pending.resolve(frame.reply);
         } else if (frame.kind === "delivery") {
           if (client.stream?.requestId !== frame.requestId) {
@@ -105,6 +114,13 @@ export class LocalClient implements SessionClient {
             return;
           }
           client.stream.values.push(frame.delivery as EventDelivery);
+        } else if (frame.kind === "complete") {
+          if (client.stream?.requestId !== frame.requestId || client.stream.completed) {
+            socket.destroy(new Error("uncorrelated-completion"));
+            return;
+          }
+          client.stream.completed = true;
+          client.stream.values.close();
         } else socket.destroy(new Error("host-protocol-error"));
       });
       socket.once("connect", () =>

@@ -350,7 +350,7 @@
             <dd>
               2026-09-11T20:27:25Z; 2026-09-12T13:35:14Z; 2026-09-12T14:06:24Z;
               2026-09-12T14:13:33Z; 2026-09-12T14:23:45Z; 2026-09-12T15:40:45Z;
-              2026-09-12T16:17:57Z; 2026-09-12T16:34:01Z
+              2026-09-12T16:17:57Z; 2026-09-12T16:34:01Z; 2026-09-12T16:58:06Z
             </dd>
             <dt>commits</dt>
             <dd>
@@ -360,19 +360,21 @@
               implementation rebased onto main@3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf);
               519f0c0bb04d38edfc68597b07dec56fae1b0a86 (phase 2 branch base; implementation
               uncommitted); df9f63b50ffe099bc2a5baee96ade5b49c01ae89 (phase 2 PR #11 initial head);
-              ae38766ad7bcd5e2b46bcead32a7d2a4a513d8d7 (first review repairs, Ubuntu CI passed)
+              ae38766ad7bcd5e2b46bcead32a7d2a4a513d8d7 (first review repairs, Ubuntu CI passed);
+              8403876dcffcc8e7c81282cc15f69a790d109b8d (second review repairs, Ubuntu CI passed)
             </dd>
             <dt>agent name</dt>
             <dd>
               pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra (single agent); pi / gpt-6-astra
               (phase 2, single agent); pi / gpt-6-astra (PR #11, single agent); pi / gpt-6-astra (PR
-              #11 second review, single agent)
+              #11 second review, single agent); pi / gpt-6-astra (PR #11 third review, single agent)
             </dd>
             <dt>session id</dt>
             <dd>
               01a09168-fae8-701c-91a3-cf1504ae78a9; 01a09168-fae8-701c-91a3-cf1504ae78a9;
               01a095e0-cd7f-701c-91a3-cf37ea4a0cb5; 01a0962e-071f-7681-98bc-26b90fd97297;
-              01a0962e-071f-7681-98bc-26b90fd97297; 01a0962e-071f-7681-98bc-26b90fd97297
+              01a0962e-071f-7681-98bc-26b90fd97297; 01a0962e-071f-7681-98bc-26b90fd97297;
+              01a0962e-071f-7681-98bc-26b90fd97297
             </dd>
             <dt>back refs</dt>
             <dd>
@@ -862,6 +864,24 @@
       </section>
       <section id="amendments">
         <h2>Amendments</h2>
+        <details open>
+          <summary>2026-09-12T16:58:06Z: Third PR #11 review pass</summary>
+          <p>
+            Ubuntu validation passed all 90 cases on 8403876d. Verified findings added subscription
+            completion after end/cleanup, finite terminal replay, command-grant-aware playbook
+            discovery and embedded shutdown that waits for in-flight browser launches and cleanup.
+            Natural subscription completion preserves other replies on the connection.
+          </p>
+          <p>
+            Persistent-context loss and admission/start-race findings were disproved against pinned
+            Playwright source and focused tests. Normal persistent contexts expose a Browser in
+            Playwright 1.63.0; real disposable-profile loss revokes grants. Admission through
+            operation capture is synchronous, and deferred execution rejects document invalidation
+            without side effects. Focused host checks passed 22 cases; full validation is rerun
+            before push. Final CI/re-review remain tracked on PR #11. Phase 3 and publishing remain
+            unstarted.
+          </p>
+        </details>
         <details open>
           <summary>2026-09-12T16:34:01Z: Second PR #11 review pass</summary>
           <p>
