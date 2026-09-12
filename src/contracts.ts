@@ -44,6 +44,7 @@ export interface Session {
     readonly ownership: "owned" | "borrowed";
   };
   readonly pages: readonly PageId[];
+  readonly documents: readonly { readonly pageId: PageId; readonly documentId: string }[];
   readonly capabilities: readonly string[];
   readonly policy: VersionRef;
   readonly configuration: VersionRef;
@@ -169,7 +170,10 @@ export interface PlaybookManifest {
   }>;
 }
 
-export type Checkpoint = { readonly id: string } & (
+export type Checkpoint = {
+  readonly id: string;
+  readonly observed?: JsonObject;
+} & (
   | { readonly state: "reached"; readonly scans: NonEmpty<ScanResult> }
   | { readonly state: "blocked" | "skipped"; readonly reason: Diagnostic }
 );
@@ -193,6 +197,7 @@ export type Operation<K extends keyof Results = keyof Results> = {
     readonly kind: Kind;
     readonly policy: VersionRef;
     readonly configuration: VersionRef;
+    readonly invocation?: { readonly playbook: VersionRef; readonly inputs: JsonObject };
   } & (
     | { readonly state: "queued" | "running" | "cancelling" }
     | { readonly state: "completed"; readonly result: Results[Kind] }
@@ -200,6 +205,7 @@ export type Operation<K extends keyof Results = keyof Results> = {
         readonly state: "failed" | "cancelled" | "lost";
         readonly diagnostics: NonEmpty<Diagnostic>;
         readonly completedScans: readonly ScanResult[];
+        readonly checkpoints?: readonly Checkpoint[];
         readonly sideEffects: "none" | "confirmed" | "uncertain";
         readonly cleanup: "complete" | "incomplete" | "not-required";
       }

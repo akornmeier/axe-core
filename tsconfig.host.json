@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "compilerOptions": { "types": ["node"] },
+  "compilerOptions": { "types": ["node"], "skipLibCheck": true },
   "include": ["src/host/**/*.ts", "test/types/host.typecheck.ts"]
 }

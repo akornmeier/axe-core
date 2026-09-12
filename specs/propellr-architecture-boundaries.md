@@ -1,8 +1,10 @@
 # Propellr: proposed architecture boundaries
 
-**Implementation update:** Phase 1 implements contracts and request admission only;
-see [foundation evidence](foundation-validation.md). The proposal below is retained
-at its capture state. Session, browser and reporting execution remain unimplemented.
+**Implementation update:** Phases 1 and 2 implement contracts, request admission,
+local IPC sessions, Playwright ownership and one trusted dialog playbook. See
+[foundation evidence](foundation-validation.md) and [local host evidence](local-host-validation.md).
+Browser analysis and reporting remain unimplemented. The proposal below is retained
+at its capture state; current protocol details live in [local host protocol](local-host-protocol.md).
 
 September 11, 2026; revised at 19:38 UTC. **Stateful sessions, playbooks and
 enterprise-first operation are agreed product direction. Detailed boundaries and

@@ -349,21 +349,32 @@
             <dt>modified</dt>
             <dd>
               2026-09-11T20:27:25Z; 2026-09-12T13:35:14Z; 2026-09-12T14:06:24Z;
-              2026-09-12T14:13:33Z; 2026-09-12T14:23:45Z
+              2026-09-12T14:13:33Z; 2026-09-12T14:23:45Z; 2026-09-12T15:40:45Z;
+              2026-09-12T16:17:57Z; 2026-09-12T16:34:01Z; 2026-09-12T16:58:06Z
             </dd>
             <dt>commits</dt>
             <dd>
               46df83acde9421908d9b962d39d70b2da203426e (planning context, not greenfield
               implementation); 46df83acde9421908d9b962d39d70b2da203426e (phase 1 branch base;
               implementation staged, uncommitted); 44bfb559df534285dff1ce20ff6b0815ac04ec03 (phase 1
-              implementation rebased onto main@3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf)
+              implementation rebased onto main@3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf);
+              519f0c0bb04d38edfc68597b07dec56fae1b0a86 (phase 2 branch base; implementation
+              uncommitted); df9f63b50ffe099bc2a5baee96ade5b49c01ae89 (phase 2 PR #11 initial head);
+              ae38766ad7bcd5e2b46bcead32a7d2a4a513d8d7 (first review repairs, Ubuntu CI passed);
+              8403876dcffcc8e7c81282cc15f69a790d109b8d (second review repairs, Ubuntu CI passed)
             </dd>
             <dt>agent name</dt>
-            <dd>pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra (single agent)</dd>
+            <dd>
+              pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra (single agent); pi / gpt-6-astra
+              (phase 2, single agent); pi / gpt-6-astra (PR #11, single agent); pi / gpt-6-astra (PR
+              #11 second review, single agent); pi / gpt-6-astra (PR #11 third review, single agent)
+            </dd>
             <dt>session id</dt>
             <dd>
               01a09168-fae8-701c-91a3-cf1504ae78a9; 01a09168-fae8-701c-91a3-cf1504ae78a9;
-              01a095e0-cd7f-701c-91a3-cf37ea4a0cb5
+              01a095e0-cd7f-701c-91a3-cf37ea4a0cb5; 01a0962e-071f-7681-98bc-26b90fd97297;
+              01a0962e-071f-7681-98bc-26b90fd97297; 01a0962e-071f-7681-98bc-26b90fd97297;
+              01a0962e-071f-7681-98bc-26b90fd97297
             </dd>
             <dt>back refs</dt>
             <dd>
@@ -378,7 +389,10 @@
               None. Workspace not created; execution awaits approval. Phase 1:
               ~/code/propellr-greenfield on feat/greenfield-foundation; evidence:
               specs/foundation-validation.md in that worktree.;
-              <a href="https://github.com/asbury-labs/propellr/pull/10">PR #10</a>
+              <a href="https://github.com/asbury-labs/propellr/pull/10">PR #10</a>;
+              <a href="local-host-validation.md">Phase 2 evidence</a>;
+              <a href="local-host-protocol.md">Local host protocol</a>;
+              <a href="https://github.com/asbury-labs/propellr/pull/11">PR #11</a>
             </dd>
           </dl>
         </details>
@@ -394,10 +408,14 @@
       <section id="problem">
         <h2>Boundary</h2>
         <p>
-          The inherited workspace and its prior green CI do not prove the new design. Phase 1 now
-          passes TypeScript 7.0.2 source/type checks and 62 runtime request/admission tests in the
-          greenfield worktree. Dependency-declaration exceptions are recorded below. Transport/host
-          execution security, browser behavior, rule fidelity and performance remain unverified.
+          The inherited workspace and its prior green CI do not prove the new design. Phases 1 and 2
+          now pass TypeScript 7.0.2 source/type checks and real contract, local IPC and
+          cross-browser playbook cases. Exact counts, environments and review repairs are recorded
+          in
+          <a href="local-host-validation.md">Phase 2 evidence</a>; latest CI/review status is
+          tracked on PR #11. Dependency-declaration exceptions and single-user host limits remain
+          explicit. Browser analysis, rule fidelity, production isolation and performance remain
+          unverified.
         </p>
       </section>
       <section id="solution">
@@ -406,8 +424,8 @@
           Initial selection used read-only registry and Node release observations on September 11,
           2026. Phase 1 installed these exact pins in the new worktree on September 12, without
           global upgrades. Declared engine/peer ranges fit Node 26 and matching Vitest/provider 5.
-          Phase 1 verifies native tool execution and the Node test configuration; browser/provider
-          execution remains deferred.
+          Phase 1 verifies native tool execution and the Node test configuration. Phase 2 executes
+          host Playwright interactions; a browser-analysis entry/provider project remains deferred.
         </p>
         <div class="table-scroll">
           <table>
@@ -553,8 +571,8 @@
       <section id="phases">
         <h2>Implementation slices</h2>
         <p>
-          Phase 1 executed and validated. Stop here for review. Phases 2 and 3 remain unexecuted;
-          their script names remain deliverables, not existing commands.
+          Phases 1 and 2 executed and validated. Stop here for review. Phase 3 remains unexecuted;
+          its parity/reporting/benchmark script names remain deliverables, not existing commands.
         </p>
         <div class="phase">
           <h3><code class="status">[x]</code>1. Clean foundation and validated contracts</h3>
@@ -631,7 +649,7 @@
           </div>
         </div>
         <div class="phase">
-          <h3><code class="status">[]</code>2. Local stateful host and one playbook</h3>
+          <h3><code class="status">[x]</code>2. Local stateful host and one playbook</h3>
           <p>
             Implement the session boundary without a cloud control plane. Initial local host targets
             macOS/Linux; Windows transport and remote operation are not claimed. Until slice 3, scan
@@ -641,32 +659,32 @@
           <h4>2.1 Deliverables</h4>
           <ul class="checklist">
             <li>
-              <code class="status">[]</code>Use <code>node:net</code> local IPC in a private
+              <code class="status">[x]</code>Use <code>node:net</code> local IPC in a private
               per-user directory with restrictive permissions and bounded message sizes. SDK/CLI use
               the same seven commands. No unauthenticated TCP/HTTP listener or new RPC framework.
               Define framing, request correlation and replay limits before implementing the
               transport.
             </li>
             <li>
-              <code class="status">[]</code>Implement owned sessions and authorized borrowed targets
-              through a Playwright adapter. The host resolves target IDs; clients cannot supply
-              arbitrary browser endpoints or self-grant policy permissions. Ending a borrowed
+              <code class="status">[x]</code>Implement owned sessions and authorized borrowed
+              targets through a Playwright adapter. The host resolves target IDs; clients cannot
+              supply arbitrary browser endpoints or self-grant policy permissions. Ending a borrowed
               session detaches rather than terminating its browser.
             </li>
             <li>
-              <code class="status">[]</code>Keep session state alive across client disconnects.
+              <code class="status">[x]</code>Keep session state alive across client disconnects.
               Bound operation/event retention, make gaps explicit and coordinate conflicting page
               actions. Cancel cooperatively or with permitted host enforcement; never replay
               uncertain side effects after reconnect or loss.
             </li>
             <li>
-              <code class="status">[]</code>Add one trusted <code>dialog-open-close</code> playbook
+              <code class="status">[x]</code>Add one trusted <code>dialog-open-close</code> playbook
               against a controlled local fixture. Declare origin/action permissions, inputs,
               prerequisites and scan checkpoints. Record actual checkpoint state and failures; no
               arbitrary agent-authored execution, real login credentials or business submissions.
             </li>
             <li>
-              <code class="status">[]</code>Keep secrets, audit/redaction and access decisions at
+              <code class="status">[x]</code>Keep secrets, audit/redaction and access decisions at
               the host boundary. This first single-user local host is not production multi-tenant
               isolation, durable crash recovery or an enterprise identity suite.
             </li>
@@ -674,18 +692,18 @@
           <h4>2.2 Testing Strategy</h4>
           <ul class="checklist">
             <li>
-              <code class="status">[]</code
+              <code class="status">[x]</code
               ><code>pnpm exec playwright install chromium firefox webkit</code>: provision pinned
               test browser revisions in the new environment before host/browser tests; use
               --with-deps on supported CI Linux
             </li>
             <li>
-              <code class="status">[]</code><code>pnpm test:host</code>: real local IPC reconnect,
+              <code class="status">[x]</code><code>pnpm test:host</code>: real local IPC reconnect,
               request conflicts, replay gaps, authorization denial, cancellation and
               borrowed-browser ownership
             </li>
             <li>
-              <code class="status">[]</code><code>pnpm test:playbooks</code>: actual browser
+              <code class="status">[x]</code><code>pnpm test:playbooks</code>: actual browser
               interaction, blocked prerequisites, checkpoint correlation and explicit cleanup
               failures; no manufactured scan success
             </li>
@@ -846,6 +864,89 @@
       </section>
       <section id="amendments">
         <h2>Amendments</h2>
+        <details open>
+          <summary>2026-09-12T16:58:06Z: Third PR #11 review pass</summary>
+          <p>
+            Ubuntu validation passed all 90 cases on 8403876d. Verified findings added subscription
+            completion after end/cleanup, finite terminal replay, command-grant-aware playbook
+            discovery and embedded shutdown that waits for in-flight browser launches and cleanup.
+            Natural subscription completion preserves other replies on the connection.
+          </p>
+          <p>
+            Persistent-context loss and admission/start-race findings were disproved against pinned
+            Playwright source and focused tests. Normal persistent contexts expose a Browser in
+            Playwright 1.63.0; real disposable-profile loss revokes grants. Admission through
+            operation capture is synchronous, and deferred execution rejects document invalidation
+            without side effects. Focused host checks passed 22 cases; full validation is rerun
+            before push. Final CI/re-review remain tracked on PR #11. Phase 3 and publishing remain
+            unstarted.
+          </p>
+        </details>
+        <details open>
+          <summary>2026-09-12T16:34:01Z: Second PR #11 review pass</summary>
+          <p>
+            Ubuntu validation passed all 88 cases on ae38766a. Verified second-pass findings led to
+            stronger retained-operation ownership checks and terminal handshake rejection, including
+            coalesced frames from a half-open peer. Foreign retained operation IDs now fail
+            admission; unknown or evicted IDs keep explicit retention diagnostics.
+          </p>
+          <p>
+            Retained the documented eight-frame in-flight cap, including duplicate requests, rather
+            than permit unbounded reply waiters. A real IPC saturation test verifies reconnection
+            preserves cached replies without re-execution. Focused host checks passed 17 cases; full
+            validation is rerun before pushing. Current-head CI/re-review remain tracked on PR #11.
+            No phase 3 or publishing work.
+          </p>
+        </details>
+        <details open>
+          <summary>2026-09-12T16:17:57Z: PR #11 delivery and review repairs</summary>
+          <p>
+            Tony authorized filing, monitoring and merging this phase only. Committed Phase 2 at
+            df9f63b5, rebased onto current main and opened ready PR #11. Ubuntu 24.04 validation
+            passed all 84 original tests. Verified review findings led to current-document grant
+            revocation, operation/session audit correlation, faithful failed-subscription replay and
+            retention of confirmed observations during cancellation.
+          </p>
+          <p>
+            The alleged pre-start-loss deadlock is a false positive: the return is inside the async
+            IIFE and its attached finally still resolves operation cleanup. Deterministic
+            crash-event injection before deferred startup verifies end completes and loss remains
+            terminal. Full local pnpm validate passed after repairs: 62 contract, 15 host and 11
+            playbook cases, build, strict types, lint and Oxfmt. Latest-head CI and re-review must
+            pass before merge; their live status is tracked on PR #11. Phase 3 and publishing remain
+            out of scope.
+          </p>
+        </details>
+        <details open>
+          <summary>2026-09-12T15:40:45Z: Phase 2 executed, stop boundary reached</summary>
+          <p>
+            Tony authorized only the next phase and one agent. Implemented private Unix IPC,
+            same-command SDK/CLI, bounded request replay and event retention, host-owned access,
+            owned/borrowed Playwright sessions and dialog-open-close@1. Client disconnect does not
+            replay or end work. Cancellation, lost browser state, stale documents, replay gaps and
+            incomplete cleanup remain explicit. No remote listener or arbitrary playbook loading.
+          </p>
+          <p>
+            Provisioned pinned Chromium, Firefox and WebKit in this worktree's ignored browser
+            cache. Frozen install, build, four strict type scopes, lint, required Oxfmt, 62 contract
+            tests, 13 real IPC/host tests and 9 real browser playbook tests passed under Node 26.8.2
+            and PNPM 12.4.1 on macOS 26.6.2 arm64. Repaired and retested request handshake
+            validation, cancellation timing and loss/end state preservation. CI browser setup
+            updated, not run.
+          </p>
+          <p>
+            Playwright declarations reference DOM names from Node APIs; host/build now use a
+            documented dependency-only skipLibCheck exception. Own host source remains DOM-free and
+            strict. Scan requests fail with scan-unavailable; observed playbook checkpoints remain
+            blocked and journey coverage partial. No scan, parity, reporting or benchmark success.
+          </p>
+          <p>
+            Full evidence: <a href="local-host-validation.md">local-host-validation.md</a>. Phase 2
+            [x]; phase 3 []; no unresolved [f] task. Work remains uncommitted on
+            feat/local-session-host. Other worktrees, user edits, canonical axe-core and global
+            tools preserved. No staging, push, merge, PR action, publishing or live-channel work.
+          </p>
+        </details>
         <details open>
           <summary>2026-09-12T14:23:45Z: Linux CI passed; review repair</summary>
           <p>

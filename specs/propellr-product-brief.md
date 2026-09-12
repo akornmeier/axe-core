@@ -1,7 +1,9 @@
 # Propellr: agreed product direction
 
-**Implementation update:** Phase 1 now exists in this greenfield worktree. See
-[foundation evidence](foundation-validation.md). Remaining text records the agreed
+**Implementation update:** Phases 1 and 2 now exist in this greenfield worktree.
+See [foundation evidence](foundation-validation.md) and
+[local host evidence](local-host-validation.md). Browser scans remain unavailable.
+Remaining text records the agreed
 planning direction at capture time, not current implementation status.
 
 Captured September 11, 2026 from Tony's decisions; expanded to stateful sessions
