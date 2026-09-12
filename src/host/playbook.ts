@@ -86,7 +86,8 @@ export async function runDialog(
     sideEffects = "uncertain";
     await opener.click(options);
     await page.locator("#dialog").waitFor({ state: "visible", ...options });
-    guard();
+    // Retain confirmed observations even when cancellation arrived during the browser await.
+    if (!current()) throw new Error("stale-observation");
     sideEffects = "confirmed";
     record({
       id: "opened",
@@ -99,7 +100,7 @@ export async function runDialog(
     await closer.click(options);
     await page.locator("#dialog").waitFor({ state: "hidden", ...options });
     const focusReturned = (await page.locator("#open:focus").count()) === 1;
-    guard();
+    if (!current()) throw new Error("stale-observation");
     if (!focusReturned) throw new Error("focus");
     sideEffects = "confirmed";
     record({

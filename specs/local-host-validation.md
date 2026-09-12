@@ -3,7 +3,7 @@
 September 12, 2026. One agent: pi / gpt-6-astra, session
 `01a0962e-071f-7681-98bc-26b90fd97297`. Current worktree only:
 `/Users/tk/Code/propellr-greenfield`, branch `feat/local-session-host`, base
-`519f0c0bb04d38edfc68597b07dec56fae1b0a86`. Work remains uncommitted.
+`519f0c0bb04d38edfc68597b07dec56fae1b0a86`. Work was uncommitted at this validation stop.
 
 ## Implemented
 
@@ -100,6 +100,39 @@ CI now provisions pinned browser revisions with Linux dependencies and runs the
 same validation. CI was edited, **not dispatched or observed** for this phase.
 Linux execution remains unverified here. No fresh disposable-checkout validation
 was repeated in phase 2; phase 1's evidence remains historical.
+
+## PR delivery and review update
+
+Tony subsequently authorized filing, monitoring and merging [PR #11](https://github.com/asbury-labs/propellr/pull/11).
+Phase 2 was committed at `df9f63b5`, rebased onto current `main`, and pushed as a
+ready PR. Ubuntu 24.04 CI passed all 84 tests and static checks on that revision.
+This extends the earlier local-only evidence; no publishing or phase 3 work.
+
+Verified review findings prompted these repairs:
+
+- Admission now uses the session's advertised document grants. Lost/ending sessions
+  have none; later navigation cannot restore a lost session's grants.
+- Confirmed dialog observations survive cancellation delivered during the browser
+  await. Current-document/origin checks still reject stale observations.
+- Failed subscriptions replay their original denial, including concurrent copies
+  and reconnect. A successful subscription is established only once.
+- Audit entries correlate applicable session/operation IDs, including request-ID
+  conflicts, accepted scans/playbooks and inspect/cancel decisions.
+
+The alleged early-loss shutdown deadlock was a false positive: the early return is
+inside the async IIFE, so its attached `.finally()` still clears `record.active`
+and resolves `done`. Added deterministic crash-event injection before deferred
+startup on a real borrowed Page; ending the session completes and preserves the
+lost operation. This fault-injection case is separate from real browser-close tests.
+
+Focused review verification passed 15 host and 11 playbook cases. Two new real-browser
+cases cancel exactly after visible/hidden observations. Cancellation now reports
+confirmed rather than uncertain effects when those observations exist. One combined
+host/playbook run had a WebKit journey failure; the documented serial commands
+passed on rerun. The failure reason was not established, so no infrastructure cause
+is claimed. Full `pnpm validate` then passed: build, all type scopes, lint,
+Oxfmt, 62 contract tests, 15 host tests and 11 playbook tests. Latest-head CI and
+bot review are recorded on the PR rather than asserted in advance here.
 
 ## Stop boundary
 

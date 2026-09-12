@@ -64,6 +64,7 @@ export interface AuditEntry {
   readonly command: CommandName | "invalid";
   readonly decision: string;
   readonly sessionId?: SessionId;
+  readonly operationId?: OperationId;
 }
 export type HostReply = Reply<Commands[keyof Commands]["output"]>;
 export function denied(code: string, message: string): Reply<never> {
@@ -153,7 +154,7 @@ export class SessionHost {
       policies: [this.policy],
       managedBrowsers: this.browsers,
       attachedTargets: [...this.borrowed.keys()],
-      sessions: [...this.sessions.values()].map(({ session, target, operations }) => ({
+      sessions: [...this.sessions.values()].map(({ session, operations }) => ({
         id: session.id,
         // Missing operation IDs are handled session-locally as retention diagnostics.
         operations: [
@@ -163,7 +164,7 @@ export class SessionHost {
             ? [request.input.operationId]
             : []),
         ],
-        documents: target ? [{ pageId: target.pageId, documentId: target.documentId }] : [],
+        documents: session.documents,
         playbooks: [dialogVersion],
         secretRefs: [],
       })),
@@ -179,20 +180,39 @@ export class SessionHost {
         reply = denied("host-error", "Host operation failed; inspect before retrying");
       }
     }
+    const sessionId =
+      request.command === "open"
+        ? reply.ok && "protocol" in reply.value
+          ? reply.value.id
+          : undefined
+        : request.input.sessionId;
+    const operationId =
+      "operationId" in request.input
+        ? request.input.operationId
+        : reply.ok && "kind" in reply.value
+          ? reply.value.id
+          : undefined;
     this.auditDecision(
       request.command,
       reply.ok ? "accepted" : reply.diagnostic.code,
-      request.command === "open" ? undefined : request.input.sessionId,
+      sessionId,
+      operationId,
     );
     return reply;
   }
 
-  auditDecision(command: CommandName | "invalid", decision: string, sessionId?: SessionId): void {
+  auditDecision(
+    command: CommandName | "invalid",
+    decision: string,
+    sessionId?: SessionId,
+    operationId?: OperationId,
+  ): void {
     this.auditEntries.push({
       time: new Date().toISOString(),
       command,
       decision,
       ...(sessionId ? { sessionId } : {}),
+      ...(operationId ? { operationId } : {}),
     });
     if (this.auditEntries.length > 128) this.auditEntries.shift();
   }
@@ -303,6 +323,7 @@ export class SessionHost {
     };
     this.sessions.set(id, record);
     target.onNavigation = () => {
+      if (record.session.state !== "active") return;
       record.session = {
         ...record.session,
         documents: [{ pageId: target.pageId, documentId: target.documentId }],
@@ -513,7 +534,7 @@ export class SessionHost {
 
   private async releaseSession(record: RecordState): Promise<Session> {
     if (record.session.state === "ended") return record.session;
-    record.session = { ...record.session, state: "ending" };
+    record.session = { ...record.session, state: "ending", documents: [] };
     this.emit(record, { type: "session", session: record.session });
     record.active?.abort.abort();
     await record.active?.done;

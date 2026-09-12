@@ -47,6 +47,30 @@ describe("local session host over real Unix IPC", () => {
         diagnostics: [{ code: "scan-unavailable" }],
         completedScans: [],
       });
+      const inspection = { ...meta(), sessionId: session.id, operationId: scan.id };
+      unwrap(await next.inspect(inspection));
+      expect(await next.inspect({ ...inspection, operationId: undefined })).toMatchObject({
+        ok: false,
+        diagnostic: { code: "request-conflict" },
+      });
+      unwrap(await next.cancel({ ...meta(), sessionId: session.id, operationId: scan.id }));
+      for (const command of ["scan", "inspect", "cancel"]) {
+        expect(server.host.audit).toContainEqual(
+          expect.objectContaining({
+            command,
+            decision: "accepted",
+            sessionId: session.id,
+            operationId: scan.id,
+          }),
+        );
+      }
+      expect(server.host.audit).toContainEqual(
+        expect.objectContaining({
+          command: "inspect",
+          decision: "request-conflict",
+          sessionId: session.id,
+        }),
+      );
       expect(unwrap(await next.end({ ...meta(), sessionId: session.id })).state).toBe("ended");
       expect(await next.runPlaybook(playbookInput(session))).toMatchObject({ ok: false });
     });
@@ -103,7 +127,7 @@ describe("local session host over real Unix IPC", () => {
         expect(
           await client.subscribe({ ...meta(), sessionId: session.id, after: "session_other.0" }),
         ).toMatchObject({ ok: false, diagnostic: { code: "invalid-cursor" } });
-        // One subscription attempt per connection. A fresh connection can replay retained events.
+        // Failed subscriptions do not reserve this connection's stream slot.
       },
       { limits: { sessions: 1, operations: 1, events: 3 } },
     );
@@ -222,7 +246,7 @@ describe("local session host over real Unix IPC", () => {
             state: "cancelled",
             completedScans: [],
             cleanup: "complete",
-            sideEffects: "uncertain",
+            sideEffects: "confirmed",
           });
           expect(
             unwrap(
@@ -286,6 +310,61 @@ describe("local session host over real Unix IPC", () => {
           expect(unwrap(await next.inspect({ ...meta(), sessionId: other.id })).session.state).toBe(
             "active",
           );
+        },
+        { borrowed: new Map([["fixture", page]]) },
+      );
+    } finally {
+      await browser.close();
+    }
+  });
+
+  test("loss before deferred startup still finalizes the operation and revokes document grants", async () => {
+    const browser = await chromium.launch();
+    try {
+      const page = await browser.newPage();
+      await page.route(FIXTURE_URL, (route) =>
+        route.fulfill({ contentType: "text/html", body: DIALOG_HTML }),
+      );
+      await page.goto(FIXTURE_URL);
+      await withHost(
+        async ({ client, server }) => {
+          const session = unwrap(
+            await client.open({
+              ...meta(),
+              policy: LOCAL_POLICY,
+              target: { kind: "attached", targetId: "fixture" },
+            }),
+          );
+          const input = playbookInput(session);
+          // Direct admission queues synchronously. Inject loss before yielding to setImmediate.
+          const pending = server.host.execute(JSON.stringify({ command: "runPlaybook", input }));
+          if (!("emit" in page) || typeof page.emit !== "function")
+            throw new Error("Expected Playwright event emitter for fault injection");
+          page.emit("crash", page);
+          const operation = unwrap(await pending);
+          if (!("kind" in operation)) throw new Error("Expected operation");
+          expect(server.host.audit).toContainEqual(
+            expect.objectContaining({
+              command: "runPlaybook",
+              decision: "accepted",
+              sessionId: session.id,
+              operationId: operation.id,
+            }),
+          );
+          expect(await terminal(client, operation)).toMatchObject({ state: "lost" });
+          expect(await client.runPlaybook({ ...input, ...meta() })).toMatchObject({
+            ok: false,
+            diagnostic: { code: "permission-denied" },
+          });
+          // A later navigation must not restore grants to a lost session.
+          await page.goto(FIXTURE_URL);
+          expect(
+            unwrap(await client.inspect({ ...meta(), sessionId: session.id })).session.documents,
+          ).toEqual([]);
+          expect(unwrap(await client.end({ ...meta(), sessionId: session.id })).state).toBe(
+            "ended",
+          );
+          expect(await terminal(client, operation)).toMatchObject({ state: "lost" });
         },
         { borrowed: new Map([["fixture", page]]) },
       );

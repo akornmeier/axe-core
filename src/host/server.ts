@@ -131,11 +131,19 @@ export async function startLocalServer(options: LocalServerOptions) {
       const digest = createHash("sha256").update(text).digest("hex");
       const previous = ledger.get(requestId);
       if (previous && previous.digest !== digest) {
-        host.auditDecision(request.command, "request-conflict");
+        host.auditDecision(
+          request.command,
+          "request-conflict",
+          request.command === "open" ? undefined : request.input.sessionId,
+          "operationId" in request.input ? request.input.operationId : undefined,
+        );
         reply(requestId, denied("request-conflict", "Request ID was used with different content"));
         return;
       }
-      if (previous?.subscription || (request.command === "subscribe" && subscriptionReserved)) {
+      if (
+        previous?.subscription ||
+        (!previous && request.command === "subscribe" && subscriptionReserved)
+      ) {
         reply(
           requestId,
           denied(
@@ -152,23 +160,33 @@ export async function startLocalServer(options: LocalServerOptions) {
         );
         return;
       }
-      if (request.command === "subscribe") subscriptionReserved = true;
+      if (!previous && request.command === "subscribe") subscriptionReserved = true;
       const entry = previous ?? {
         digest,
         reply: host.execute(text),
-        subscription: request.command === "subscribe",
+        subscription: false,
       };
       ledger.set(requestId, entry);
       inFlight++;
       const task = (async () => {
         const result = await entry.reply;
         if (request.command === "subscribe" && result.ok) {
+          // Concurrent copies may await the same result; establish its stream only once.
+          if (ledger?.get(requestId)?.subscription) {
+            if (!socket.destroyed)
+              reply(
+                requestId,
+                denied("subscription-conflict", "Subscription requires a fresh request ID"),
+              );
+            return;
+          }
           // execute() returns an iterable only for this command; no iterable crosses the wire.
           const events = result.value as AsyncIterable<EventDelivery>;
           subscription = events[Symbol.asyncIterator]();
           // Replace the ledger's iterator reference with a small terminal acknowledgment.
           ledger?.set(requestId, {
             ...entry,
+            subscription: true,
             reply: Promise.resolve(
               denied("subscription-conflict", "Subscription requires a fresh request ID"),
             ),
@@ -187,7 +205,7 @@ export async function startLocalServer(options: LocalServerOptions) {
             }
           })();
         } else {
-          if (request.command === "subscribe") subscriptionReserved = false;
+          if (!previous && request.command === "subscribe") subscriptionReserved = false;
           if (!socket.destroyed) reply(requestId, result);
         }
       })()

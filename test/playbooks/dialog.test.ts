@@ -1,9 +1,51 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { chromium } from "playwright";
-import { browserTypes } from "../../src/host/browser.js";
+import { browserTypes, launchTarget } from "../../src/host/browser.js";
+import { runDialog } from "../../src/host/playbook.js";
 import { DIALOG_HTML, FIXTURE_URL } from "../../src/host/fixture.js";
 import { LOCAL_POLICY } from "../../src/host/runtime.js";
 import { meta, playbookInput, terminal, unwrap, withHost } from "../support/host.js";
+
+test.each(["visible", "hidden"] as const)(
+  "cancellation after a confirmed %s observation preserves its checkpoint",
+  async (state) => {
+    const target = await launchTarget("chromium");
+    const abort = new AbortController();
+    const locate = target.page.locator.bind(target.page);
+    const spy = vi.spyOn(target.page, "locator").mockImplementation((selector, options) => {
+      const locator = locate(selector, options);
+      if (selector === "#dialog") {
+        const wait = locator.waitFor.bind(locator);
+        locator.waitFor = async (options) => {
+          await wait(options); // Real browser observation; cancel exactly before the caller resumes.
+          if (options?.state === state) abort.abort();
+        };
+      }
+      return locator;
+    });
+    try {
+      const execution = await runDialog(
+        target,
+        { timeoutMs: 1000 },
+        target.documentId,
+        abort.signal,
+        () => true,
+        () => {},
+      );
+      expect(execution.cancelled).toBe(true);
+      expect(
+        execution.result.checkpoints.find(
+          (checkpoint) => checkpoint.id === (state === "visible" ? "opened" : "closed"),
+        ),
+      ).toMatchObject({ state: "blocked", observed: { dialogVisible: state === "visible" } });
+      expect(execution.result.cleanup).toBe("complete");
+      expect(await target.page.locator("#dialog").isVisible()).toBe(false);
+    } finally {
+      spy.mockRestore();
+      await target.release();
+    }
+  },
+);
 
 for (const engine of ["chromium", "firefox", "webkit"] as const) {
   describe(engine, () => {
@@ -19,7 +61,7 @@ for (const engine of ["chromium", "firefox", "webkit"] as const) {
         // Repeating the accepted request cannot re-open the dialog.
         expect(unwrap(await client.runPlaybook(input)).id).toBe(operation.id);
         const finished = await terminal(client, operation);
-        expect(finished).toMatchObject({
+        expect(finished, JSON.stringify(finished)).toMatchObject({
           kind: "playbook",
           state: "completed",
           invocation: { playbook: input.playbook, inputs: { timeoutMs: 1000 } },

@@ -24,7 +24,8 @@ different content is rejected. No eviction: a full ledger rejects new requests.
 At most 32 leases per host boot; restart loses live state and invalidates leases.
 A fresh lease is a new caller correlation scope, not a license to retry uncertain
 actions. SDK never automatically retries requests. Reconnect, inspect, then decide.
-Subscriptions must use a fresh request ID after reconnect and an event cursor.
+Re-establishing a successful subscription requires a fresh request ID and an event
+cursor. Denied subscription requests replay their original diagnostic.
 
 Limits: 32 connections, 8 in-flight requests per connection, 8 retained sessions,
 32 retained operations per session, 64 events per session, 65 queued subscription

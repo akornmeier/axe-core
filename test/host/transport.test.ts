@@ -58,6 +58,61 @@ describe("bounded transport", () => {
     });
   });
 
+  test("failed subscription replies replay unchanged, including concurrent copies and reconnect", async () => {
+    await withHost(async ({ client, server, open, reconnect }) => {
+      const session = await open();
+      const input = { ...meta(), sessionId: session.id, after: "session_other.0" };
+      const request = { kind: "request", request: { command: "subscribe", input } };
+      const expected = {
+        kind: "reply",
+        requestId: input.requestId,
+        reply: { ok: false, diagnostic: { code: "invalid-cursor" } },
+      };
+      const { socket, messages } = await rawConnection(server.path);
+      try {
+        socket.write(encodeFrame({ kind: "hello", lease: client.lease }));
+        expect((await messages.next()).value).toMatchObject({ ok: true });
+        socket.write(Buffer.concat([encodeFrame(request), encodeFrame(request)]));
+        expect((await messages.next()).value).toMatchObject(expected);
+        expect((await messages.next()).value).toMatchObject(expected);
+        const live = {
+          kind: "request",
+          request: { command: "subscribe", input: { ...meta(), sessionId: session.id } },
+        };
+        socket.write(Buffer.concat([encodeFrame(live), encodeFrame(live)]));
+        const established = [
+          (await messages.next()).value,
+          (await messages.next()).value,
+          (await messages.next()).value,
+        ];
+        expect(established).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ kind: "reply", reply: { ok: true, value: null } }),
+            expect.objectContaining({
+              kind: "reply",
+              reply: expect.objectContaining({
+                ok: false,
+                diagnostic: expect.objectContaining({ code: "subscription-conflict" }),
+              }),
+            }),
+            expect.objectContaining({ kind: "delivery" }),
+          ]),
+        );
+        socket.write(encodeFrame(request));
+        expect((await messages.next()).value).toMatchObject(expected);
+        socket.write(encodeFrame(live));
+        expect((await messages.next()).value).toMatchObject({
+          kind: "reply",
+          reply: { ok: false, diagnostic: { code: "subscription-conflict" } },
+        });
+      } finally {
+        socket.destroy();
+      }
+      const next = await reconnect(client.lease);
+      expect(await next.subscribe(input)).toMatchObject(expected.reply);
+    });
+  });
+
   test("missing handshake and deeply nested frames close without executing", async () => {
     await withHost(async ({ server }) => {
       for (const frame of [

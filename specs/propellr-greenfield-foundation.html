@@ -349,7 +349,7 @@
             <dt>modified</dt>
             <dd>
               2026-09-11T20:27:25Z; 2026-09-12T13:35:14Z; 2026-09-12T14:06:24Z;
-              2026-09-12T14:13:33Z; 2026-09-12T14:23:45Z; 2026-09-12T15:40:45Z
+              2026-09-12T14:13:33Z; 2026-09-12T14:23:45Z; 2026-09-12T15:40:45Z; 2026-09-12T16:17:57Z
             </dd>
             <dt>commits</dt>
             <dd>
@@ -358,17 +358,18 @@
               implementation staged, uncommitted); 44bfb559df534285dff1ce20ff6b0815ac04ec03 (phase 1
               implementation rebased onto main@3a9d1ff08d707f3b0a08c8543d0f2584718b7eaf);
               519f0c0bb04d38edfc68597b07dec56fae1b0a86 (phase 2 branch base; implementation
-              uncommitted)
+              uncommitted); df9f63b50ffe099bc2a5baee96ade5b49c01ae89 (phase 2 PR #11 initial head)
             </dd>
             <dt>agent name</dt>
             <dd>
               pi / gpt-6-astra; pi / gpt-6-astra; pi / gpt-6-astra (single agent); pi / gpt-6-astra
-              (phase 2, single agent)
+              (phase 2, single agent); pi / gpt-6-astra (PR #11, single agent)
             </dd>
             <dt>session id</dt>
             <dd>
               01a09168-fae8-701c-91a3-cf1504ae78a9; 01a09168-fae8-701c-91a3-cf1504ae78a9;
-              01a095e0-cd7f-701c-91a3-cf37ea4a0cb5; 01a0962e-071f-7681-98bc-26b90fd97297
+              01a095e0-cd7f-701c-91a3-cf37ea4a0cb5; 01a0962e-071f-7681-98bc-26b90fd97297;
+              01a0962e-071f-7681-98bc-26b90fd97297
             </dd>
             <dt>back refs</dt>
             <dd>
@@ -385,7 +386,8 @@
               specs/foundation-validation.md in that worktree.;
               <a href="https://github.com/asbury-labs/propellr/pull/10">PR #10</a>;
               <a href="local-host-validation.md">Phase 2 evidence</a>;
-              <a href="local-host-protocol.md">Local host protocol</a>
+              <a href="local-host-protocol.md">Local host protocol</a>;
+              <a href="https://github.com/asbury-labs/propellr/pull/11">PR #11</a>
             </dd>
           </dl>
         </details>
@@ -402,11 +404,12 @@
         <h2>Boundary</h2>
         <p>
           The inherited workspace and its prior green CI do not prove the new design. Phases 1 and 2
-          now pass TypeScript 7.0.2 source/type checks, 62 contract tests, 13 local host tests and 9
-          playbook tests. Actual dialog interactions ran in Chromium, Firefox and WebKit on macOS.
-          Dependency-declaration exceptions and single-user host limits are recorded in the
-          evidence. Browser analysis, rule fidelity, production isolation and performance remain
-          unverified.
+          now pass TypeScript 7.0.2 source/type checks, 62 contract tests, 15 local host tests and
+          11 playbook tests on macOS. Initial PR #11 Ubuntu validation passed all 84 pre-review
+          cases, including Chromium, Firefox and WebKit interactions. Subsequent CI/review status is
+          tracked on PR #11. Dependency-declaration exceptions and single-user host limits are
+          recorded in the evidence. Browser analysis, rule fidelity, production isolation and
+          performance remain unverified.
         </p>
       </section>
       <section id="solution">
@@ -415,8 +418,8 @@
           Initial selection used read-only registry and Node release observations on September 11,
           2026. Phase 1 installed these exact pins in the new worktree on September 12, without
           global upgrades. Declared engine/peer ranges fit Node 26 and matching Vitest/provider 5.
-          Phase 1 verifies native tool execution and the Node test configuration; browser/provider
-          execution remains deferred.
+          Phase 1 verifies native tool execution and the Node test configuration. Phase 2 executes
+          host Playwright interactions; a browser-analysis entry/provider project remains deferred.
         </p>
         <div class="table-scroll">
           <table>
@@ -855,6 +858,25 @@
       </section>
       <section id="amendments">
         <h2>Amendments</h2>
+        <details open>
+          <summary>2026-09-12T16:17:57Z: PR #11 delivery and review repairs</summary>
+          <p>
+            Tony authorized filing, monitoring and merging this phase only. Committed Phase 2 at
+            df9f63b5, rebased onto current main and opened ready PR #11. Ubuntu 24.04 validation
+            passed all 84 original tests. Verified review findings led to current-document grant
+            revocation, operation/session audit correlation, faithful failed-subscription replay and
+            retention of confirmed observations during cancellation.
+          </p>
+          <p>
+            The alleged pre-start-loss deadlock is a false positive: the return is inside the async
+            IIFE and its attached finally still resolves operation cleanup. Deterministic
+            crash-event injection before deferred startup verifies end completes and loss remains
+            terminal. Full local pnpm validate passed after repairs: 62 contract, 15 host and 11
+            playbook cases, build, strict types, lint and Oxfmt. Latest-head CI and re-review must
+            pass before merge; their live status is tracked on PR #11. Phase 3 and publishing remain
+            out of scope.
+          </p>
+        </details>
         <details open>
           <summary>2026-09-12T15:40:45Z: Phase 2 executed, stop boundary reached</summary>
           <p>
