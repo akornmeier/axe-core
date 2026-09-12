@@ -177,6 +177,16 @@ while a real browser launch is held in flight. Full `pnpm validate` then passed:
 static checks and 95 cases (62 contracts, 22 host, 11 playbooks). Latest-head
 CI/re-review remain tracked on PR #11.
 
+### Fourth review pass
+
+Head `f46fb4bd` passed Ubuntu CI with all 95 tests. Two verified edge cases were
+repaired: explicit iterator return now discards queued delivery, and borrowed open
+rejects non-fixture URLs before leasing the Page. Focused cases distinguish natural
+stream draining from explicit cancellation and prove a rejected about:blank Page
+can be attached after its owner navigates it to the controlled fixture. Full
+`pnpm validate` passed static checks and 96 cases (62 contracts, 23 host, 11
+playbooks). Current-head CI/review status remains tracked on PR #11.
+
 ## Stop boundary
 
 Phase 2 complete; phase 3 unstarted. Existing worktree tips and clean starting

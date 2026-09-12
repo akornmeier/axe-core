@@ -26,6 +26,7 @@ import {
   scanUnavailable,
 } from "./playbook.js";
 import { BoundedStream } from "./stream.js";
+import { FIXTURE_URL } from "./fixture.js";
 
 export const LOCAL_POLICY = { id: "local-fixture", version: "1" } as const;
 const configuration = { id: "local-host", version: "1" } as const;
@@ -287,6 +288,8 @@ export class SessionHost {
         return denied("permission-denied", "Target is not authorized");
       if (page && (page.isClosed() || this.borrowedInUse.has(page)))
         return denied("target-unavailable", "Borrowed target is closed or already leased");
+      if (page && page.url() !== FIXTURE_URL)
+        return denied("target-unavailable", "Borrowed target must display the configured fixture");
       if (page) this.borrowedInUse.add(page);
       let target: BrowserTarget;
       try {

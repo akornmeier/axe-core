@@ -17,6 +17,7 @@ After hello: `{kind:"request", request:{command,input}}`; replies use
 `{kind:"reply", requestId, reply}`. Subscription deliveries use
 `{kind:"delivery", requestId, delivery}` after an accepted subscription reply.
 One active subscription per connection; disconnect ends delivery, not the session.
+Explicit iterator return discards queued deliveries; natural completion drains them.
 After the final end/cleanup event, `{kind:"complete", requestId}` completes the
 subscription iterator without dropping other command replies. A subscription to an
 ended session replays retained events and then completes. Browser loss alone does
@@ -57,7 +58,8 @@ Only `dialog-open-close@1` is registered. Host serves a repository-owned synthet
 fixture through Playwright routing at `http://propellr.invalid/dialog`, without
 opening a network listener. Managed contexts block other HTTP/WebSocket requests, downloads and service
 workers. Borrowed targets are explicit host-provided Pages, exclusively leased,
-not arbitrary endpoints. They must already display the configured fixture URL.
+not arbitrary endpoints. Open rejects them unless they already display the configured
+fixture URL.
 Borrowed contexts retain their owner's network policy; this slice does not install
 a customer-network firewall.
 

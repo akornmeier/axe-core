@@ -90,7 +90,7 @@ test("embedded host shutdown waits for an in-flight real browser launch and rele
   }
 });
 
-test("persistent borrowed context detaches on end and reports browser loss", async () => {
+test("persistent borrowed context requires fixture and preserves ownership/loss", async () => {
   const profile = await mkdtemp("/tmp/pplr-profile-");
   const context = await chromium.launchPersistentContext(profile, { headless: true });
   try {
@@ -100,7 +100,7 @@ test("persistent borrowed context detaches on end and reports browser loss", asy
     await page.route(FIXTURE_URL, (route) =>
       route.fulfill({ contentType: "text/html", body: DIALOG_HTML }),
     );
-    await page.goto(FIXTURE_URL);
+    expect(page.url()).toBe("about:blank");
     await withHost(
       async ({ client }) => {
         const input = {
@@ -108,7 +108,12 @@ test("persistent borrowed context detaches on end and reports browser loss", asy
           policy: LOCAL_POLICY,
           target: { kind: "attached", targetId: "persistent" },
         } as const;
-        const first = unwrap(await client.open(input));
+        expect(await client.open(input)).toMatchObject({
+          ok: false,
+          diagnostic: { code: "target-unavailable" },
+        });
+        await page.goto(FIXTURE_URL);
+        const first = unwrap(await client.open({ ...input, ...meta() }));
         unwrap(await client.end({ ...meta(), sessionId: first.id }));
         expect(page.isClosed()).toBe(false);
         const second = unwrap(await client.open({ ...input, ...meta() }));

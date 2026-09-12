@@ -45,6 +45,7 @@ export class BoundedStream<T> implements AsyncIterableIterator<T> {
   }
 
   async return(): Promise<IteratorResult<T>> {
+    this.values.length = 0;
     this.close();
     return { done: true, value: undefined };
   }

@@ -219,6 +219,20 @@ describe("bounded transport", () => {
     }
   });
 
+  test("explicit stream return discards queued delivery while natural close drains it", async () => {
+    const stream = new BoundedStream<number>();
+    stream.push(1);
+    stream.push(2);
+    stream.close();
+    expect(await stream.next()).toEqual({ done: false, value: 1 });
+    expect(await stream.return()).toEqual({ done: true, value: undefined });
+    expect(await stream.next()).toEqual({ done: true, value: undefined });
+    const cancelled = new BoundedStream<number>();
+    cancelled.push(3);
+    await cancelled.return();
+    expect(await cancelled.next()).toEqual({ done: true, value: undefined });
+  });
+
   test("slow consumers fail explicitly instead of retaining unbounded events", async () => {
     let closed = false;
     const stream = new BoundedStream<number>(1, () => {
